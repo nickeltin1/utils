@@ -1,4 +1,11 @@
 # utils
-Different universal scripts for unity
+Different universal utility scripts for unity
 
-Singleton - just a generic singleton
+1. Singletons
+UnconsistentSingleton - generic singleton which loads from resource folder if not presented on scene, not consist over scenes
+ConsistentSingleton - inherets from UnconsistentSingleton, but consists over scenes
+
+2. Object Pools
+PoolBase - abstract class wich containts base pool fields and abstract Get() and AddToPool() methods
+Pool - contains regural Pool and generic Pool<T> both of them inherets form PoolBase, regural Pool uses GameObjects as poolObject, generic Pool<T> uses PoolObject<T>
+PoolObject<T> - MonoBehaviour with its Pool<T> reference
