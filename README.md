@@ -11,3 +11,15 @@ Pool - contains regural Pool and generic Pool<T> both of them inherets form Pool
 PoolObject<T> - MonoBehaviour with its Pool<T> reference
 
 3. State Machine
+StateMachine - regural class, but with StateMachine engine as MonoBehaviour, uses Update, FixedUpdate unity events, different state mschines can be merged to work on one engine, for better performance
+There is main state which runs always
+
+State - class containing all actions for state: onUpdate, onFixedUpdate, onStateStart, onStateEnd
+Trsnsition between states is specified in state itself, as yourStateMachine.SwitchState(Enum type)
+Each state should be provided with its Enum value for type
+States in state machine added in code, with .AddState(State newState), state can be overrided
+
+4. Items & Inventory
+Item - scriptable object, whish has references to its world representations, as world item, and as world drop (Pickupable)
+Inventory - infinite invetory, wich works with stacks
+InventorySorter - can split one inventory into different categories (for inventory ui representation)
