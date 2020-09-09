@@ -1,46 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using Interfaces;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Characters
 {
-    public class StateMachine : MonoBehaviour
+    public class StateMachine : ILifeCycle
     {
-        public enum StateType
-        {
-            Default
-        }
-        private State currentState;
+        public enum StateType { Main, Disabled, Enabled }
+        private enum DataMode { Add, Remove }
+        
         private State mainState;
-        private Dictionary<Enum, State> states = new Dictionary<Enum, State>();
-
-        public static StateMachine Initialize(Transform parent, State[] states = null)
+        public State MainState
         {
-            var instance = parent.gameObject.AddComponent<StateMachine>();
-            
-            if (states != null)
+            get => mainState;
+            private set
             {
-                instance.currentState = states[0];
-                foreach (var state in states)
-                {
-                    instance.states.Add(state.Type, state);
-                }
+                PassDataToEngine(mainState, DataMode.Remove);
+                mainState = value;
+                PassDataToEngine(mainState, DataMode.Add);
             }
-            return instance;
+        }
+        
+        private State currentState;
+        public State CurrentState
+        {
+            get => currentState;
+            private set
+            {
+                PassDataToEngine(currentState, DataMode.Remove);
+                currentState = value;
+                PassDataToEngine(currentState, DataMode.Add);
+            }
+        }
+        
+        
+        private Dictionary<Enum, State> states = new Dictionary<Enum, State>();
+        private bool updateEnabled;
+        private bool fixedUpdateEnabled;
+        private StateMachineEngine engine;
+
+        public StateMachine(Transform parent, IEnumerable<State> states = null, bool updateEnabled = true, 
+            bool fixedUpdateEnabled = true)
+        {
+            engine = parent.gameObject.AddComponent<StateMachineEngine>();
+            SetSettings(updateEnabled, fixedUpdateEnabled);
+            if (states != null) foreach (var state in states) AddState(state);
         }
 
+        public void SetSettings(bool updateEnabled, bool fixedUpdateEnabled)
+        {
+            this.updateEnabled = updateEnabled;
+            this.fixedUpdateEnabled = fixedUpdateEnabled;
+        }
+        public static void Merge(StateMachine a, StateMachine b)
+        {
+            Object.Destroy(b.engine);
+            StateMachineEngine engine = b.engine = a.engine;
+            engine.ClearData();
+            a.PassDataToEngine(a.mainState, DataMode.Add);
+            b.PassDataToEngine(b.mainState, DataMode.Add);
+            a.PassDataToEngine(a.currentState, DataMode.Add);
+            b.PassDataToEngine(b.currentState, DataMode.Add);
+        }
         public State SwichtState(Enum type)
         {
-            if (states.TryGetValue(type, out var requestedState))
+            var requestedState = GetState(type);
+            if (requestedState != null)
             {
-                if (requestedState == currentState) return null;
-                currentState.OnStateEnd?.Invoke();
-                currentState = requestedState;
-                currentState.OnStateStart?.Invoke();
-                return currentState;
+                if (requestedState == CurrentState) return null;
+                CurrentState?.OnStateEnd?.Invoke();
+                CurrentState = requestedState;
+                CurrentState.OnStateStart?.Invoke();
+                return CurrentState;
             }
-
-            Debug.LogWarning($"Requested state " + type + " doesn't exist");
+            
             return null;
         }
         public void AddState(State newState)
@@ -48,24 +83,105 @@ namespace Characters
             if (!states.ContainsKey(newState.Type))
             {
                 states.Add(newState.Type, newState);
-                if (currentState == null) currentState = newState;
+                if (CurrentState == null)
+                {
+                    CurrentState = newState;
+                    CurrentState.OnStateStart?.Invoke();
+                } 
             }
         }
-        public void SetMainState(State defaultState)
+        public void SetMainState(State newMainState)
         {
-            this.mainState = defaultState;
+            this.MainState = newMainState;
+        }
+        public State ExitState()
+        {
+            CurrentState?.OnStateEnd?.Invoke();
+            var exitState = CurrentState;
+            CurrentState = null;
+            return exitState;
+        }
+        public void OverrideState(State newOverridedState)
+        {
+            if (states.ContainsKey(newOverridedState.Type)) states[newOverridedState.Type] = newOverridedState;
+            else Debug.LogWarning($"State " + newOverridedState.Type + " doesn't exist, and can't be overrided");
+        }
+        public State GetState(Enum type)
+        {
+            if (states.TryGetValue(type, out var requestedState)) return requestedState;
+            Debug.LogWarning($"Requested state " + type + " doesn't exist");
+            return null;
+        }
+        private void PassDataToEngine(State state, DataMode mode)
+        {
+            switch (mode)
+            {
+                case DataMode.Add:
+                    if (state != null)
+                    {
+                        engine.AddData(fixedUpdateEnabled ? state.OnFixedUpdate : null, 
+                            updateEnabled ? state.OnUpdate : null);
+                    }
+                    break;
+                case DataMode.Remove:
+                    if(state != null) engine.RemoveData(state.OnFixedUpdate, state.OnUpdate);
+                    break;
+            }
+        }
+        public void Disable()
+        {
+            engine.enabled = false;
+            Disabled = true;
+        }
+        
+        public void Enable()
+        {
+            engine.enabled = true;
+            Disabled = false;
+        }
+        
+        private class StateMachineEngine : MonoBehaviour
+        {
+            private List<Action> updateList = new List<Action>();
+            private List<Action> fixedUpdateList = new List<Action>();
+            
+            public void AddData(Action onFixedUpdate, Action onUpdate)
+            {
+                if (onFixedUpdate != null) fixedUpdateList.Add(onFixedUpdate);
+                if (onUpdate != null) updateList.Add(onUpdate);
+            }
+            public void RemoveData(Action onFixedUpdate, Action onUpdate)
+            {
+                if (onFixedUpdate != null) fixedUpdateList.Remove(onFixedUpdate);
+                if (onUpdate != null) updateList.Remove(onUpdate);
+            }
+
+            public void ClearData()
+            {
+                updateList.Clear();
+                fixedUpdateList.Clear();
+            }
+            
+            private void Update()
+            {
+                if (updateList.Count == 0) return;
+                for (int i = updateList.Count - 1; i >= 0; i--)
+                {
+                    updateList[i]?.Invoke();
+                }
+            }
+            private void FixedUpdate()
+            {
+                if(fixedUpdateList.Count == 0) return;
+                for (int i = fixedUpdateList.Count - 1; i >= 0; i--)
+                {
+                    fixedUpdateList[i]?.Invoke();
+                }
+                
+            }
         }
 
-
-        private void Update()
-        {
-            mainState?.OnUpdate?.Invoke();
-            currentState?.OnUpdate?.Invoke();
-        }
-        private void FixedUpdate()
-        {
-            mainState?.OnFixedUpdate?.Invoke();
-            currentState?.OnFixedUpdate?.Invoke();
-        }
+        
+        public bool Disabled { get; private set; }
     }
 }

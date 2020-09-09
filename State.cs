@@ -1,24 +1,24 @@
 ﻿using System;
-using UnityEngine;
 
 namespace Characters
 {
     public class State
     {
-        public Enum Type { get; private set; }
+        public Enum Type { get; }
         
-        public Action OnStateEnd { get; private set; }
-        public Action OnUpdate { get; private set; }
-        public Action OnFixedUpdate { get; private set; }
-        public Action OnStateStart { get; private set; }
-        
-        public State(Enum type, Action onStateEnd = null, Action onUpdate = null, Action onFixedUpdate = null, Action onStateStart = null)
+        public Action OnStateEnd { get; }
+        public Action OnUpdate { get; }
+        public Action OnFixedUpdate { get; }
+        public Action OnStateStart { get; }
+
+        public State(Enum type,  Action onStateStart = null, Action onUpdate = null, Action onFixedUpdate = null, 
+            Action onStateEnd = null)
         {
             Type = type;
-            OnStateEnd = onStateEnd;
+            OnStateStart = onStateStart;
             OnUpdate = onUpdate;
             OnFixedUpdate = onFixedUpdate;
-            OnStateStart = onStateStart;
+            OnStateEnd = onStateEnd;
         }
     }
 }

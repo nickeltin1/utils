@@ -39,7 +39,7 @@ namespace Utilities
             if (instance == null) {
                 instance = this as T;
             } else {
-                Destroy (gameObject);
+                Destroy(gameObject);
             }
         }
     }
