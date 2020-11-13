@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Interfaces;
+using nickeltin.Interfaces;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Characters
+namespace nickeltin.StateMachine
 {
     public class StateMachine : ILifeCycle
     {
@@ -142,8 +142,8 @@ namespace Characters
         
         private class StateMachineEngine : MonoBehaviour
         {
-            private List<Action> updateList = new List<Action>();
-            private List<Action> fixedUpdateList = new List<Action>();
+            private readonly List<Action> updateList = new List<Action>();
+            private readonly List<Action> fixedUpdateList = new List<Action>();
             
             public void AddData(Action onFixedUpdate, Action onUpdate)
             {

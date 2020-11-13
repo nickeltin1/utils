@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Other;
 using UnityEngine;
 
 namespace Items
@@ -10,13 +9,13 @@ namespace Items
 
         static ItemLibrary()
         {
-            GameStaticEvents.onBeforeSceneChange += () =>
-            {
+            // GameStaticEvents.onBeforeSceneChange += () =>
+            // {
                 foreach (Item item in allItemTypes.Values)
                 {
                     item.Reset();
                 }
-            };
+            // };
         }
 
         public static void RegisterNewItem(Item newItem)

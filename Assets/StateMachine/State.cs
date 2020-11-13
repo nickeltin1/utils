@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Characters
+namespace nickeltin.StateMachine
 {
     public class State
     {

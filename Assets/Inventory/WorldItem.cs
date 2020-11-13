@@ -1,4 +1,4 @@
-﻿using Interfaces;
+﻿using nickeltin.Interfaces;
 using UnityEngine;
 
 namespace Items

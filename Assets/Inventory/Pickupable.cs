@@ -1,11 +1,10 @@
-﻿using Interfaces;
-using Other;
+﻿using nickeltin.Interfaces;
 using UnityEngine;
 
 namespace Items
 {    
-    [RequireComponent(typeof(Rigidbody2D), typeof(Animator))]
-    public class Pickupable : TriggerArea, IDestructable
+    [RequireComponent(typeof(Rigidbody2D), typeof(Animator), typeof(Collider2D))]
+    public class Pickupable : MonoBehaviour, IDestructable
     {
         [Header("Components")] 
         [SerializeField] private SpriteRenderer Renderer; 
@@ -22,9 +21,8 @@ namespace Items
         }
 
         
-        protected override void Awake()
+        private void Awake()
         {
-            base.Awake();
             Rigidbody = GetComponent<Rigidbody2D>();
         }
 

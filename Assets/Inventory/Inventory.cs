@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using Characters;
 using UnityEngine;
 
 namespace Items
@@ -16,7 +15,7 @@ namespace Items
         public event Action<ItemStack> onItemAdded;
         public event Action<Item, int> onItemDropped;
 
-        [HideInInspector] public CharacterBase owner;
+        [HideInInspector] public object owner;
 
         public void ItemDropInvoke(Item item, int quantity) => onItemDropped?.Invoke(item, quantity);
 

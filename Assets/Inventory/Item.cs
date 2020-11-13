@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Text;
-using Interfaces;
 using UnityEngine;
 
 namespace Items
 {
     [Serializable]
-    public abstract class Item : ScriptableObject, IInitializer, IEquatable<Item>
+    public abstract class Item : ScriptableObject, IEquatable<Item>
     {
         public ItemBaseData baseData;
         [Space]
