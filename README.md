@@ -18,7 +18,9 @@ Trsnsition between states is specified in state itself, as yourStateMachine.Swit
 Each state should be provided with its Enum value for type
 States in state machine added in code, with .AddState(State newState), state can be overrided
 
-4. Items & Inventory
-Item - scriptable object, whish has references to its world representations, as world item, and as world drop (Pickupable)
-Inventory - infinite invetory, wich works with stacks
-InventorySorter - can split one inventory into different categories (for inventory ui representation)
+4. Save System
+Inherit class that need to be saved form Saveable<SaveType>, provide it with ID (save file name) and .Register() it
+SaveType - clear class for all data that need to be stored 
+
+5. Extensions
+Different extension methods for Vectors, Integer, Floats, Transform, Color... 
