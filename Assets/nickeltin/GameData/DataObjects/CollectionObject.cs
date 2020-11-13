@@ -29,6 +29,14 @@ namespace nickeltin.GameData.DataObjects
             InvokeUpdate();
         }
         
-        public T this [int i] => m_collection[i];
+        public T this [int i]
+        {
+            get => m_collection[i];
+            set
+            {
+                m_collection[i] = value;
+                InvokeUpdate();
+            }
+        }
     }
 }
