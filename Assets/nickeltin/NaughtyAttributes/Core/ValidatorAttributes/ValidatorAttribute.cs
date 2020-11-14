@@ -2,7 +2,7 @@
 
 namespace nickeltin.Editor.Attributes
 {
-	public class ValidatorAttribute : Attribute, IAttribute
+	public class ValidatorAttribute : Attribute, INaughtyAttribute
 	{
 	}
 }

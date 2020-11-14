@@ -2,7 +2,7 @@
 
 namespace nickeltin.Editor.Attributes
 {
-	public class MetaAttribute : Attribute, IAttribute
+	public class MetaAttribute : Attribute, INaughtyAttribute
 	{
 	}
 }

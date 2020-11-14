@@ -5,7 +5,7 @@ namespace nickeltin.Editor.Attributes
 	/// <summary>
 	/// Base class for all drawer attributes
 	/// </summary>
-	public class DrawerAttribute : PropertyAttribute, IAttribute
+	public class DrawerAttribute : PropertyAttribute, INaughtyAttribute
 	{
 	}
 }

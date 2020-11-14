@@ -2,7 +2,7 @@
 
 namespace nickeltin.Editor.Attributes
 {
-	public class SpecialCaseDrawerAttribute : Attribute, IAttribute
+	public class SpecialCaseDrawerAttribute : Attribute, INaughtyAttribute
 	{
 	}
 }
