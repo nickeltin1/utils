@@ -36,5 +36,10 @@ namespace nickeltin.Extensions.Vector
         {
             return new Vector3Int((int)vector.x, (int)vector.y, (int)vector.z);
         }
+
+        public static float GetRandomValueBetweenAxis(this Vector2 vector)
+        {
+            return Random.Range(vector.x, vector.y);
+        }
     }
 }

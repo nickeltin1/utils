@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace nickeltin.Editor
+namespace nickeltin.Editor.PropertyDrawers
 {
     [CustomPropertyDrawer(typeof(SortingLayerAttribute))]
     public class SortingLayerDrawer : PropertyDrawer

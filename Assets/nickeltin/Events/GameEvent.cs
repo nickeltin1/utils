@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using nickeltin.Editor.Attributes;
 using UnityEngine;
 
 namespace nickeltin.Events
@@ -11,6 +12,7 @@ namespace nickeltin.Events
         /// </summary>
         private readonly List<GameEventListener> eventListeners = new List<GameEventListener>();
 
+        [Button(enabledMode: EButtonEnableMode.Playmode)]
         public void Raise()
         {
             for(int i = eventListeners.Count -1; i >= 0; i--) eventListeners[i].OnEventRaised();
