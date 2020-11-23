@@ -10,19 +10,24 @@ namespace nickeltin.Localization.Editor
     public class LocalizationManagerEditor : UnityEditor.Editor
     {
         private ReorderableList m_AvailableLanguagesList;
-        private SerializedProperty m_AvailableLanguages;
-        private SerializedProperty m_GoogleAuthenticationFile;
+        private SerializedProperty m_availableLanguages;
+        private SerializedProperty m_googleAuthenticationFile;
+        private SerializedProperty m_currentLanguage;
+        private SerializedProperty m_onLanguageChangeEvent;
 
         private void OnEnable()
         {
-            m_AvailableLanguages = serializedObject.FindProperty("m_availableLanguages");
-            m_GoogleAuthenticationFile = serializedObject.FindProperty("m_googleAuthenticationFile");
-            if (m_AvailableLanguages != null)
+            m_availableLanguages = serializedObject.FindProperty("m_availableLanguages");
+            m_googleAuthenticationFile = serializedObject.FindProperty("m_googleAuthenticationFile");
+            m_currentLanguage = serializedObject.FindProperty("m_currentLanguage");
+            m_onLanguageChangeEvent = serializedObject.FindProperty("onLocalizationChangedEvent");
+            
+            if (m_availableLanguages != null)
             {
                 m_AvailableLanguagesList = new ReorderableList
                 (
                     serializedObject: serializedObject,
-                    elements: m_AvailableLanguages,
+                    elements: m_availableLanguages,
                     draggable: true,
                     displayHeader: true,
                     displayAddButton: true,
@@ -30,7 +35,7 @@ namespace nickeltin.Localization.Editor
                 );
                 m_AvailableLanguagesList.drawHeaderCallback = (Rect rect) =>
                 {
-                    EditorGUI.LabelField(rect, m_AvailableLanguages.displayName);
+                    EditorGUI.LabelField(rect, m_availableLanguages.displayName);
                 };
                 m_AvailableLanguagesList.drawElementCallback = (Rect rect, int index, bool isActive, bool isFocused) =>
                 {
@@ -65,41 +70,50 @@ namespace nickeltin.Localization.Editor
             if (m_AvailableLanguagesList != null)
             {
                 serializedObject.Update();
+                
+                GUI.enabled = false;
+                EditorGUILayout.PropertyField(m_currentLanguage);
+                GUI.enabled = true;
+                
+                EditorGUILayout.Space(20);
+                
                 m_AvailableLanguagesList.DoLayoutList();
-
+                
                 EditorGUILayout.LabelField("Google Translate", EditorStyles.boldLabel);
-                EditorGUILayout.PropertyField(m_GoogleAuthenticationFile);
-                if (!m_GoogleAuthenticationFile.objectReferenceValue)
+                EditorGUILayout.PropertyField(m_googleAuthenticationFile);
+                if (!m_googleAuthenticationFile.objectReferenceValue)
                 {
                     EditorGUILayout.HelpBox("If you want to use Google Translate in editor or in-game, attach the service account or API key file claimed from Google Cloud.", MessageType.Info);
                 }
+                    
+                EditorGUILayout.Space(20);
+                
+                EditorGUILayout.PropertyField(m_onLanguageChangeEvent);
+                
                 serializedObject.ApplyModifiedProperties();
             }
-            else
-            {
-                base.OnInspectorGUI();
-            }
+            else base.OnInspectorGUI();
         }
 
         private void AddUsedLocales()
         {
             var enumNames = Enum.GetNames(typeof(SystemLanguage));
             var languages = FindUsedLanguages(enumNames);
-            m_AvailableLanguages.arraySize = languages.Count;
-            var size = m_AvailableLanguages.arraySize;
+            m_availableLanguages.arraySize = languages.Count;
+            var size = m_availableLanguages.arraySize;
             for (int i = 0; i < size; i++)
             {
                 var enumValueIndex = Array.IndexOf(enumNames, languages[i].ToString());
-                m_AvailableLanguages.GetArrayElementAtIndex(i).enumValueIndex = enumValueIndex;
+                m_availableLanguages.GetArrayElementAtIndex(i).enumValueIndex = enumValueIndex;
             }
         }
 
         private List<SystemLanguage> FindUsedLanguages(string[] enumNames)
         {
             var languages = new HashSet<SystemLanguage>();
-            for (int i = 0; i < m_AvailableLanguages.arraySize; i++)
+            for (int i = 0; i < m_availableLanguages.arraySize; i++)
             {
-                var enumName = enumNames[m_AvailableLanguages.GetArrayElementAtIndex(i).enumValueIndex];
+                var enumName = enumNames[m_availableLanguages.GetArrayElementAtIndex(i).enumValueIndex];
                 languages.Add((SystemLanguage)Enum.Parse(typeof(SystemLanguage), enumName));
             }
 

@@ -11,21 +11,24 @@ namespace nickeltin.Singletons
 
         protected static T Instance => FindOrSpawnInstanceAndInitialize();
 
+        [RuntimeInitializeOnLoadMethod]
         protected static T FindOrSpawnInstanceAndInitialize()
         {
             if (!Exists)
             {
                 var objs = Resources.FindObjectsOfTypeAll<T>();
                     
+                //Debug.Log("Singeltons find " + objs.Length);
+                
                 if (objs.Length == 0) Debug.LogError(errorMessagePrefix + " not exists in your project, create one");
-                else if (objs.Length > 1) Debug.LogError(errorMessagePrefix + " has more than one instances, delete them for yout project");
+                else if (objs.Length > 1) Debug.LogError(errorMessagePrefix + " has more than one instances, delete them from your project");
                     
                 instance = objs.First();
                     
                 if(Exists) instance.Initialize();
             }
                 
-            if (!Exists)
+            if (!Exists && Application.isPlaying)
             {
                 instance = CreateInstance<T>();
                 instance.hideFlags = HideFlags.HideAndDontSave;

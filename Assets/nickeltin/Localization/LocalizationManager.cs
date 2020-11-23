@@ -1,16 +1,18 @@
-﻿using System;
+﻿#pragma warning disable
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using nickeltin.Singletons;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace nickeltin.Localization
 {
     [CreateAssetMenu(fileName = "LocalizationManager", menuName = "Localization/Localization Manager")]
     public sealed class LocalizationManager : SOSingleton<LocalizationManager>
     {
-        
-        [SerializeField, Tooltip("Enabled languages for the application.")]
+        [SerializeField]
         private List<SystemLanguage> m_availableLanguages = new List<SystemLanguage>(1)
         {
             SystemLanguage.English
@@ -23,18 +25,29 @@ namespace nickeltin.Localization
 
         public static List<SystemLanguage> AvailableLanguages => Instance.m_availableLanguages;
 
-        private SystemLanguage m_currentLanguage = SystemLanguage.English;
+        [SerializeField] private SystemLanguage m_currentLanguage = SystemLanguage.English;
         public static SystemLanguage CurrentLanguage => Instance.m_currentLanguage;
         
         public static event EventHandler<LocaleChangedEventArgs> onLocalizationChanged;
 
+        [SerializeField] private UnityEvent<LocaleChangedEventArgs> onLocalizationChangedEvent;
+        
+        public void ChangeLanguage(LanguageProvider languageProvider) => ChangeLanguage(languageProvider.Enum);
+
         public void ChangeLanguage(SystemLanguage lang)
         {
-            if (m_currentLanguage != lang)
+            if (m_availableLanguages.Contains(lang))
             {
-                var previousLanguage = m_currentLanguage;
-                m_currentLanguage = lang;
-                LocalizationChangedInvoke(new LocaleChangedEventArgs(previousLanguage, m_currentLanguage));
+                if (m_currentLanguage != lang)
+                {
+                    var previousLanguage = m_currentLanguage;
+                    m_currentLanguage = lang;
+                    LocalizationChangedInvoke(new LocaleChangedEventArgs(previousLanguage, m_currentLanguage));
+                }
+            }
+            else
+            {
+                Debug.LogError($"{lang} language doesn't exists in {typeof(LocalizationManager).Name}, please, add it if you want to change to it");
             }
         }
 
@@ -135,9 +148,13 @@ namespace nickeltin.Localization
             }
         }
         
-        private void LocalizationChangedInvoke(LocaleChangedEventArgs e) => onLocalizationChanged?.Invoke(this, e);
+        private void LocalizationChangedInvoke(LocaleChangedEventArgs e)
+        {
+            onLocalizationChanged?.Invoke(this, e);
+            onLocalizationChangedEvent.Invoke(e);
+        }
 
-        protected override void Initialize() => SetDefaultLanguage();
+        protected override void Initialize() { }
     }
     
     public class LocaleChangedEventArgs : EventArgs

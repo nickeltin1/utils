@@ -14,4 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_LocaleItems:
   - m_Language: 10
-    m_Value: 
+    m_Value: Frog
+  - m_Language: 30
+    m_Value: "\u041B\u044F\u0433\u0443\u0448\u043A\u0430"
+  - m_Language: 38
+    m_Value: "\u0416\u0430\u0431\u0430"
+  - m_Language: 22
+    m_Value: KAWAIII

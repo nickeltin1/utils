@@ -187,14 +187,16 @@ namespace nickeltin.Localization.Editor
             cellRect.y += 2;
             cellRect.height -= 4;
             var treeViewItem = item as LocaleTreeViewItem;
-            if (treeViewItem != null)
+            if (treeViewItem?.LocaleItem?.ObjectValue != null)
             {
+                //Debug.Log(treeViewItem);
                 var localeItem = treeViewItem.LocaleItem;
                 var valueType = treeViewItem.Parent.LocalizedAsset.ValueType;
 
                 EditorGUI.BeginChangeCheck();
                 if (valueType.IsSubclassOf(typeof(UnityEngine.Object)))
                 {
+                    //Debug.LogError(localeItem);
                     localeItem.ObjectValue = EditorGUI.ObjectField(cellRect, (UnityEngine.Object)localeItem.ObjectValue, localeItem.ObjectValue.GetType(), false);
                 }
                 else if (valueType == typeof(string))

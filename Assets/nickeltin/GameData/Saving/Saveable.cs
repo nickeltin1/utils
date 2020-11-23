@@ -1,4 +1,6 @@
-﻿using System;
+﻿#pragma warning disable
+
+using System;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving

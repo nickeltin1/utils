@@ -229,12 +229,14 @@ namespace nickeltin.Localization.Editor
 
         private void OpenSettings()
         {
+            //Debug.Log(LocalizationManager.Exists);
+            var localizationManager = LocalizationManager.GetInstance();
             if (LocalizationManager.Exists)
             {
-                Selection.activeObject = LocalizationManager.GetInstance();
+                Selection.activeObject = localizationManager;
             }
         }
-
+        
         private void LocalizedAssetControls()
         {
             if (GUILayout.Button(new GUIContent("Create", "Create a new localized asset."), EditorStyles.toolbarDropDown))
@@ -254,7 +256,18 @@ namespace nickeltin.Localization.Editor
             {
                 DeleteAssetItems(new[] { selectedItem });
             }
+
+            if (GUILayout.Button(new GUIContent("Select Asset", "Shows selected assets in project view"),
+                EditorStyles.toolbarButton))
+            {
+                SelectAssetInProjectView(selectedItem);
+            }
             GUI.enabled = true;
+        }
+        
+        private void SelectAssetInProjectView(AssetTreeViewItem item)
+        {
+            Selection.activeObject = item.LocalizedAsset;
         }
 
         private void CreateLocalizedAssetPopup(Vector2 mousePosition)
@@ -330,6 +343,7 @@ namespace nickeltin.Localization.Editor
             string itemCreate = "Create";
             string itemRename = "Rename";
             string itemDelete = "Delete";
+            string itemSelect = "Select Asset";
 
             if (Event.current != null)
             {
@@ -342,11 +356,13 @@ namespace nickeltin.Localization.Editor
             {
                 menu.AddDisabledItem(new GUIContent(itemRename));
                 menu.AddDisabledItem(new GUIContent(itemDelete));
+                menu.AddDisabledItem(new GUIContent(itemSelect));
             }
             else
             {
                 menu.AddItem(new GUIContent(itemRename), false, AssetItemContextMenu_Rename);
                 menu.AddItem(new GUIContent(itemDelete), false, AssetItemContextMenu_Delete);
+                menu.AddItem(new GUIContent(itemSelect), false, AssetItemContextMenu_SelectAsset);
             }
             menu.ShowAsContext();
         }
@@ -367,6 +383,11 @@ namespace nickeltin.Localization.Editor
         private void AssetItemContextMenu_Delete()
         {
             DeleteAssetItems(GetSelectedAssetItems());
+        }
+
+        private void AssetItemContextMenu_SelectAsset()
+        {
+            SelectAssetInProjectView(m_TreeView.GetSelectedItem() as AssetTreeViewItem);
         }
 
         private void OnLocaleItemContextMenu(AssetTreeViewItem assetTreeViewItem, LocaleTreeViewItem localeTreeViewItem)

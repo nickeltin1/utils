@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#pragma warning disable
+
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace nickeltin.Events
