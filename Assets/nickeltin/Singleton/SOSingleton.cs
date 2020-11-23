@@ -9,28 +9,37 @@ namespace nickeltin.Singletons
         
         private static T instance;
 
-        protected static T Instance
+        protected static T Instance => FindOrSpawnInstanceAndInitialize();
+
+        protected static T FindOrSpawnInstanceAndInitialize()
         {
-            get
+            if (!Exists)
             {
-                if (instance == null)
-                {
-                    var objs = Resources.FindObjectsOfTypeAll<T>();
+                var objs = Resources.FindObjectsOfTypeAll<T>();
                     
-                    if (objs.Length == 0) Debug.LogError(errorMessagePrefix + " not exists in your project, create one");
-                    else if (objs.Length > 1) Debug.LogError(errorMessagePrefix + " has more than one instances, delete them for yout project");
+                if (objs.Length == 0) Debug.LogError(errorMessagePrefix + " not exists in your project, create one");
+                else if (objs.Length > 1) Debug.LogError(errorMessagePrefix + " has more than one instances, delete them for yout project");
                     
-                    instance = objs.First();
-                }
-                
-                if (instance == null)
-                {
-                    instance = CreateInstance<T>();
-                    instance.hideFlags = HideFlags.HideAndDontSave;
-                }
-                
-                return instance;
+                instance = objs.First();
+                    
+                if(Exists) instance.Initialize();
             }
+                
+            if (!Exists)
+            {
+                instance = CreateInstance<T>();
+                instance.hideFlags = HideFlags.HideAndDontSave;
+                    
+                if(Exists) instance.Initialize();
+            }
+
+            return instance;
         }
+
+        public static T GetInstance() => Instance;
+
+        public static bool Exists => instance != null;
+
+        protected abstract void Initialize();
     }
 }

@@ -28,6 +28,14 @@ namespace nickeltin.Editor.Attributes
 			_values = new List<KeyValuePair<string, object>>();
 		}
 
+		public DropdownList(IEnumerable<T> source) : base()
+		{
+			foreach (var item in source)
+			{
+				Add(item.ToString(), item);
+			}
+		}
+
 		public void Add(string displayName, T value)
 		{
 			_values.Add(new KeyValuePair<string, object>(displayName, value));
