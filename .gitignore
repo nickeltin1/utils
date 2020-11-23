@@ -13,6 +13,7 @@
 /[Pp]ackages/
 /[Aa]ssets/[Tt]extMesh [Pp]ro/
 /[Aa]ssets/[Tt]esting/
+/[Aa]ssets/*.meta
 /.idea/
 
 # MemoryCaptures can get excessive in size.
@@ -51,6 +52,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.meta
 
 #Scenes
 *.unity
