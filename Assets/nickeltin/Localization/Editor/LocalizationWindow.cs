@@ -102,10 +102,20 @@ namespace nickeltin.Localization.Editor
 
                 m_TreeView = new LocalizationTreeView(m_TreeViewState, multiColumnHeader);
 
-                m_SearchField = new SearchField();
+                    m_SearchField = new SearchField();
                 m_SearchField.downOrUpArrowKeyPressed += m_TreeView.SetFocusAndEnsureSelectedItem;
 
+                m_TreeView.onItemDoubleClick += OnItemDoubleClick;
+                
                 m_Initialized = true;
+            }
+        }
+
+        private void OnItemDoubleClick(TreeViewItem obj)
+        {
+            if (obj is AssetTreeViewItem assetItem)
+            {
+                SelectAssetInProjectView(assetItem);
             }
         }
 
@@ -268,6 +278,7 @@ namespace nickeltin.Localization.Editor
         private void SelectAssetInProjectView(AssetTreeViewItem item)
         {
             Selection.activeObject = item.LocalizedAsset;
+            EditorGUIUtility.PingObject(item.LocalizedAsset);
         }
 
         private void CreateLocalizedAssetPopup(Vector2 mousePosition)

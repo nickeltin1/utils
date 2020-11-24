@@ -13,6 +13,7 @@ namespace nickeltin.Localization.Editor
         private const float ToggleWidth = 18f;
         private const float MaxTextAreaHeight = 100f;
         private const int FirstElementId = 1;
+        public event Action<TreeViewItem> onItemDoubleClick;
 
         // TreeView column types.
         private enum ColumnType
@@ -41,6 +42,11 @@ namespace nickeltin.Localization.Editor
             customFoldoutYOffset = (RowHeight - EditorGUIUtility.singleLineHeight) * 0.5f;
             multiColumnHeader.canSort = false;
             Reload();
+        }
+
+        protected override void DoubleClickedItem(int id)
+        {
+            onItemDoubleClick?.Invoke(GetSelectedItem());
         }
 
         protected override TreeViewItem BuildRoot()

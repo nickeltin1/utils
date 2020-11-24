@@ -56,8 +56,19 @@ namespace nickeltin.Editor.Attributes.Editor
 							r.y += 1.0f;
 							r.x += 10.0f;
 							r.width -= 10.0f;
+							
+							string attribute = PropertyUtility.GetAttribute<ReorderableListAttribute>(property).itemName;
+							if (!string.IsNullOrEmpty(attribute))
+							{
+								EditorGUI.PropertyField(new Rect(r.x, r.y, r.width, 0.0f), element, 
+									new GUIContent(attribute + " " + index), true);
+							}
+							else
+							{
+								EditorGUI.PropertyField(new Rect(r.x, r.y, r.width, 0.0f), element, true);
+							}
 
-							EditorGUI.PropertyField(new Rect(r.x, r.y, r.width, 0.0f), element, true);
+							
 						},
 
 						elementHeightCallback = (int index) =>

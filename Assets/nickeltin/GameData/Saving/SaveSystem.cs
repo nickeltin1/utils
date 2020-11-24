@@ -7,17 +7,18 @@ using UnityEngine;
 
 namespace nickeltin.GameData.Saving
 {
-    public static class SaveSystem
+    [CreateAssetMenu(menuName = "GameData/SaveSystem")]
+    public class SaveSystem : ScriptableObject
     {
-        private static readonly string path;
+        private static string path => Application.persistentDataPath + "/saves/";
         private const string extention = ".save";
-        private static readonly Dictionary<string, ISaveable> saves;
+        private static readonly Dictionary<string, ISaveable> saves = new Dictionary<string, ISaveable>();
 
-        static SaveSystem()
-        {
-            saves = new Dictionary<string, ISaveable>();
-            path = Application.persistentDataPath + "/saves/";
-        }
+        // static SaveSystem()
+        // {
+        //     //saves = new Dictionary<string, ISaveable>();
+        //     //path = Application.persistentDataPath + "/saves/";
+        // }
         
         public static bool AddSavedItem(string key, ISaveable entery)
         {
@@ -42,6 +43,10 @@ namespace nickeltin.GameData.Saving
             save = null;
             return false;
         }
+
+        public void Save(ISaveable obj) => obj.Save();
+
+        public void Load(ISaveable obj) => obj.Load();
 
         public static void Save<T>(T obj, string key)
         {
