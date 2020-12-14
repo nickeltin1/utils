@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Extensions.TransformComponent
+namespace nickeltin.Extensions
 {
     public static class TransformExt
     {
@@ -10,6 +10,16 @@ namespace nickeltin.Extensions.TransformComponent
             {
                transform.GetChild(i).gameObject.SetActive(isActive); 
             }
+        }
+
+        public static Vector2 GetViewportPosition(this Transform transform, Camera cam)
+        {
+            return transform.position.ToViewportPosition(cam);
+        }
+
+        public static Vector2 GetLocalPositionInRect(this Transform transform, Camera cam, RectTransform rect)
+        {
+            return transform.position.ToLocalPositionInRect(cam, rect);
         }
     }
 }

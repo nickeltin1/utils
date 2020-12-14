@@ -2,23 +2,27 @@
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace nickeltin.ObjectPooling
 {
     [Serializable]
     public abstract class PoolBase<T> where T : Component
     {
-        [SerializeField] protected List<T> pool = new List<T>();
+        [SerializeField] protected List<T> pool;
         protected T poolObject;
         public Transform parent { get; }
-        protected List<T> outOfPoolObjects = new List<T>();
+        protected List<T> outOfPoolObjects;
         protected int size;
         public int TotalCount { get => outOfPoolObjects.Count + pool.Count; }
+        private Action<T> onItemFirstSpawn;
 
-
-        protected PoolBase(T poolObject, Transform poolParent = null, int size = 200)
+        protected PoolBase(T poolObject, Transform poolParent, int size, Action<T> onItemFirstSpawn)
         {
+            this.pool = new List<T>();
+            this.outOfPoolObjects = new List<T>();
             this.poolObject = poolObject;
+            this.onItemFirstSpawn = onItemFirstSpawn;
             this.parent = poolParent == null ? new GameObject(poolObject.name + "_pool").transform : poolParent;
             this.size = size;
             if (poolObject.gameObject.activeInHierarchy) this.Add(poolObject, true);
@@ -26,6 +30,12 @@ namespace nickeltin.ObjectPooling
         
         public abstract T Get();
 
+        public void Add(IList<T> objects, [DefaultParameterValue(false)] [Optional] bool forceParent)
+        {
+            for (int i = objects.Count - 1; i >= 0; i--) Add(objects[i], forceParent);
+
+        }
+        
         public virtual bool Add(T poolObject, [DefaultParameterValue(false)] [Optional] bool forceParent)
         {
             if (pool.Contains(poolObject)) return false;
@@ -42,6 +52,18 @@ namespace nickeltin.ObjectPooling
         {
             if (pool.Contains(poolObject)) pool.Remove(poolObject);
             else if (outOfPoolObjects.Contains(poolObject)) outOfPoolObjects.Remove(poolObject);
+        }
+
+        public void ReturnAllObjectsToPool([DefaultParameterValue(false)] [Optional] bool forceParent)
+        {
+            Add(outOfPoolObjects, forceParent);
+        }
+
+        protected T SpawnItem()
+        {
+            T obj = Object.Instantiate(poolObject, parent);
+            onItemFirstSpawn?.Invoke(obj);
+            return obj;
         }
     }
 }

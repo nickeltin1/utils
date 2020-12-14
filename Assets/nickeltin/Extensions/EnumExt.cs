@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace nickeltin.Extensions.Enums
+namespace nickeltin.Extensions
 {
     public static class EnumExt
     {

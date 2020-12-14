@@ -1,20 +1,12 @@
-using System;
-using System.Linq;
-using nickeltin.Extensions.Enums;
+using nickeltin.Extensions;
 using UnityEngine;
 using UnityEditor;
 
 namespace nickeltin.Localization.Editor
 {
-    /// <summary>
-    /// Unity Editor menu for changing localization under "Tools/Localization".
-    /// </summary>
     public static class LocalizationMenu
     {
         private const string ParentMenu = LocalizationEditorHelper.LocalizationMenu + "Set Language/";
-
-        // [MenuItem(LocalizationEditorHelper.LocalizationMenu + "Help", false, 1)]
-        // private static void OpenHelpUrl() => LocalizationEditorHelper.OpenHelpUrl();
 
         [MenuItem(ParentMenu + "Afrikaans")]
         private static void ChangeToAfrikaans() => SetLanguage(SystemLanguage.Afrikaans);

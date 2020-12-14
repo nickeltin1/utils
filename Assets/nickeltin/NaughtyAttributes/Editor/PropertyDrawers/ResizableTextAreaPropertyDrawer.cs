@@ -66,8 +66,8 @@ namespace nickeltin.Editor.Attributes.Editor
 
 		private int GetNumberOfLines(string text)
 		{
-			string content = Regex.Replace(text, @"\r\n|\n\r|\r|\n", Environment.NewLine);
-			string[] lines = content.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+			string content = Regex.Replace(text, @"\r\n|\n\r|\r|\n", System.Environment.NewLine);
+			string[] lines = content.Split(new string[] { System.Environment.NewLine }, StringSplitOptions.None);
 			return lines.Length;
 		}
 

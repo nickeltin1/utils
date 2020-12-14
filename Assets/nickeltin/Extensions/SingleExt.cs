@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System;
 
-namespace nickeltin.Extensions.Float
+namespace nickeltin.Extensions
 {
     public static class SingleExt
     {
@@ -26,7 +26,6 @@ namespace nickeltin.Extensions.Float
         
         /// <param name="x">root to be extracted form</param>
         /// <param name="n">root power, clamped to minmum of 1</param>
-        /// <returns></returns>
         public static Single Root(this Single x, int n)
         {
             n = Mathf.Clamp(n, 1, int.MaxValue);
@@ -38,5 +37,12 @@ namespace nickeltin.Extensions.Float
         public static bool Zero(this Single f) => f == 0;
         public static bool NegativeOrZero(this Single f) => Zero(f) || Negative(f);
         public static bool PositiveOrZero(this Single f) => Zero(f) || Positive(f);
+        
+        public static Single Clamp01(this Single f) => Mathf.Clamp01(f);
+        
+        /// <param name="min">Inclusive min</param>
+        /// <param name="max">Exclusive max</param>
+        // ReSharper disable once InvalidXmlDocComment
+        public static bool InRange(this Single f, Single min, Single max) => f >= min && f < max;
     }
 }

@@ -11,6 +11,11 @@ namespace nickeltin.Editor.Attributes
 			Inverted = false;
 		}
 
+		public ShowIfAttribute(string condition, bool inverted) : this(condition)
+		{
+			Inverted = inverted;
+		}
+
 		public ShowIfAttribute(EConditionOperator conditionOperator, params string[] conditions)
 			: base(conditionOperator, conditions)
 		{

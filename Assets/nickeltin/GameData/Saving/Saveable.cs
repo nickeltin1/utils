@@ -1,42 +1,47 @@
-﻿#pragma warning disable
+﻿using UnityEngine;
 
-using System;
-using UnityEngine;
+#pragma warning disable
 
 namespace nickeltin.GameData.Saving
 {
-    [Serializable]
-    public abstract class Saveable<SaveType> : ISaveable
+    /// <summary>
+    /// Saveable with specified type, override its <see cref="Serialize"/>, <see cref="Deserialize"/>, <see cref="LoadDefault"/>
+    /// methods to define how data inside is saved.
+    /// Inherit from it to create your own save files.
+    /// </summary>
+    /// <typeparam name="SaveType">Any <see cref="System.Serializable"/> data type</typeparam>
+    public abstract class Saveable<SaveType> : SaveableBase
     {
-        [Header("Saving")] 
-        [SerializeField] private string m_saveId;
-
-        public bool SuccessfulyLoaded { get; private set; }
-        public string SaveID => m_saveId;
-        
-        public bool Register()
+        [SerializeField] private SaveType m_file;
+        public SaveType File
         {
-            if (SaveSystem.AddSavedItem(m_saveId, this)) return true;
-            return false;
+            get => m_file;
+            protected set => m_file = value;
         }
         
-        public void Save() => SaveSystem.Save(Serialize(), m_saveId);
+        public override void Save() => SaveSystem.Save(Serialize(), m_saveId);
 
-        public bool Load(bool loadDefault = false)
+        public override bool Load(bool loadDefault = false)
         {
-            SuccessfulyLoaded = false;
-            if (loadDefault) Deserialize(GetDefault());
-            else if (SaveSystem.SaveExists(m_saveId))
+            if (loadDefault || !SaveSystem.SaveExists(m_saveId))
+            {
+                LoadDefault();
+                SetLoadState(false);
+            }
+            else if(SaveSystem.SaveExists(m_saveId))
             {
                 Deserialize(SaveSystem.Load<SaveType>(m_saveId));
-                SuccessfulyLoaded = true;
+                SetLoadState(true);
             }
 
             return SuccessfulyLoaded;
         }
         
-        protected virtual SaveType GetDefault() => default;
-        protected abstract SaveType Serialize();
-        protected abstract void Deserialize(SaveType obj);
+        public override void SetFileWithoutType(object file) => Deserialize((SaveType) file);
+
+        public override object GetFileWithoutType() => Serialize();
+        
+        protected virtual SaveType Serialize() => File;
+        protected virtual void Deserialize(SaveType obj) => File = obj;
     }
 }

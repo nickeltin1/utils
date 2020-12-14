@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Extensions.UnityColor
+namespace nickeltin.Extensions
 {
     public static class ColorExt
     {

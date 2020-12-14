@@ -11,26 +11,28 @@ namespace nickeltin.ObjectPooling
     [Serializable]
     public class Pool<T> : PoolBase<T> where T : PoolObject<T>
     {
-        public Pool(T poolObject, Transform poolParent = null, int size = 200) : base(poolObject, poolParent, size) { }
+        public Pool(T poolObject, Transform poolParent = null, int size = 200, Action<T> onItemFirstSpawn = null ) : 
+            base(poolObject, poolParent, size, onItemFirstSpawn) { }
+        
         public override T Get()
         {
             if (pool.Count == 0)
             {
                 if (outOfPoolObjects.Count >= size)
                 {
-                    var extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
+                    T extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
                     outOfPoolObjects.RemoveAt(outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
                 else
                 {
-                    var newObj = Object.Instantiate(poolObject, parent);
+                    T newObj = SpawnItem();
                     newObj.Pool = this;
                     Add(newObj);
                 }
             }
 
-            var obj = pool[pool.Count - 1];
+            T obj = pool[pool.Count - 1];
             pool.RemoveAt(pool.Count - 1);    
             outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);
@@ -54,7 +56,8 @@ namespace nickeltin.ObjectPooling
     [Serializable]
     public class Pool : PoolBase<Transform>
     {
-        public Pool(Transform poolObject, Transform poolParent = null, int size = 200) : base(poolObject, poolParent, size) { }
+        public Pool(Transform poolObject, Transform poolParent = null, int size = 200, 
+            Action<Transform> onItemFirstSpawn = null) : base(poolObject, poolParent, size, onItemFirstSpawn) { }
         
         public override Transform Get()
         {
@@ -62,14 +65,14 @@ namespace nickeltin.ObjectPooling
             {
                 if (outOfPoolObjects.Count >= size)
                 {
-                    var extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
+                    Transform extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
                     outOfPoolObjects.RemoveAt(outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
-                else Add(Object.Instantiate(poolObject, parent));
+                else Add(SpawnItem());
             }
 
-            var obj = pool[pool.Count - 1];
+            Transform obj = pool[pool.Count - 1];
             pool.RemoveAt(pool.Count - 1);
             outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);

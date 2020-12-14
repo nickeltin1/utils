@@ -153,8 +153,6 @@ namespace nickeltin.Localization
             onLocalizationChanged?.Invoke(this, e);
             onLocalizationChangedEvent.Invoke(e);
         }
-
-        protected override void Initialize() { }
     }
     
     public class LocaleChangedEventArgs : EventArgs

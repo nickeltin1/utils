@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace nickeltin.Extensions.CameraComponent
+namespace nickeltin.Extensions
 {
     public static class CameraExt
     {

@@ -1,4 +1,4 @@
-﻿using nickeltin.Extensions.Float;
+﻿using nickeltin.Extensions;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
