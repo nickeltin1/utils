@@ -1,24 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace nickeltin.StateMachine
 {
     public class State
     {
-        public Enum Type { get; }
+        public enum Type { NotAssigned, Main, Disabled, Enabled }
         
-        public Action OnStateEnd { get; }
-        public Action OnUpdate { get; }
-        public Action OnFixedUpdate { get; }
-        public Action OnStateStart { get; }
+        public readonly Enum type;
 
-        public State(Enum type,  Action onStateStart = null, Action onUpdate = null, Action onFixedUpdate = null, 
-            Action onStateEnd = null)
+        private readonly Func<bool> m_onStateStart;
+        private readonly Func<bool> m_onUpdate;
+        private readonly Func<bool> m_onFixedUpdate;
+        private readonly Func<bool> m_onStateEnd;
+
+        public readonly List<Transition> transitions;
+        
+        public State(Enum type) => this.type = type;
+
+        public State(Enum type, Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
+            Func<bool> onStateEnd = null, params Transition[] transitions) : this(type)
         {
-            Type = type;
-            OnStateStart = onStateStart;
-            OnUpdate = onUpdate;
-            OnFixedUpdate = onFixedUpdate;
-            OnStateEnd = onStateEnd;
+            m_onStateStart = onStateStart;
+            m_onUpdate = onUpdate;
+            m_onFixedUpdate = onFixedUpdate;
+            m_onStateEnd = onStateEnd;
+            this.transitions = new List<Transition>(transitions); 
+        }
+        
+        public virtual bool OnStateStart() => ExecuteAction(m_onStateStart);
+        public virtual bool OnUpdate() => ExecuteAction(m_onUpdate);
+        public virtual bool OnFixedUpdate() => ExecuteAction(m_onFixedUpdate);
+        public virtual bool OnStateEnd() => ExecuteAction(m_onStateEnd);
+        
+        protected static bool ExecuteAction(Func<bool> action)
+        {
+            if (action != null) return action();
+            return false;
         }
     }
 }

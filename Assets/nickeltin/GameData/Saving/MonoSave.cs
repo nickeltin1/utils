@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
+using nickeltin.GameData.DataObjects;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace nickeltin.GameData.Saving
 {
@@ -30,31 +32,39 @@ namespace nickeltin.GameData.Saving
             public float Number;
         }
         
+        [Serializable]
+        private struct DefaultValues
+        {
+            public BoolReference Bool;
+            public StringReference String;
+            public NumberReference Number;
+        }
+        
         [SerializeField, ReadOnly] private string m_guid;
         [SerializeField] private GenericSave m_save;
-        [SerializeField] private Values m_defaultFile;
+        [SerializeField] private DefaultValues m_defaultFile;
         [SerializeField, ReadOnly] private Values m_file;
+        
+        public UnityEvent<MonoSave> afterLoad; 
+        public UnityEvent<MonoSave> beforeSave;
+        
         private bool m_loaded = false;
 
-        public event Action beforeSave;
+        public bool SuccessfulyLoaded { get; private set; } = false;
         
         public Values Data => m_file;
         public string GUID => m_guid;
         
         private void OnEnable()
         {
-            if (!m_loaded)
-            {
-                LoadValues();
-                m_loaded = true;
-            }
+            if (!m_loaded) LoadValues();
         }
         private void Awake() => SaveSystem.onBeforeSave += SaveValues;
         private void OnDestroy() => SaveSystem.onBeforeSave -= SaveValues;
         
         private void SaveValues()
         {
-            beforeSave?.Invoke();
+            beforeSave.Invoke(this);
             m_save.SetMonoSave(this);
         }
         private void LoadValues()
@@ -73,10 +83,19 @@ namespace nickeltin.GameData.Saving
 
             GUIDs.list.Add(m_guid);
 
-            if (!m_save.TryGetMonoSave(m_guid, out m_file))
+            if (m_save.TryGetMonoSave(m_guid, out m_file)) SuccessfulyLoaded = true;
+            else
             {
-                m_file = m_defaultFile;
+                m_file = new Values()
+                {
+                    Bool = m_defaultFile.Bool,
+                    String = m_defaultFile.String,
+                    Number = m_defaultFile.Number
+                };
             }
+            
+            afterLoad?.Invoke(this);
+            m_loaded = true;
         }
 
         public void SetData([Optional] bool? b, [Optional] string s, [Optional] float? n)

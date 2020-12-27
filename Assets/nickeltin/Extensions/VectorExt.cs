@@ -68,5 +68,15 @@ namespace nickeltin.Extensions
             RectTransformUtility.ScreenPointToLocalPointInRectangle(rect, screenPoint, cam, out screenPoint);
             return screenPoint;
         }
+
+        public static Vector3 RandomOffset(this Vector3 vector, Vector3 offsetRange)
+        {
+            return vector + Random.insideUnitSphere.Mult(offsetRange);
+        }
+        
+        public static Vector3 RandomOffset(this Vector3 vector, float offsetRange)
+        {
+            return vector + Random.insideUnitSphere.Mult(offsetRange);
+        }
     }
 }

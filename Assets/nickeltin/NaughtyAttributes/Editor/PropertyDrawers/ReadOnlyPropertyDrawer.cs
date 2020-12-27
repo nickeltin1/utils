@@ -14,12 +14,12 @@ namespace nickeltin.Editor.Attributes.Editor
 		protected override void OnGUI_Internal(Rect rect, SerializedProperty property, GUIContent label)
 		{
 			EditorGUI.BeginProperty(rect, label, property);
-
+			
 			using (new EditorGUI.DisabledScope(disabled: true))
 			{
 				EditorGUI.PropertyField(rect, property, label, true);
 			}
-
+			
 			EditorGUI.EndProperty();
 		}
 	}
