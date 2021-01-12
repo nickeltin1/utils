@@ -5,12 +5,8 @@ namespace nickeltin.GameData.DataObjects
 {
     public abstract class DataObject<T> : ScriptableObject
     {
-        #if UNITY_EDITOR
-        [Multiline]
-        public string DevelopmentDescription = "";
+        [Multiline, SerializeField] private string m_developmentDescription = "";
         [Space]
-        #endif
-    
         [SerializeField] protected T m_value;
 
         public virtual T Value

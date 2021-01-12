@@ -4,9 +4,10 @@ using UnityEngine;
 
 namespace nickeltin.Singletons
 {
-    public class SOSInitializer : MonoBehaviour
+    public class SOSInitializer : MonoSingleton<SOSInitializer>
     {
         [SerializeField, ReorderableList("SOSingleton")] private List<SOSBase> toInitialize;
+        [SerializeField, ReorderableList("Reference")] private List<Object> editorReferences;
 
         public void AddItems(SOSBase[] targets)
         {
@@ -14,8 +15,10 @@ namespace nickeltin.Singletons
             toInitialize.AddRange(targets);
         }
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             foreach (var sos in toInitialize)
             {
                 if (!sos.Initialize())

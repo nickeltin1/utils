@@ -9,7 +9,7 @@ namespace nickeltin.ObjectPooling
     /// </summary>
     /// <typeparam name="T">PoolObject</typeparam>
     [Serializable]
-    public class Pool<T> : PoolBase<T> where T : PoolObject<T>
+    public class Pool<T> : PoolBase<T> where T : Component, IPoolObject<T>
     {
         public Pool(T poolObject, Transform poolParent = null, int size = 200, Action<T> onItemFirstSpawn = null ) : 
             base(poolObject, poolParent, size, onItemFirstSpawn) { }

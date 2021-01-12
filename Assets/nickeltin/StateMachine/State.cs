@@ -33,7 +33,7 @@ namespace nickeltin.StateMachine
         public virtual bool OnFixedUpdate() => ExecuteAction(m_onFixedUpdate);
         public virtual bool OnStateEnd() => ExecuteAction(m_onStateEnd);
         
-        protected static bool ExecuteAction(Func<bool> action)
+        private static bool ExecuteAction(Func<bool> action)
         {
             if (action != null) return action();
             return false;

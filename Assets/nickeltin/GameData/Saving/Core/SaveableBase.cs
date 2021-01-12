@@ -108,6 +108,7 @@ namespace nickeltin.GameData.Saving
             m_saveId = GenerateSaveID(name);
         }
         
+#endif
         public void OnBeforeSerialize()
         {
             if (m_guid.IsNullOrEmpty()) m_guid = GenerateGUID();
@@ -115,6 +116,5 @@ namespace nickeltin.GameData.Saving
         }
 
         public void OnAfterDeserialize() { }
-#endif
     }
 }

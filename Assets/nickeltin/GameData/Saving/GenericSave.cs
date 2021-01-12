@@ -10,7 +10,7 @@ namespace nickeltin.GameData.Saving
     /// Generic save for all types of data.
     /// By default can store arrays of: <see cref="BoolReference"/>, <see cref="NumberReference"/>, <see cref="StringReference"/>
     /// which can be assigned in inspector.
-    /// Also if its provided inside <see cref="MonoSave"/> will hold its <see cref="MonoSave.Values"/>.
+    /// Also if its provided inside <see cref="MonoSave"/> will hold its data.
     /// Can store any <see cref="object"/>, assign them with <see cref="SetObject{T}"/>, or get with <see cref="GetObject{T}"/>.
     /// </summary>
     [CreateAssetMenu(menuName = "GameData/Saving/GenericSave")]
@@ -20,7 +20,7 @@ namespace nickeltin.GameData.Saving
         public class MonoSaveEntry
         {
             public string key;
-            public MonoSave.Values value;
+            public object value;
         }
         
         [Serializable]
@@ -35,7 +35,7 @@ namespace nickeltin.GameData.Saving
         [SerializeField] private Entry<BoolReference>[] m_bools;
         
         private object[] m_objects;
-        private Dictionary<string, MonoSave.Values> m_monoSavesDictionary;
+        private Dictionary<string, object> m_monoSavesDictionary;
         
         /// <summary>
         /// Realocates memory for new array with new size, copying old values to temporary array, and back
@@ -65,10 +65,13 @@ namespace nickeltin.GameData.Saving
         }
         public void SetMonoSave(MonoSave save)
         {
-            if (m_monoSavesDictionary.ContainsKey(save.GUID))
+            if (!save.Data.IsSerializable())
             {
-                m_monoSavesDictionary[save.GUID] = save.Data;
+                Debug.Log($"Data of {save} is not serializable");
+                return;
             }
+
+            if (m_monoSavesDictionary.ContainsKey(save.GUID)) m_monoSavesDictionary[save.GUID] = save.Data;
             else m_monoSavesDictionary.Add(save.GUID, save.Data);
         }
         public bool SetNumber(float n, int id) => TryToSetArrayValue(m_numbers, n, id);
@@ -89,7 +92,7 @@ namespace nickeltin.GameData.Saving
         }
 
         public T GetObject<T>(int id) => (T)m_objects[id];
-        public bool TryGetMonoSave(string key, out MonoSave.Values values) => m_monoSavesDictionary.TryGetValue(key, out values);
+        public bool TryGetMonoSave(string key, out object data) => m_monoSavesDictionary.TryGetValue(key, out data);
         public float GetNumber(int id) => m_numbers[id].value;
         public string GetString(int id) => m_strings[id].value;
         public bool GetBool(int id) => m_bools[id].value;
@@ -179,8 +182,8 @@ namespace nickeltin.GameData.Saving
         protected override void LoadDefault()
         {
             m_objects = new object[0];
-            m_monoSavesDictionary = new Dictionary<string, MonoSave.Values>();
-            
+            m_monoSavesDictionary = new Dictionary<string, object>();
+
             LoadDefaultToArray(m_numbers);
             LoadDefaultToArray(m_strings);
             LoadDefaultToArray(m_bools);
@@ -189,7 +192,7 @@ namespace nickeltin.GameData.Saving
         protected override void Deserialize(object[] obj)
         {
             m_objects = new object[(int)obj[0]];
-            m_monoSavesDictionary = new Dictionary<string, MonoSave.Values>();
+            m_monoSavesDictionary = new Dictionary<string, object>();
             int startingIndex = 2;
             
             DeserializeArray(obj, m_numbers, startingIndex, out startingIndex);

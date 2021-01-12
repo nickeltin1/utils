@@ -1,21 +1,23 @@
-﻿namespace nickeltin.GameData.DataObjects
+﻿using UnityEngine;
+
+namespace nickeltin.GameData.DataObjects
 {
     public abstract class DataObjectReference<ObjectType, ValueType> : DataObjectReferenceBase where ObjectType : DataObject<ValueType>
     {
-        public bool UseConstant = true;
-        public ValueType ConstantValue;
-        public ObjectType DataObject;
-        
+        [SerializeField] protected bool m_useConstant = true;
+        [SerializeField] protected ValueType m_constantValue;
+        [SerializeField] protected ObjectType m_dataObject;
+
         public ValueType Value
         {
-            get { return UseConstant ? ConstantValue : DataObject.Value; }
+            get { return m_useConstant ? m_constantValue : m_dataObject.Value; }
         }
         
         public override object GetValueWithoutType() => Value;
         public override void SetValueWithoutType(object value)
         {
-            ConstantValue = (ValueType) value;
-            if(DataObject != null) DataObject.Value = (ValueType) value;
+            m_constantValue = (ValueType) value;
+            if (m_dataObject != null) m_dataObject.Value = m_constantValue;
         }
 
         public static implicit operator ValueType(DataObjectReference<ObjectType, ValueType> reference)

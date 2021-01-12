@@ -21,5 +21,12 @@ namespace nickeltin.Extensions
         {
             return transform.position.ToLocalPositionInRect(cam, rect);
         }
+
+        public static Transform[] GetAllChilds(this Transform transform)
+        {
+            Transform[] childs = new Transform[transform.childCount];
+            for (int i = transform.childCount - 1; i >= 0; i--) childs[i] = transform.GetChild(i);
+            return childs;
+        }
     }
 }

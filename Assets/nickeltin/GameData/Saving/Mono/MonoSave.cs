@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System.Collections.Generic;
 using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
-using nickeltin.GameData.DataObjects;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
@@ -11,9 +8,8 @@ using UnityEngine.Events;
 namespace nickeltin.GameData.Saving
 {
     /// <summary>
-    /// State saver for MonoBehaviour's, can save one <see cref="string"/>, one <see cref="bool"/> and one <see cref="float"/>.
-    /// Use <see cref="beforeSave"/> event to assign data with <see cref="SetData(nickeltin.GameData.Saving.MonoSave.Values)"/>
-    /// before saving.
+    /// State saver for MonoBehaviour's, can save <see cref="object"/>.
+    /// Use <see cref="beforeSave"/> event to assign data object before saving.
     /// </summary>
     [DisallowMultipleComponent]
     public class MonoSave : MonoBehaviour
@@ -24,26 +20,11 @@ namespace nickeltin.GameData.Saving
             static GUIDs() => list = new List<string>();
         }
         
-        [Serializable]
-        public struct Values
-        {
-            public bool Bool;
-            public string String;
-            public float Number;
-        }
-        
-        [Serializable]
-        private struct DefaultValues
-        {
-            public BoolReference Bool;
-            public StringReference String;
-            public NumberReference Number;
-        }
-        
         [SerializeField, ReadOnly] private string m_guid;
         [SerializeField] private GenericSave m_save;
-        [SerializeField] private DefaultValues m_defaultFile;
-        [SerializeField, ReadOnly] private Values m_file;
+        [SerializeField, Tooltip("Load and Save methods on target will be called automatically")] 
+        private MonoSaveable m_target;
+        private object m_data;
         
         public UnityEvent<MonoSave> afterLoad; 
         public UnityEvent<MonoSave> beforeSave;
@@ -52,7 +33,7 @@ namespace nickeltin.GameData.Saving
 
         public bool SuccessfulyLoaded { get; private set; } = false;
         
-        public Values Data => m_file;
+        public object Data => m_data;
         public string GUID => m_guid;
         
         private void OnEnable()
@@ -64,6 +45,7 @@ namespace nickeltin.GameData.Saving
         
         private void SaveValues()
         {
+            if (m_target != null) m_data = m_target.Save();
             beforeSave.Invoke(this);
             m_save.SetMonoSave(this);
         }
@@ -83,41 +65,30 @@ namespace nickeltin.GameData.Saving
 
             GUIDs.list.Add(m_guid);
 
-            if (m_save.TryGetMonoSave(m_guid, out m_file)) SuccessfulyLoaded = true;
+            if (m_save.TryGetMonoSave(m_guid, out m_data)) SuccessfulyLoaded = true;
             else
             {
-                m_file = new Values()
-                {
-                    Bool = m_defaultFile.Bool,
-                    String = m_defaultFile.String,
-                    Number = m_defaultFile.Number
-                };
+                m_data = new object();
+                SuccessfulyLoaded = false;
             }
             
+            if (m_target != null) m_target.Load(m_data);
             afterLoad?.Invoke(this);
             m_loaded = true;
         }
-
-        public void SetData([Optional] bool? b, [Optional] string s, [Optional] float? n)
-        {
-            Values old = m_file;
-            m_file = new Values()
-            {
-                Bool = b ?? old.Bool,
-                String = s.IsNullOrEmpty() ? old.String : s,
-                Number = n ?? old.Number
-            };
-        }
-        public void SetData(Values data) => m_file = data;
+        
+        public void SetData(object data) => m_data = data;
+        
+        public void GenerateGUID() => m_guid = SaveableBase.GenerateGUID();
 
 #if UNITY_EDITOR
         [ContextMenu("Generate GUID")]
         private void GenerateGUID_Context()
         {
             Undo.RecordObject(this, "GUID generation");
-            m_guid = SaveableBase.GenerateGUID();
+            GenerateGUID();
         }
-
+        
         private void OnValidate()
         {
             if (m_guid.IsNullOrEmpty()) m_guid = SaveableBase.GenerateGUID();

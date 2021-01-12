@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Voxelization
+namespace nickeltin.Other
 {
     [Serializable]
     public class SerializableArray3D<T> where T : new()

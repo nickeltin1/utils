@@ -9,17 +9,21 @@ namespace nickeltin.Extensions
         public static bool RaycastFromScreenpoint(this Camera cam, Vector2 screenPoint, out RaycastHit hit, 
             float range = 1000f, LayerMask? mask = null, bool preventUiIntersecting = false)
         {
-            Ray ray = cam.ScreenPointToRay(screenPoint);
+            return RaycastFromScreenpoint(cam.ScreenPointToRay(screenPoint), out hit, range, mask, preventUiIntersecting);
+        }
 
+        public static bool RaycastFromScreenpoint(Ray ray, out RaycastHit hit,
+            float range = 1000f, LayerMask? mask = null, bool preventUiIntersecting = false)
+        {
             bool hasHit;
             
             if (mask.HasValue) hasHit = Physics.Raycast(ray, out hit, range, (LayerMask) mask);
             else hasHit = Physics.Raycast(ray, out hit, range);
 
             if (!preventUiIntersecting) return hasHit;
-            return hasHit && !EventSystem.current.IsPointerOverGameObject();
+            return hasHit && !EventSystem.current.IsPointerOverGameObject(); 
         }
-        
+
         /// <returns>Returns number of hits</returns>
         public static int RaycastFromScreenpointAll(this Camera cam, Vector2 screenPoint, RaycastHit[] hits, 
             float range = 1000f, LayerMask? mask = null)

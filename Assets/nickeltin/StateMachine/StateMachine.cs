@@ -24,12 +24,7 @@ namespace nickeltin.StateMachine
             public void LogState(State state)
             {
                 m_statesHistory[lastIndex] = !m_lastStateName.IsNullOrEmpty() ? m_lastStateName + timePassed : "";
-
-                //TODO: check this
-                //for (int i = 1; i < historyLength; i++) m_statesHistory[i - 1] = m_statesHistory[i];
                 m_statesHistory.ShiftLeft(1);
-                //
-                
                 string stateName = state != null ? state.type.ToString() : "NULL";
                 m_statesHistory[lastIndex] = stateName;
                 m_lastStateName = stateName;
@@ -98,7 +93,7 @@ namespace nickeltin.StateMachine
                 {
                     for (int i = m_updateTransitions.Count - 1; i >= 0; i--)
                     {
-                        if (m_updateTransitions[i].condition())
+                        if (m_updateTransitions[i].Condition())
                         {
                             onStateTransition?.Invoke(m_updateTransitions[i].transitionTo);
                         }
@@ -119,7 +114,7 @@ namespace nickeltin.StateMachine
                 {
                     for (int i = m_fixedUpdateTransitions.Count - 1; i >= 0; i--)
                     {
-                        if (m_fixedUpdateTransitions[i].condition())
+                        if (m_fixedUpdateTransitions[i].Condition())
                         {
                             onStateTransition?.Invoke(m_fixedUpdateTransitions[i].transitionTo);
                         }
@@ -257,7 +252,16 @@ namespace nickeltin.StateMachine
         public void SetMainState(State newMainState)
         {
             PassStateToEngine(MainState, DataMode.Remove);
-            this.MainState = newMainState;
+            MainState?.OnStateEnd();
+            MainState = newMainState;
+            MainState?.OnStateStart();
+            PassStateToEngine(MainState, DataMode.Add);
+        }
+
+        public void OverrideMainState(State newMainState)
+        {
+            PassStateToEngine(MainState, DataMode.Remove);
+            MainState = newMainState;
             PassStateToEngine(MainState, DataMode.Add);
         }
 

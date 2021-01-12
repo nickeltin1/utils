@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects.Editor
 {
-    public abstract class DataObjectReferenceDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(DataObjectReferenceBase), true)]
+    public sealed class DataObjectReferenceDrawer : PropertyDrawer
     {
         /// <summary>
         /// Options to display in the popup to select constant or variable.
@@ -27,9 +28,9 @@ namespace nickeltin.GameData.DataObjects.Editor
             EditorGUI.BeginChangeCheck();
 
             // Get properties
-            SerializedProperty useConstant = property.FindPropertyRelative("UseConstant");
-            SerializedProperty constantValue = property.FindPropertyRelative("ConstantValue");
-            SerializedProperty variable = property.FindPropertyRelative("DataObject");
+            SerializedProperty useConstant = property.FindPropertyRelative("m_useConstant");
+            SerializedProperty constantValue = property.FindPropertyRelative("m_constantValue");
+            SerializedProperty variable = property.FindPropertyRelative("m_dataObject");
 
             // Calculate rect for configuration button
             Rect buttonRect = new Rect(position);

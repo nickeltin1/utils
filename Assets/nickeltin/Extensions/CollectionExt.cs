@@ -29,16 +29,10 @@ namespace nickeltin.Extensions
             return x >= 0 && x < xLength && y >= 0 && y < yLength && z >= 0 && z < zLength;
         }
         
-        public static T GetRandom<T>(this IList<T> list)
-        {
-            return list[random.Next(0, list.Count)];
-        }
-        
-        public static T GetRandom<T>(this T[] list)
-        {
-            return list[random.Next(0, list.Length)];
-        }
-        
+        public static T GetRandom<T>(this IList<T> list) => list[random.Next(0, list.Count)];
+
+        public static T GetRandom<T>(this T[] list) => list[random.Next(0, list.Length)];
+
         public static void FillDefault<T>(this T[] array) where T : new()
         {
             for (int i = 0; i < array.GetLength(0); i++) array[i] = new T();
