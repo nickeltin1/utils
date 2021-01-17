@@ -1,42 +1,43 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace nickeltin.StateMachine
 {
-    public class State
+    public sealed class State : State<Enum>
     {
-        public enum Type { NotAssigned, Main, Disabled, Enabled }
-        
-        public readonly Enum type;
+        public State(Enum type) : base(type) { }
 
-        private readonly Func<bool> m_onStateStart;
-        private readonly Func<bool> m_onUpdate;
-        private readonly Func<bool> m_onFixedUpdate;
-        private readonly Func<bool> m_onStateEnd;
+        public State(Enum type, Func<bool> onStateStart = null, Func<bool> onUpdate = null,
+            Func<bool> onFixedUpdate = null, Func<bool> onStateEnd = null, params Transition[] transitions) :
+            base(type, onStateStart, onUpdate, onFixedUpdate, onStateEnd, transitions)
+        { }
+    }
+    
+    /// <summary>
+    /// Inherit from it if you want to create custom state
+    /// </summary>
+    /// <typeparam name="T">State Type - enum</typeparam>
+    public abstract class State<T> : StateBase where T : Enum
+    {
+        [SerializeField] private T m_type;
+        //public T type => m_type;
 
-        public readonly List<Transition> transitions;
-        
-        public State(Enum type) => this.type = type;
+        public T explicitType => m_type;
+        public override Enum implicitType => m_type;
 
-        public State(Enum type, Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
+        public State() { }
+
+        public State(T type) => this.m_type = type;
+
+        public State(T type, Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
             Func<bool> onStateEnd = null, params Transition[] transitions) : this(type)
         {
             m_onStateStart = onStateStart;
             m_onUpdate = onUpdate;
             m_onFixedUpdate = onFixedUpdate;
             m_onStateEnd = onStateEnd;
-            this.transitions = new List<Transition>(transitions); 
-        }
-        
-        public virtual bool OnStateStart() => ExecuteAction(m_onStateStart);
-        public virtual bool OnUpdate() => ExecuteAction(m_onUpdate);
-        public virtual bool OnFixedUpdate() => ExecuteAction(m_onFixedUpdate);
-        public virtual bool OnStateEnd() => ExecuteAction(m_onStateEnd);
-        
-        private static bool ExecuteAction(Func<bool> action)
-        {
-            if (action != null) return action();
-            return false;
+            this.m_transitions = new List<Transition>(transitions); 
         }
     }
 }

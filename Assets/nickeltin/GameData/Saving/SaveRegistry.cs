@@ -27,14 +27,24 @@ namespace nickeltin.GameData.Saving
             
             foreach (var save in m_entries)
             {
-                save.UseGUID = true;
-                if(!save.Register()) value = false;
+                if (save != null)
+                {
+                    save.UseGUID = true;
+                    if(!save.Register()) value = false;
+                }
             }
 
             return value;
         }
         
         public int GetLocalId(T entry) => m_entries.IndexOf(entry);
-        public T this[int localId] => m_entries[localId];
+        public T this[int localId]
+        {
+            get
+            {
+                if (localId < 0 || localId >= m_entries.Count) return null;
+                return m_entries[localId];
+            }
+        }
     }
 }

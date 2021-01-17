@@ -11,7 +11,6 @@ namespace nickeltin.GameData.Saving
     /// State saver for MonoBehaviour's, can save <see cref="object"/>.
     /// Use <see cref="beforeSave"/> event to assign data object before saving.
     /// </summary>
-    [DisallowMultipleComponent]
     public class MonoSave : MonoBehaviour
     {
         private static class GUIDs
@@ -68,7 +67,6 @@ namespace nickeltin.GameData.Saving
             if (m_save.TryGetMonoSave(m_guid, out m_data)) SuccessfulyLoaded = true;
             else
             {
-                m_data = new object();
                 SuccessfulyLoaded = false;
             }
             

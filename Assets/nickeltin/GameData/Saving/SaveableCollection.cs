@@ -17,7 +17,7 @@ namespace GameData.DataObjects
         public event Action onCollectionChange;
 
         public IReadOnlyList<T> Collection => m_collection;
-
+        
         public void Clear()
         {
             m_collection.Clear();
