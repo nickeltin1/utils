@@ -3,10 +3,12 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    public abstract class CollectionObject<T> : DataObject<IReadOnlyCollection<T>>
+    public abstract class CollectionObject<T> : DataObject<IList<T>>
     {
-        [SerializeField] protected List<T> m_collection = new List<T>();
-        
+        [SerializeField] protected List<T> m_collection;
+
+        public override IList<T> Value { get => m_collection;}
+
         public void AddItem(T item, bool uniqueEntry = false)
         {
             if (uniqueEntry)

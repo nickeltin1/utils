@@ -3,7 +3,10 @@ using UnityEditor;
 using UnityEditor.Callbacks;
 
 #if UNITY_IOS
+using System.IO;
 using UnityEditor.iOS.Xcode;
+using UnityEngine;
+
 #endif
 
 namespace nickeltin.Localization.Editor
