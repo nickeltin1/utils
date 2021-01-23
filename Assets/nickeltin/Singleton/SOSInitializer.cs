@@ -6,8 +6,8 @@ namespace nickeltin.Singletons
 {
     public class SOSInitializer : MonoSingleton<SOSInitializer>
     {
-        [SerializeField, ReorderableList("SOSingleton")] private List<SOSBase> toInitialize;
-        [SerializeField, ReorderableList("Reference")] private List<Object> editorReferences;
+        [SerializeField] private List<SOSBase> toInitialize;
+        [SerializeField] private List<Object> editorReferences;
 
         public void AddItems(SOSBase[] targets)
         {

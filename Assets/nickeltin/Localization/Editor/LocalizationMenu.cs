@@ -1,3 +1,5 @@
+using System;
+using nickeltin.Enums;
 using nickeltin.Extensions;
 using UnityEngine;
 using UnityEditor;
@@ -149,7 +151,7 @@ namespace nickeltin.Localization.Editor
 
         private static void ChangeLanguageInMenu(SystemLanguage language)
         {
-            foreach (var lang in EnumExt.GetAllEnumValues<SystemLanguage>())
+            foreach (var lang in EnumUtils.GetAllEnumValues<SystemLanguage>())
             { 
                 Menu.SetChecked(GetMenuName(lang), false);
             }

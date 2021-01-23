@@ -82,7 +82,7 @@ namespace nickeltin.Other
             Progress = 1;
         }
         
-        public static TimedEvent Start([DefaultParameterValue(null)][Optional]MonoBehaviour owner, float t, Action onTimesOut)
+        public static TimedEvent Start(float t, Action onTimesOut, MonoBehaviour owner = null)
         {
             MonoBehaviour o = owner == null ? TimedEvent.Instance : owner;
             var i = new TimedEvent(o, t, onTimesOut);

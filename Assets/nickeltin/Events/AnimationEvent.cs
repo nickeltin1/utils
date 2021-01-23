@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
-using nickeltin.Editor.Attributes;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace NPCs
+namespace nickeltin.Events
 {
     public class AnimationEvent : MonoBehaviour
     {
-        [ReorderableList] public List<UnityEvent> events;
+        public List<UnityEvent> events;
 
         public void AnimationEventInvoke(int eventIndex) => events[eventIndex].Invoke();
         

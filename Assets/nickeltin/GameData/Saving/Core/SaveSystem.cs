@@ -75,7 +75,7 @@ namespace nickeltin.GameData.Saving
         [SerializeField] private bool m_enabled = true;
         [SerializeField] private bool m_logEvents = true;
         [SerializeField, Range(10, 900), Tooltip("In seconds")] private float m_autosaveInterval = 120;
-        [SerializeField, ReorderableList("SAVE")] private List<SaveableBase> m_saves;
+        [SerializeField] private List<SaveableBase> m_saves;
         [SerializeField] private UnityEvent onBeforeSaveEvent; 
 
         public override bool Initialize()

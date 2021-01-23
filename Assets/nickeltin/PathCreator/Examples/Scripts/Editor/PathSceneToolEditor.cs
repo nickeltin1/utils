@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using nickeltin.PathCreation;
 
 namespace nickeltin.PathCreation.Examples
 {

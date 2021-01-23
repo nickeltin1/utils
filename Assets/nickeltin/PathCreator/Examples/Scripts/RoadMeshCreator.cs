@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using nickeltin.PathCreation.Utility;
 using UnityEngine;
 
 namespace nickeltin.PathCreation.Examples {

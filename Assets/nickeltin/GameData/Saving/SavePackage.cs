@@ -10,7 +10,7 @@ namespace nickeltin.GameData.Saving
     [CreateAssetMenu(menuName = "GameData/Saving/SavePackage")]
     public sealed class SavePackage : Saveable<object[]>
     {
-        [SerializeField, ReorderableList] private List<SaveableBase> m_saves;
+        [SerializeField] private List<SaveableBase> m_saves;
         public IReadOnlyList<SaveableBase> Saves => m_saves;
         
         protected override void Deserialize(object[] obj)
