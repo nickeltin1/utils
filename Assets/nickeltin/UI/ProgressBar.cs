@@ -86,7 +86,7 @@ namespace nickeltin.UI
 
         private void UpdateValueFromSource(float rawValue)
         {
-            UpdateValueNonInterpolate(m_useSourceRawValue ? rawValue : m_source.NormalizedValue);
+            UpdateValue(m_useSourceRawValue ? rawValue : m_source.NormalizedValue);
         }
 
         private void OnEnable()
