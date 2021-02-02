@@ -9,8 +9,9 @@ namespace nickeltin.PathCreation.Examples
         public PathCreator pathCreator;
         public EndOfPathInstruction endOfPathInstruction;
         public float speed = 5;
-        float distanceTravelled;
-
+        public float distanceTravelled;
+        
+        
         void Start() {
             if (pathCreator != null)
             {
@@ -28,6 +29,8 @@ namespace nickeltin.PathCreation.Examples
                 transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
             }
         }
+        
+        
 
         // If the path changes during the game, update the distance travelled so that the follower's position on the new path
         // is as close as possible to its position on the old path

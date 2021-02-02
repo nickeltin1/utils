@@ -23,7 +23,7 @@ namespace nickeltin.Extensions
 
             return Mathf.Clamp(result, ratioMin, ratioMax);
         }
-        
+
         /// <param name="x">root to be extracted form</param>
         /// <param name="n">root power, clamped to minmum of 1</param>
         public static Single Root(this Single x, int n)
@@ -38,11 +38,13 @@ namespace nickeltin.Extensions
         public static bool NegativeOrZero(this Single f) => Zero(f) || Negative(f);
         public static bool PositiveOrZero(this Single f) => Zero(f) || Positive(f);
         
-        public static Single Clamp01(this Single f) => Mathf.Clamp01(f);
+        public static Single Clamp(this ref Single f, Single min, Single max) => f = Mathf.Clamp(f, min, max);
+        public static Single Clamp01(this ref Single f) => f = Mathf.Clamp01(f);
         
         /// <param name="min">Inclusive min</param>
         /// <param name="max">Exclusive max</param>
         // ReSharper disable once InvalidXmlDocComment
         public static bool InRange(this Single f, Single min, Single max) => f >= min && f < max;
+
     }
 }

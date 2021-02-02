@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace nickeltin.Extensions
 {
@@ -16,31 +18,43 @@ namespace nickeltin.Extensions
             return new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
         }
         
-        public static Vector3 Add(this Vector3 vector,  float? x = null, float? y = null, float? z = null)
+        public static Vector3 Add(this ref Vector3 vector,  float? x = null, float? y = null, float? z = null)
         {
-            return new Vector3((vector.x + x) ?? vector.x, (vector.y + y) ?? vector.y, (vector.z + z) ?? vector.z);
+            return vector = new Vector3((vector.x + x) ?? vector.x, (vector.y + y) ?? vector.y, (vector.z + z) ?? vector.z);
         }
 
-        public static Vector3 Sub(this Vector3 vector, float? x = null, float? y = null, float? z = null)
+        public static Vector3 Sub(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
         {
-            return new Vector3((vector.x - x) ?? vector.x, (vector.y - y) ?? vector.y, (vector.z - z) ?? vector.z);
+            return vector = new Vector3((vector.x - x) ?? vector.x, (vector.y - y) ?? vector.y, (vector.z - z) ?? vector.z);
         }
 
         public static Vector3 DirectionTo(this Vector3 from, Vector3 to) => to - from;
 
-        public static Vector3 Div(this Vector3 vector, Vector3 by)
+        public static Vector3 Div(this ref Vector3 vector, Vector3 by)
+        {
+            return vector = new Vector3(vector.x / by.x, vector.y / by.y, vector.z / by.z);
+        }
+        
+        public static Vector3 DivNonRef(this Vector3 vector, Vector3 by)
         {
             return new Vector3(vector.x / by.x, vector.y / by.y, vector.z / by.z);
         }
 
-        public static Vector2 Div(this Vector2 vector, Vector2 by)
+        public static Vector2 Div(this ref Vector2 vector, Vector2 by)
+        {
+            return vector = new Vector2(vector.x / by.x, vector.y / by.y);
+        }
+        
+        public static Vector2 DivNonRef(this Vector2 vector, Vector2 by)
         {
             return new Vector2(vector.x / by.x, vector.y / by.y);
         }
         
-        public static Vector3 Mult(this Vector3 x, float n) => x * n;
+        public static Vector3 Mult(this ref Vector3 x, float n) => x *= n;
+        public static Vector3 MultNonRef(this Vector3 x, float n) => x * n;
         
-        public static Vector3 Mult(this Vector3 x, Vector3 n) => Vector3.Scale(x, n);
+        public static Vector3 Mult(this ref Vector3 x, Vector3 n) => x = Vector3.Scale(x, n);
+        public static Vector3 MultNonRef(this Vector3 x, Vector3 n) => Vector3.Scale(x, n);
         
         public static Vector3Int ToInt(this Vector3 vector)
         {
@@ -71,12 +85,33 @@ namespace nickeltin.Extensions
 
         public static Vector3 RandomOffset(this Vector3 vector, Vector3 offsetRange)
         {
-            return vector + Random.insideUnitSphere.Mult(offsetRange);
+            return vector + Random.insideUnitSphere.MultNonRef(offsetRange);
         }
         
         public static Vector3 RandomOffset(this Vector3 vector, float offsetRange)
         {
-            return vector + Random.insideUnitSphere.Mult(offsetRange);
+            return vector + Random.insideUnitSphere.MultNonRef(offsetRange);
+        }
+
+        /// <summary>
+        /// Clamps each axis within range
+        /// </summary>
+        /// <returns>Clamped vector</returns>
+        public static Vector3 Clamp(this ref Vector3 vector, float min, float max)
+        {
+            return vector = new Vector3(Mathf.Clamp(vector.x, min, max), 
+                Mathf.Clamp(vector.y, min, max), 
+                Mathf.Clamp(vector.z, min, max));
+        }
+
+        /// <summary>
+        /// Clamps each axis within range of [-1 - 1]
+        /// </summary>
+        public static Vector3 Clamp1(this ref Vector3 vector) => vector.Clamp(-1, 1);
+
+        public static bool Approximately(this Vector3 a, Vector3 b, float tolerance = float.Epsilon)
+        {
+            return (Math.Abs(a.x - b.x) < tolerance && Math.Abs(a.y - b.y) < tolerance && Math.Abs(a.z - b.z) < tolerance);
         }
     }
 }

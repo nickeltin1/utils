@@ -34,6 +34,7 @@ namespace nickeltin.GameData.DataObjects
             }
             set
             {
+                if(m_value == value) return;
                 m_value = Mathf.Clamp(value, m_minValue, m_maxValue);
                 if (m_type.Equals(NumberType.Int)) m_value = Mathf.RoundToInt(m_value);
                 InvokeUpdate();

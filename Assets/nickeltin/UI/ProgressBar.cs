@@ -46,8 +46,6 @@ namespace nickeltin.UI
         /// <param name="normalizedValue">[0 - 1]</param>
         public void UpdateValueNonInterpolate(float normalizedValue)
         {
-            if(!gameObject.activeInHierarchy) return;
-
             normalizedValue = Mathf.Clamp01(normalizedValue);
             progress = normalizedValue;
             
@@ -67,10 +65,12 @@ namespace nickeltin.UI
         /// <param name="normalizedValue">[0 - 1]</param>
         public void UpdateValue(float normalizedValue)
         {
-            if(!gameObject.activeInHierarchy) return;
+            //if(!gameObject.activeInHierarchy) return;
             
             if(m_interpolation != null) StopCoroutine(m_interpolation);
-            m_interpolation = StartCoroutine(Interpolation());
+
+            if (m_interpolationTime > 0) m_interpolation = StartCoroutine(Interpolation());
+            else UpdateValueNonInterpolate(normalizedValue);
 
             IEnumerator Interpolation()
             {
@@ -84,9 +84,10 @@ namespace nickeltin.UI
             }
         }
 
-        private void UpdateValueFromSource(float rawValue)
+        private void UpdateValueFromSource(float _)
         {
-            UpdateValue(m_useSourceRawValue ? rawValue : m_source.NormalizedValue);
+            //Debug.Log(rawValue);
+            UpdateValue(m_useSourceRawValue ? m_source.Value : m_source.NormalizedValue);
         }
 
         private void OnEnable()

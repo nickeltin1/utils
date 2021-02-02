@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using nickeltin.Editor.Attributes;
-using nickeltin.Extensions;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace nickeltin.StateMachine
 {
@@ -50,7 +47,7 @@ namespace nickeltin.StateMachine
             m_engine.onStateTransition += SwitchState;
             this.updateEnabled = updateEnabled;
             this.fixedUpdateEnabled = fixedUpdateEnabled;
-            if (states != null) foreach (var state in states) AddState(state);
+            if (states != null) AddStates(states);
         }
 
         public StateMachine(Transform parent, [Optional] params T[] states) 
@@ -116,6 +113,11 @@ namespace nickeltin.StateMachine
                 if (CurrentState == null) SwitchState(newState);
             }
             else Debug.LogError("You're trying to add state " + newState.implicitType + ", but it already exists");
+        }
+
+        public void AddStates(params T[] states)
+        {
+            foreach (var state in states) AddState(state);
         }
         
         /// <summary>

@@ -22,9 +22,8 @@ namespace nickeltin.GameData.DataObjects
         public event Action<T> onValueChanged;
         protected virtual void InvokeUpdate() => onValueChanged?.Invoke(m_value);
 
-        public static implicit operator T(DataObject<T> reference)
-        {
-            return reference.Value;
-        }
+        public static implicit operator T(DataObject<T> reference) => reference.Value;
+
+        public override string ToString() => Value.ToString();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace nickeltin.PathCreation
 {
-    //[CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "PathCreation/DisplaySettings")]
     public class GlobalDisplaySettings : ScriptableObject
     {
 
