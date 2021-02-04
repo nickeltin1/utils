@@ -21,7 +21,6 @@ namespace nickeltin.StateMachine
     public abstract class State<T> : StateBase where T : Enum
     {
         [SerializeField] private T m_type;
-        //public T type => m_type;
 
         public T explicitType => m_type;
         public override Enum implicitType => m_type;

@@ -2,6 +2,6 @@
 
 namespace nickeltin.Events
 {
-    [AddComponentMenu("Events/Float")]
+    [AddComponentMenu("Events/FloatEventListener")]
     public sealed class FloatEventListener : GenericEventListener<float> { }
 }

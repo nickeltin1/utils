@@ -56,9 +56,9 @@ namespace nickeltin.StateMachine
                 {
                     for (int i = 0; i < transitions.Count; i++)
                     {
-                        if (transitions[i].conditionValidationMode == StateMachineBase.UpdateType.Update)
+                        if (transitions[i].conditionValidationMode == UpdateType.Update)
                             m_updateTransitions.Add(transitions[i]);
-                        else if (transitions[i].conditionValidationMode == StateMachineBase.UpdateType.FixedUpdate) 
+                        else if (transitions[i].conditionValidationMode == UpdateType.FixedUpdate) 
                             m_fixedUpdateTransitions.Add(transitions[i]);
                     }
                 }
@@ -70,9 +70,9 @@ namespace nickeltin.StateMachine
                 {
                     for (int i = 0; i < transitions.Count; i++)
                     {
-                        if (transitions[i].conditionValidationMode == StateMachineBase.UpdateType.Update)
+                        if (transitions[i].conditionValidationMode == UpdateType.Update)
                             m_updateTransitions.Remove(transitions[i]);
-                        else if (transitions[i].conditionValidationMode == StateMachineBase.UpdateType.FixedUpdate) 
+                        else if (transitions[i].conditionValidationMode == UpdateType.FixedUpdate) 
                             m_fixedUpdateTransitions.Remove(transitions[i]);
                     }
                 }
@@ -86,51 +86,28 @@ namespace nickeltin.StateMachine
                 m_fixedUpdateTransitions.Clear();
             }
             
-            private void Update()
+            private void Update() => Iterate(m_updateTransitions, m_updateList);
+
+            private void FixedUpdate() => Iterate(m_fixedUpdateTransitions, m_fixedUpdateList);
+
+            private void Iterate(IReadOnlyList<Transition> transitions, IReadOnlyList<Func<bool>> actions)
             {
-                if (m_updateTransitions.Count > 0)
+                if (transitions.Count > 0)
                 {
-                    for (int i = m_updateTransitions.Count - 1; i >= 0; i--)
+                    for (int i = transitions.Count - 1; i >= 0; i--)
                     {
-                        if (m_updateTransitions[i].Condition())
-                        {
-                            onStateTransition?.Invoke(m_updateTransitions[i].transitionTo);
-                        }
+                        if (transitions[i].Condition()) onStateTransition?.Invoke(transitions[i].transitionTo);
                     }
                 }
                 
-                if (m_updateList.Count > 0)
+                if (actions.Count > 0)
                 {
-                    for (int i = m_updateList.Count - 1; i >= 0; i--)
-                    {
-                        m_updateList[i]?.Invoke();
-                    }
-                }
-            }
-            private void FixedUpdate()
-            {
-                if (m_fixedUpdateTransitions.Count > 0)
-                {
-                    for (int i = m_fixedUpdateTransitions.Count - 1; i >= 0; i--)
-                    {
-                        if (m_fixedUpdateTransitions[i].Condition())
-                        {
-                            onStateTransition?.Invoke(m_fixedUpdateTransitions[i].transitionTo);
-                        }
-                    }
-                }
-                
-                if (m_fixedUpdateList.Count > 0)
-                {
-                    for (int i = m_fixedUpdateList.Count - 1; i >= 0; i--)
-                    {
-                        m_fixedUpdateList[i]?.Invoke();
-                    }
+                    for (int i = actions.Count - 1; i >= 0; i--) actions[i]?.Invoke();
                 }
             }
         }
         
-        [Flags] public enum UpdateType { Update, FixedUpdate }
+        public enum UpdateType { Update, FixedUpdate, Both}
         protected enum DataMode { Add, Remove }
         
         private bool m_enabled = true;
@@ -165,22 +142,22 @@ namespace nickeltin.StateMachine
         protected StateMachineEngine m_engine;
         
         protected void PassStateToEngine(StateBase state, DataMode mode, 
-            UpdateType updateType = UpdateType.Update | UpdateType.FixedUpdate)
+            UpdateType updateType = UpdateType.Both)
         {
             if (state == null) return;
 
             if (mode == DataMode.Add) m_engine.AddTransitions(state.transitions);
             else if (mode == DataMode.Remove) m_engine.RemoveTransitions(state.transitions);
 
-            if (updateType == UpdateType.Update)
+            if (updateType == UpdateType.Update || updateType == UpdateType.Both)
             {
-                if (mode == DataMode.Add) m_engine.AddData(null, state.OnUpdate);
+                if (mode == DataMode.Add && updateEnabled) m_engine.AddData(null, state.OnUpdate);
                 else if (mode == DataMode.Remove) m_engine.RemoveData(null, state.OnUpdate);
             }
                 
-            if (updateType == UpdateType.FixedUpdate)
+            if (updateType == UpdateType.FixedUpdate || updateType == UpdateType.Both)
             {
-                if (mode == DataMode.Add) m_engine.AddData(state.OnFixedUpdate, null);
+                if (mode == DataMode.Add && fixedUpdateEnabled) m_engine.AddData(state.OnFixedUpdate, null);
                 else if (mode == DataMode.Remove) m_engine.RemoveData(state.OnFixedUpdate, null);
             }
         }

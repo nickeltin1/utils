@@ -2,6 +2,6 @@
 
 namespace nickeltin.Events
 {
-    [AddComponentMenu("Events/Int")]
+    [AddComponentMenu("Events/IntEventListener")]
     public sealed class IntEventListener : GenericEventListener<int> { }
 }

@@ -20,6 +20,21 @@ namespace nickeltin.Cameras.TriDimensional
             public float y;
             public bool alignWithTargetRotation;
             [AllowNesting, HideIf("alignWithTargetRotation")] public Vector3 rotation;
+
+            // public float xAspectRatio => x / y;
+            // public float yAspectRatio => y / x;
+            //
+            // public float distanaceToCamera
+            // {
+            //     get => (x * xAspectRatio) + (y * yAspectRatio);
+            //     set
+            //     {
+            //         float xRatio = xAspectRatio;
+            //         float yRatio = yAspectRatio;
+            //         x = xRatio * value;
+            //         y = yRatio * value;
+            //     }
+            // }
         }
 
         public static Settings copiedSettings = new Settings();
@@ -30,7 +45,7 @@ namespace nickeltin.Cameras.TriDimensional
         [SerializeField] private Camera m_camera;
         [SerializeField] private Camera m_uiCamera;
         [SerializeField] private UpdateType m_updateType;
-        [SerializeField] private float m_interpolationSpeed;
+        [SerializeField, Range(0f,1f)] private float m_interpolationSpeed;
         [SerializeField] private Settings m_defaultSettings;
 
         public bool updatePosition { get; set; } = true;
@@ -45,6 +60,12 @@ namespace nickeltin.Cameras.TriDimensional
         {
             get => m_updateType;
             set => m_updateType = value;
+        }
+
+        public float fov
+        {
+            get => m_camera.fieldOfView;
+            set => m_camera.fieldOfView = value;
         }
         
         private Settings m_settings;
@@ -103,14 +124,14 @@ namespace nickeltin.Cameras.TriDimensional
             
             if(updatePosition)
             {
-                transform.position = Vector3.Lerp(transform.position, m_target.transform.position,
-                Time.deltaTime * m_interpolationSpeed);
+                transform.position = Vector3.Lerp(transform.position, m_target.transform.position, m_interpolationSpeed);
+                m_camera.transform.localPosition = Vector3.Lerp(m_camera.transform.localPosition, 
+                    new Vector3(m_settings.x, m_settings.y, 0), interpolationSpeed);
             }
 
             if(m_settings.alignWithTargetRotation)
             {
-                transform.rotation = Quaternion.Lerp(transform.rotation, m_target.transform.rotation, 
-                    Time.deltaTime * m_interpolationSpeed);
+                transform.rotation = Quaternion.Lerp(transform.rotation, m_target.transform.rotation, m_interpolationSpeed);
             }
         }
 

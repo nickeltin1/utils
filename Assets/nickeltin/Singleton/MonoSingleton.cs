@@ -14,14 +14,19 @@ namespace nickeltin.Singletons
             get => instance != null;
         }
         
-        protected virtual void Awake()
+        protected virtual void Awake() => Awake_Internal();
+
+        protected bool Awake_Internal()
         {
             if (instance == null)
             {
                 instance = this as T;
-                if(persistent) DontDestroyOnLoad (gameObject);
+                if (persistent) DontDestroyOnLoad (gameObject);
+                return true;
             }
-            else Destroy(gameObject);
+
+            Destroy(gameObject);
+            return false;
         }
         
         

@@ -3,16 +3,16 @@ using UnityEngine.Events;
 
 namespace nickeltin.Events
 {
-    [AddComponentMenu("Events/VoidEventListener")]
+    [AddComponentMenu("Events/EventListener")]
     public sealed class EventListener : MonoBehaviour
     {
         [SerializeField] private EventObject m_event;
         [SerializeField] private UnityEvent m_response;
 
-        private void OnEnable() => m_event.RegisterListener(this);
+        private void OnEnable() => m_event.onInvoke += OnInvoke;
 
-        private void OnDisable() => m_event.UnregisterListener(this);
+        private void OnDisable() => m_event.onInvoke -= OnInvoke;
 
-        public void OnInvoke() => m_response.Invoke();
+        private void OnInvoke() => m_response.Invoke();
     }
 }

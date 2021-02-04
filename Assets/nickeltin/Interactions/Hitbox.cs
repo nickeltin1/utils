@@ -18,5 +18,16 @@ namespace nickeltin.Interactions
             owner = null;
             return false;
         }
+
+        public static bool TryToGetOwner<T>(GameObject other, out T owner) where T : MonoBehaviour
+        {
+            if (other.TryGetComponent(out Hitbox hitbox) && hitbox.TryGetOwner(out owner))
+            {
+                return true;
+            }
+            
+            owner = null;
+            return false;
+        }
     }
 }

@@ -9,9 +9,9 @@ namespace nickeltin.Events
         [SerializeField] private GenericEventObject<T> m_event;
         [SerializeField] private UnityEvent<T> m_response;
 
-        private void OnEnable() => m_event.RegisterListener(this);
+        private void OnEnable() => m_event.onInvoke += OnInvoke;
 
-        private void OnDisable() => m_event.UnregisterListener(this);
+        private void OnDisable() => m_event.onInvoke -= OnInvoke;
 
         public void OnInvoke([Optional] T data) => m_response.Invoke(data);
     }
