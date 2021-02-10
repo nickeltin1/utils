@@ -13,14 +13,24 @@ namespace nickeltin.Extensions
                    $"{vector.z.ToString("F"+digits)}";
         }
         
-        public static Vector3 With(this Vector3 vector, float? x = null, float? y = null, float? z = null)
+        public static Vector3 Set(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
+        {
+            return vector = new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
+        }
+        public static Vector3 SetNoRef(this Vector3 vector, float? x = null, float? y = null, float? z = null)
         {
             return new Vector3(x ?? vector.x, y ?? vector.y, z ?? vector.z);
         }
         
+        
         public static Vector3 Add(this ref Vector3 vector,  float? x = null, float? y = null, float? z = null)
         {
             return vector = new Vector3((vector.x + x) ?? vector.x, (vector.y + y) ?? vector.y, (vector.z + z) ?? vector.z);
+        }
+
+        public static Vector3 AddNoRef(this Vector3 vector,  float? x = null, float? y = null, float? z = null)
+        {
+            return new Vector3((vector.x + x) ?? vector.x, (vector.y + y) ?? vector.y, (vector.z + z) ?? vector.z);
         }
 
         public static Vector3 Sub(this ref Vector3 vector, float? x = null, float? y = null, float? z = null)
