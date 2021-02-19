@@ -1,6 +1,8 @@
 using System;
+using System.Collections;
 using nickeltin.Editor.Attributes;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace nickeltin.Cameras.TriDimensional
 {
@@ -45,10 +47,12 @@ namespace nickeltin.Cameras.TriDimensional
         [SerializeField] private Camera m_camera;
         [SerializeField] private Camera m_uiCamera;
         [SerializeField] private UpdateType m_updateType;
-        [SerializeField, Range(0f,1f)] private float m_interpolationSpeed;
+        [SerializeField, Range(0f,1f)] private float m_interpolationSpeed = 0.5f;
         [SerializeField] private Settings m_defaultSettings;
 
         public bool updatePosition { get; set; } = true;
+        
+        public bool shaking { get; private set; }
         
         public float interpolationSpeed
         {
@@ -137,13 +141,20 @@ namespace nickeltin.Cameras.TriDimensional
 
         public Settings GetSettings()
         {
-            return new Settings
+            var settings = new Settings
             {
-                x = m_camera.transform.localPosition.x,
-                y = m_camera.transform.localPosition.y,
+              
                 rotation = transform.eulerAngles,
                 alignWithTargetRotation = m_defaultSettings.alignWithTargetRotation 
             };
+
+            if (m_camera != null)
+            {
+                settings.x = m_camera.transform.localPosition.x;
+                settings.y = m_camera.transform.localPosition.y;
+            }
+
+            return settings;
         }
 
 
@@ -165,6 +176,25 @@ namespace nickeltin.Cameras.TriDimensional
                 }
                 else SetSettings(m_defaultSettings);
             }
+        }
+
+        public void Shake(float t, float amplitude)
+        {
+            IEnumerator Shake()
+            {
+                shaking = true;
+                for (float i = 0; i < t; i+=Time.deltaTime)
+                {
+                    Vector3 pos = new Vector3(m_settings.x, m_settings.y, 0) + (Random.insideUnitSphere * amplitude);
+                    m_camera.transform.localPosition = pos;
+                    yield return null;
+                }
+
+                shaking = false;
+                SetSettings(m_settings);
+            }
+
+            StartCoroutine(Shake());
         }
 
         [ContextMenu("Align Position With Target")]

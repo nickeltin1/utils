@@ -40,7 +40,7 @@ namespace nickeltin.Other
         
         private Coroutine timerTicker;
         
-        public TimedEvent(MonoBehaviour owner, float time, Action onTimesUp)
+        public TimedEvent(MonoBehaviour owner, float time, Action onTimesUp = null)
         {
             this.m_time = time;
             this.m_action = onTimesUp;

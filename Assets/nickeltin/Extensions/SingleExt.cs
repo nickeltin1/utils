@@ -32,19 +32,24 @@ namespace nickeltin.Extensions
             return Mathf.Pow(x, 1.0f / n);
         }
         
-        public static bool Negative(this Single f) => f < 0;
-        public static bool Positive(this Single f) => f > 0;
-        public static bool Zero(this Single f) => f == 0;
-        public static bool NegativeOrZero(this Single f) => Zero(f) || Negative(f);
-        public static bool PositiveOrZero(this Single f) => Zero(f) || Positive(f);
+        public static bool Negative(this Single x) => x < 0;
+        public static bool Positive(this Single x) => x > 0;
+        public static bool Zero(this Single x) => x == 0;
+        public static bool NegativeOrZero(this Single x) => Zero(x) || Negative(x);
+        public static bool PositiveOrZero(this Single x) => Zero(x) || Positive(x);
         
-        public static Single Clamp(this ref Single f, Single min, Single max) => f = Mathf.Clamp(f, min, max);
-        public static Single Clamp01(this ref Single f) => f = Mathf.Clamp01(f);
+        public static Single Clamp(this ref Single x, Single min, Single max) => x = Mathf.Clamp(x, min, max);
+        public static Single ClampNoRef(this Single x, Single min, Single max) => Mathf.Clamp(x, min, max);
+        
+        public static Single Clamp01(this ref Single x) => x = Mathf.Clamp01(x);
         
         /// <param name="min">Inclusive min</param>
         /// <param name="max">Exclusive max</param>
         // ReSharper disable once InvalidXmlDocComment
-        public static bool InRange(this Single f, Single min, Single max) => f >= min && f < max;
+        public static bool InRange(this Single x, Single min, Single max) => x >= min && x < max;
 
+        public static Single Lerp(this ref Single from, Single to, Single t) => from = Mathf.Lerp(from, to, t);
+
+        public static Single LerpNoRef(this Single from, Single to, Single t) => Mathf.Lerp(from, to, t);
     }
 }

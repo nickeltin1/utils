@@ -123,5 +123,8 @@ namespace nickeltin.Extensions
         {
             return (Math.Abs(a.x - b.x) < tolerance && Math.Abs(a.y - b.y) < tolerance && Math.Abs(a.z - b.z) < tolerance);
         }
+
+        public static Quaternion LookRotation(this Vector3 from, Vector3 to) => LookRotation(@from.DirectionTo(to));
+        public static Quaternion LookRotation(this Vector3 direction) => Quaternion.LookRotation(direction);
     }
 }

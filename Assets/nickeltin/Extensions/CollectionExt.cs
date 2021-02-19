@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
+using Random = System.Random;
 
 namespace nickeltin.Extensions
 {
@@ -53,6 +55,11 @@ namespace nickeltin.Extensions
                 array[x,y,z] = new T();
         }
 
+        public static void FillDefault<T>(this List<T> list, int count) where T : new()
+        {
+            for (int i = 0; i < count; i++) list.Add(new T());
+        }
+
         public static IList<T> ShiftLeft<T>(this IList<T> list, int by)
         {
             for (int i = by; i < list.Count; i++) list[i - by] = list[i];
@@ -77,6 +84,22 @@ namespace nickeltin.Extensions
         {
             Array.Copy(array, 0, array, by, array.Length - by);
             Array.Clear(array, 0, by);
+        }
+
+        /// <summary>
+        /// Uses regural for loop
+        /// </summary>
+        public static void ForEach<T>(this T[] array, Action<T> action)
+        {
+            for (int i = 0; i < array.Length; i++) action.Invoke(array[i]);
+        }
+        
+        /// <summary>
+        /// Uses backward for loop 
+        /// </summary>
+        public static void ForEachReversed<T>(this T[] array, Action<T> action)
+        {
+            for (int i = array.Length - 1; i >= 0; i--) action.Invoke(array[i]);
         }
     }
 }

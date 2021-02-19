@@ -5,7 +5,7 @@ namespace nickeltin.GameData.DataObjects
 {
     public abstract class DataObject<T> : ScriptableObject
     {
-        [Multiline, SerializeField] private string m_developmentDescription = "";
+        [TextArea, SerializeField] private string m_developmentDescription = "";
         [Space]
         [SerializeField] protected T m_value;
 

@@ -48,7 +48,7 @@ namespace nickeltin.GameData.Saving
                 if (char.IsWhiteSpace(objectName[i])) sb.Append("_");
                 else if (char.IsUpper(objectName[i]))
                 {
-                    if (i == 0 || char.IsWhiteSpace(objectName[(i - 1).Clamp0()])) sb.Append(char.ToLower(objectName[i]));
+                    if (i == 0 || char.IsWhiteSpace(objectName[(i - 1).Clamp0NoRef()])) sb.Append(char.ToLower(objectName[i]));
                     else sb.Append("_" + char.ToLower(objectName[i]));
                 }
                 else sb.Append(objectName[i]);

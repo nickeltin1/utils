@@ -17,7 +17,7 @@ namespace nickeltin.StateMachine
             private float m_lastStateTime;
             private string m_lastStateName;
             
-            private readonly int lastIndex = (historyLength - 1).Clamp0();
+            private readonly int lastIndex = (historyLength - 1).Clamp0NoRef();
             private string timePassed => " lasted for " + Mathf.Abs(-Time.time + m_lastStateTime).ToString("F2") + "sec.";
 
             public void LogState(StateBase state)
