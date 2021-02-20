@@ -64,6 +64,7 @@ namespace nickeltin.SceneManagment
         public static int currentLevelId { get; private set; } = 0;
         public static int levelsCompleted { get; private set; } = 0;
         public static bool tutorialCompleted { get; private set; } = false;
+        public static string currentScene { get; private set; }
 
         private const string levelId_key = "level_id";
         private const string levelsCompleted_key = "levels_completed_count";
@@ -131,6 +132,10 @@ namespace nickeltin.SceneManagment
         private static void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName, mode);
+            if (mode.Equals(LoadSceneMode.Single))
+            {
+                currentScene = sceneName;
+            }
         }
 
         private static void LogEvent(string text, EventType type = EventType.Regural)
@@ -184,14 +189,17 @@ namespace nickeltin.SceneManagment
 
         public static void LoadLevel(int levelId)
         {
-            if (instance.m_levels[levelId] != null)
+            void Load(string sceneName)
             {
-                LoadScene(instance.m_levels[levelId]);
+                LoadScene(sceneName);
                 currentLevelId = levelId;
                 LogEvent($"Level with id {levelId} loaded");
                 afterLevelLoad?.Invoke(levelId);
                 if(instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(levelId);
             }
+
+            if (levelId < 0) Load(instance.m_baseScenes.tutorialScene);
+            else if (instance.m_levels[levelId] != null) Load(instance.m_levels[levelId]);
             else LogEvent($"Level with id {levelId}", EventType.Error);
         }
 
