@@ -3,7 +3,7 @@ using nickeltin.Extensions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Managers.Audio
+namespace nickeltin.Audio
 {
     [CreateAssetMenu(menuName = "Audio/AudioEvent")]
     public class AudioEvent : ScriptableObject

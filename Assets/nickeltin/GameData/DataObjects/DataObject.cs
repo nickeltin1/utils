@@ -1,4 +1,5 @@
 ﻿using System;
+using nickeltin.Editor.Attributes;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
@@ -20,7 +21,8 @@ namespace nickeltin.GameData.DataObjects
         }
 
         public event Action<T> onValueChanged;
-        protected virtual void InvokeUpdate() => onValueChanged?.Invoke(m_value);
+        [Button("Invoke Update", EButtonEnableMode.Playmode)]
+        public virtual void InvokeUpdate() => onValueChanged?.Invoke(Value);
 
         public static implicit operator T(DataObject<T> reference) => reference.Value;
 

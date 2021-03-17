@@ -11,7 +11,7 @@ namespace nickeltin.Other
         private class TimedEventInstance : MonoBehaviour { }
 
         private static TimedEventInstance m_instance;
-        private static TimedEventInstance Instance
+        private static TimedEventInstance instance
         {
             get
             {
@@ -84,7 +84,7 @@ namespace nickeltin.Other
 
         public static TimedEvent Start(float t, Action onTimesOut = null, MonoBehaviour owner = null)
         {
-            MonoBehaviour o = owner == null ? TimedEvent.Instance : owner;
+            MonoBehaviour o = owner == null ? TimedEvent.instance : owner;
             var i = new TimedEvent(o, t, onTimesOut);
             i.Start();
             return i;

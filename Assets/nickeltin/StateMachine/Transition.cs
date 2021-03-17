@@ -4,12 +4,12 @@ namespace nickeltin.StateMachine
 {
     public class Transition
     {
-        public readonly StateMachineBase.UpdateType conditionValidationMode;
+        public readonly UpdateType conditionValidationMode;
         public readonly Enum transitionTo;
         
         private readonly Func<bool> m_condition;
 
-        public Transition(StateMachineBase.UpdateType conditionValidationMode, Enum transitionTo, Func<bool> condition)
+        public Transition(UpdateType conditionValidationMode, Enum transitionTo, Func<bool> condition)
         {
             this.conditionValidationMode = conditionValidationMode;
             this.transitionTo = transitionTo;

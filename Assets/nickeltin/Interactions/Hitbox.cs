@@ -6,6 +6,11 @@ namespace nickeltin.Interactions
     public class Hitbox : MonoBehaviour
     {
         public MonoBehaviour owner;
+
+        public void SetOwner<T>(T owner) where T : MonoBehaviour
+        {
+            this.owner = owner;
+        }
         
         public bool TryGetOwner<T>(out T owner) where T : MonoBehaviour
         {
@@ -19,7 +24,7 @@ namespace nickeltin.Interactions
             return false;
         }
 
-        public static bool TryToGetOwner<T>(GameObject other, out T owner) where T : MonoBehaviour
+        public static bool TryGetOwner<T>(GameObject other, out T owner) where T : MonoBehaviour
         {
             if (other.TryGetComponent(out Hitbox hitbox) && hitbox.TryGetOwner(out owner))
             {

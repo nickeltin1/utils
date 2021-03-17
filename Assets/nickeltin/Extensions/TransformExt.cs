@@ -12,6 +12,22 @@ namespace nickeltin.Extensions
             }
         }
 
+        /// <summary>
+        /// Transforms rotation form local space to world space
+        /// </summary>
+        public static Quaternion TransformQuaternion(this Transform transform, Quaternion localRotation)
+        {
+            return transform.rotation * localRotation;
+        }
+
+        /// <summary>
+        /// Transforms rotation form world space to local space
+        /// </summary>
+        public static Quaternion InverseTransformQuaternion(this Transform transform, Quaternion worldRotation)
+        {
+            return Quaternion.Inverse(transform.rotation) * worldRotation;
+        }
+
         public static Vector2 GetViewportPosition(this Transform transform, Camera cam)
         {
             return transform.position.ToViewportPosition(cam);

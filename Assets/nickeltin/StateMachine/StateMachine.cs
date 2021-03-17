@@ -100,7 +100,7 @@ namespace nickeltin.StateMachine
                 return true;
             }
             
-            Debug.LogError($"State " + to + " doesn't exist, and cannot be switched to");
+            Debug.LogError($"State" + to + " doesn't exist, and cannot be switched to");
             return false;
         }
 

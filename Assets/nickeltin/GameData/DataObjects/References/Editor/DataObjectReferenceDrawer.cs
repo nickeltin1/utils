@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿using nickeltin.Editor.Attributes;
+using nickeltin.Editor.Attributes.Editor;
+using UnityEditor;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects.Editor
@@ -46,9 +48,15 @@ namespace nickeltin.GameData.DataObjects.Editor
 
             useConstant.boolValue = result == 0;
 
-            EditorGUI.PropertyField(position, 
-                useConstant.boolValue ? constantValue : variable, 
-                GUIContent.none);
+            if (useConstant.boolValue)
+            {
+				EditorGUI.PropertyField(position, constantValue, GUIContent.none);
+            }
+            else
+            {
+				EditorGUI.PropertyField(position, variable, GUIContent.none);
+            }
+            
 
             if (EditorGUI.EndChangeCheck())
                 property.serializedObject.ApplyModifiedProperties();

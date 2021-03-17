@@ -117,16 +117,19 @@ namespace nickeltin.SceneManagment
                     afterInitialization?.Invoke();
                     if(m_events.afterInitialization != null) m_events.afterInitialization.Invoke();
                 }
-
-                if (m_settings.loadTutorialAfterInitialization && !tutorialCompleted && m_baseScenes.tutorialScene != null)
-                {
-                    currentLevelId = -1;
-                    LoadScene(m_baseScenes.tutorialScene);
-                    afterLevelLoad?.Invoke(-1);
-                    if(instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(-1);
-                }
-                else LoadLevel(m_settings.startFromLevelId);
             }
+        }
+
+        private void Start()
+        {
+            if (m_settings.loadTutorialAfterInitialization && !tutorialCompleted && m_baseScenes.tutorialScene != null)
+            {
+                currentLevelId = -1;
+                LoadScene(m_baseScenes.tutorialScene);
+                afterLevelLoad?.Invoke(-1);
+                if(instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(-1);
+            }
+            else LoadLevel(m_settings.startFromLevelId);
         }
 
         private static void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
@@ -195,7 +198,7 @@ namespace nickeltin.SceneManagment
                 currentLevelId = levelId;
                 LogEvent($"Level with id {levelId} loaded");
                 afterLevelLoad?.Invoke(levelId);
-                if(instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(levelId);
+                if (instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(levelId);
             }
 
             if (levelId < 0) Load(instance.m_baseScenes.tutorialScene);

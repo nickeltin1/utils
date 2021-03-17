@@ -101,5 +101,18 @@ namespace nickeltin.Extensions
         {
             for (int i = array.Length - 1; i >= 0; i--) action.Invoke(array[i]);
         }
+        
+        public static void Shuffle<T>(this T[] array)
+        {
+            int n = array.Length;
+            while (n > 1)
+            {
+                int k = random.Next(n);
+                n--;
+                T temp = array[n];
+                array[n] = array[k];
+                array[k] = temp;
+            }
+        }
     }
 }

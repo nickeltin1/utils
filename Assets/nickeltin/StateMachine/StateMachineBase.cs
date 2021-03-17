@@ -68,7 +68,7 @@ namespace nickeltin.StateMachine
             {
                 if (transitions != null && transitions.Count > 0)
                 {
-                    for (int i = 0; i < transitions.Count; i++)
+                    for (int i = transitions.Count - 1; i >= 0; i--)
                     {
                         if (transitions[i].conditionValidationMode == UpdateType.Update)
                             m_updateTransitions.Remove(transitions[i]);
@@ -92,22 +92,14 @@ namespace nickeltin.StateMachine
 
             private void Iterate(IReadOnlyList<Transition> transitions, IReadOnlyList<Func<bool>> actions)
             {
-                if (transitions.Count > 0)
+                for (int i = 0; i < transitions.Count; i++)
                 {
-                    for (int i = transitions.Count - 1; i >= 0; i--)
-                    {
-                        if (transitions[i].Condition()) onStateTransition?.Invoke(transitions[i].transitionTo);
-                    }
+                    if (transitions[i].Condition()) onStateTransition?.Invoke(transitions[i].transitionTo);
                 }
-                
-                if (actions.Count > 0)
-                {
-                    for (int i = actions.Count - 1; i >= 0; i--) actions[i]?.Invoke();
-                }
+                for (int i = actions.Count - 1; i >= 0; i--) actions[i]?.Invoke();
             }
         }
         
-        public enum UpdateType { Update, FixedUpdate, Both}
         protected enum DataMode { Add, Remove }
         
         private bool m_enabled = true;
