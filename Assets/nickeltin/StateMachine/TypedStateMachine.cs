@@ -5,10 +5,16 @@ using UnityEngine;
 
 namespace nickeltin.StateMachine
 {
-    public sealed class StateMachine : StateMachine<State>
+    public sealed class StateMachine : TypedStateMachine<State>
     {
-        public StateMachine(Transform parent, bool updateEnabled, bool fixedUpdateEnabled, params State[] states) : 
-            base(parent, updateEnabled, fixedUpdateEnabled, states)
+        public StateMachine(Transform parent, bool updateEnabled, bool fixedUpdateEnabled, 
+            Action<State> onInitialization = null, params State[] states) 
+            : base(parent, updateEnabled, fixedUpdateEnabled, onInitialization, states)
+        {
+        }
+
+        public StateMachine(Transform parent, Action<State> onInitialization, 
+            params State[] states) : base(parent, onInitialization, states)
         {
         }
 
@@ -17,11 +23,29 @@ namespace nickeltin.StateMachine
         }
     }
     
+    public class EnumStateMachine<T> : TypedStateMachine<State<T>> where T : Enum
+    {
+        public EnumStateMachine(Transform parent, bool updateEnabled, bool fixedUpdateEnabled, 
+            Action<State<T>> onInitialization = null, params State<T>[] states) 
+            : base(parent, updateEnabled, fixedUpdateEnabled, onInitialization, states)
+        {
+        }
+
+        public EnumStateMachine(Transform parent, Action<State<T>> onInitialization, 
+            params State<T>[] states) : base(parent, onInitialization, states)
+        {
+        }
+
+        public EnumStateMachine(Transform parent, params State<T>[] states) : base(parent, states)
+        {
+        }
+    }
+    
     /// <summary>
     /// Inherit form it to create custom state machine
     /// </summary>
     /// <typeparam name="T">State type that machine using</typeparam>
-    public class StateMachine<T> : StateMachineBase where T : StateBase
+    public class TypedStateMachine<T> : StateMachineBase where T : StateBase
     {
         public T MainState { get; private set; }
         
@@ -41,17 +65,30 @@ namespace nickeltin.StateMachine
         private readonly List<Enum> m_statesOrder = new List<Enum>();
         private readonly Dictionary<Enum, T> m_states = new Dictionary<Enum, T>();
         
-        public StateMachine(Transform parent, bool updateEnabled, bool fixedUpdateEnabled, [Optional] params T[] states)
+        /// <param name="onInitialization">Executes on StateMachine creation for each state, before <see cref="State.OnStateStart"/></param>
+        public TypedStateMachine(Transform parent, bool updateEnabled, bool fixedUpdateEnabled, 
+            [Optional] Action<T> onInitialization, [Optional] params T[] states)
         {
             m_engine = parent.gameObject.AddComponent<StateMachineEngine>();
             m_engine.onStateTransition += SwitchState;
             this.updateEnabled = updateEnabled;
             this.fixedUpdateEnabled = fixedUpdateEnabled;
-            if (states != null) AddStates(states);
+            if (states != null)
+            {
+                foreach (var state in states)
+                {
+                    onInitialization?.Invoke(state);
+                    AddState(state);
+                }
+            }
         }
+        
+       
+        public TypedStateMachine(Transform parent, Action<T> onInitialization, [Optional] params T[] states) 
+            : this(parent, true, true,onInitialization, states) { }
 
-        public StateMachine(Transform parent, [Optional] params T[] states) 
-            : this(parent, true, true, states) { }
+        public TypedStateMachine(Transform parent, [Optional] params T[] states) 
+            : this(parent, null, states) { }
         
         /// <summary>
         /// Switches to next state, in order you added them. If its the last state, then starts form begining.

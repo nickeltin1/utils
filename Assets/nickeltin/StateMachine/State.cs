@@ -18,9 +18,9 @@ namespace nickeltin.StateMachine
     /// Inherit from it if you want to create custom state
     /// </summary>
     /// <typeparam name="T">State Type - enum</typeparam>
-    public abstract class State<T> : StateBase where T : Enum
+    public class State<T> : StateBase where T : Enum
     {
-        [SerializeField] private T m_type;
+        [SerializeField] protected T m_type;
 
         public T explicitType => m_type;
         public override Enum implicitType => m_type;

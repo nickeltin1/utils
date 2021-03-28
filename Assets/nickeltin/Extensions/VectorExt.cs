@@ -42,6 +42,16 @@ namespace nickeltin.Extensions
         {
             return new Vector3((vector.x - x) ?? vector.x, (vector.y - y) ?? vector.y, (vector.z - z) ?? vector.z);
         }
+        
+        public static Vector2 Sub(this ref Vector2 vector, float? x = null, float? y = null, float? z = null)
+        {
+            return vector = new Vector2((vector.x - x) ?? vector.x, (vector.y - y) ?? vector.y);
+        }
+        
+        public static Vector2 SubNoRef(this Vector2 vector, float? x = null, float? y = null, float? z = null)
+        {
+            return new Vector2((vector.x - x) ?? vector.x, (vector.y - y) ?? vector.y);
+        }
 
         public static Vector3 DirectionTo(this Vector3 from, Vector3 to) => to - from;
 

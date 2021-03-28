@@ -13,6 +13,8 @@ namespace nickeltin.StateMachine
         protected Func<bool> m_onFixedUpdate;
         protected Func<bool> m_onStateEnd;
 
+        protected Action m_onGizmosDraw; 
+
         protected List<Transition> m_transitions;
 
         public IReadOnlyList<Transition> transitions => m_transitions;
@@ -32,11 +34,15 @@ namespace nickeltin.StateMachine
             m_onFixedUpdate = onFixedUpdate ?? m_onFixedUpdate;
             m_onStateEnd = onStateEnd ?? m_onStateEnd;
         }
-        
+
+        public void AddGizmos(Action onGizmosDraw) => m_onGizmosDraw = onGizmosDraw;
+
         public virtual bool OnStateStart() => ExecuteAction(m_onStateStart);
         public virtual bool OnUpdate() => ExecuteAction(m_onUpdate);
         public virtual bool OnFixedUpdate() => ExecuteAction(m_onFixedUpdate);
         public virtual bool OnStateEnd() => ExecuteAction(m_onStateEnd);
+
+        public virtual void OnGizmosDraw() => m_onGizmosDraw?.Invoke();
         
         private static bool ExecuteAction(Func<bool> action)
         {

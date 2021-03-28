@@ -13,7 +13,7 @@ namespace nickeltin.StateMachine
         {
 #if UNITY_EDITOR
             private const int historyLength = 10;
-            [SerializeField, ReadOnly] private string[] m_statesHistory = new string[historyLength];
+            [SerializeField] private string[] m_statesHistory = new string[historyLength];
             private float m_lastStateTime;
             private string m_lastStateName;
             
@@ -29,6 +29,17 @@ namespace nickeltin.StateMachine
                 m_lastStateName = stateName;
                 m_lastStateTime = Time.time;
             }
+            
+            private readonly List<Action> m_gizmos = new List<Action>();
+            
+            private void OnDrawGizmos()
+            {
+                for (var i = 0; i < m_gizmos.Count; i++) m_gizmos[i]?.Invoke();
+            }
+            
+            public void AddGizmos(Action gizmoAction) => m_gizmos.Add(gizmoAction);
+
+            public void RemoveGizmos(Action gizmoAction) => m_gizmos.Remove(gizmoAction);
 #endif
             public event Action<Enum> onStateTransition; 
             
@@ -36,6 +47,7 @@ namespace nickeltin.StateMachine
             private readonly List<Func<bool>> m_fixedUpdateList = new List<Func<bool>>();
             private readonly List<Transition> m_updateTransitions = new List<Transition>();
             private readonly List<Transition> m_fixedUpdateTransitions = new List<Transition>();
+           
 
             public void AddData(Func<bool> onFixedUpdate = null, Func<bool> onUpdate = null)
             {
@@ -49,6 +61,7 @@ namespace nickeltin.StateMachine
                 if (onFixedUpdate != null) m_fixedUpdateList.Remove(onFixedUpdate);
                 if (onUpdate != null) m_updateList.Remove(onUpdate);
             }
+            
 
             public void AddTransitions(IReadOnlyList<Transition> transitions = null)
             {
@@ -89,7 +102,7 @@ namespace nickeltin.StateMachine
             private void Update() => Iterate(m_updateTransitions, m_updateList);
 
             private void FixedUpdate() => Iterate(m_fixedUpdateTransitions, m_fixedUpdateList);
-
+            
             private void Iterate(IReadOnlyList<Transition> transitions, IReadOnlyList<Func<bool>> actions)
             {
                 for (int i = 0; i < transitions.Count; i++)
@@ -138,8 +151,20 @@ namespace nickeltin.StateMachine
         {
             if (state == null) return;
 
-            if (mode == DataMode.Add) m_engine.AddTransitions(state.transitions);
-            else if (mode == DataMode.Remove) m_engine.RemoveTransitions(state.transitions);
+            if (mode == DataMode.Add)
+            {
+                m_engine.AddTransitions(state.transitions);
+#if UNITY_EDITOR
+                m_engine.AddGizmos(state.OnGizmosDraw);
+#endif
+            }
+            else if (mode == DataMode.Remove)
+            {
+                m_engine.RemoveTransitions(state.transitions);
+#if UNITY_EDITOR
+                m_engine.RemoveGizmos(state.OnGizmosDraw);
+#endif
+            }
 
             if (updateType == UpdateType.Update || updateType == UpdateType.Both)
             {

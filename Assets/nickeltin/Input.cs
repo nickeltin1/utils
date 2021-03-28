@@ -9,8 +9,20 @@ namespace nickeltin.Other
         {
             private void Update()
             {
-                pointerDelta = ScreenPointToViewport(UnityEngine.Input.mousePosition) - lastPointerPos;
-                lastPointerPos = ScreenPointToViewport(UnityEngine.Input.mousePosition);
+                pointerPosition = ScreenPointToViewport(UnityEngine.Input.mousePosition);
+                pointerDelta = pointerPosition - lastPointerPosition;
+
+                if (PointerPressed()) lastPointerSwipedPosition = pointerPosition;
+                else if (PointerPressing())
+                {
+                    pointerSwipeDelta = pointerPosition - lastPointerSwipedPosition;
+                    lastPointerSwipedPosition = pointerPosition;
+                }
+                else if (PointerUp()) pointerSwipeDelta = Vector2.zero;
+
+
+                lastPointerPosition = pointerPosition;
+                pointerOffsetFromCenter = (lastPointerPosition * 2).SubNoRef(1, 1);
                 pointerPressedLastFrame = PointerPressing();
             }
         }
@@ -22,20 +34,31 @@ namespace nickeltin.Other
         }
         
         private static Engine m_engine;
+        private static Vector2 lastPointerSwipedPosition;
 
         public const float SWIPE_THRESHOLD = 0.01f;
 
         public static float swipeThreshold = SWIPE_THRESHOLD;
         
         /// <summary>Viewport rect [0 - 1]</summary>
-        public static Vector2 lastPointerPos { get; private set; }
+        public static Vector2 lastPointerPosition { get; private set; }
         
         /// <summary>Viewport rect [-1 - 1] because its direction</summary>
         public static Vector2 pointerDelta { get; private set; }
-
+        
+        /// <summary>Viewport rect [-1 - 1] because its direction</summary>
+        public static Vector2 pointerSwipeDelta { get; private set; }
+        
         public static bool pointerPressedLastFrame { get; private set; }
+        
+        /// <summary>[-1 - 1] From screen center </summary>
+        public static Vector2 pointerOffsetFromCenter { get; private set; }
 
-        public static Vector2 pointerPos => UnityEngine.Input.mousePosition;
+        /// <summary>Screen pos in pixels </summary>
+        public static Vector2 pointerScreenPosition => UnityEngine.Input.mousePosition;
+
+        /// <summary>Viewport rect [0 - 1]</summary>
+        public static Vector2 pointerPosition { get; private set; }
         
         /// <param name="screenPoint">In pixels</param>
         public static Vector2 ScreenPointToViewport(Vector2 screenPoint)

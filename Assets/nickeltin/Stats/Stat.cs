@@ -60,6 +60,18 @@ namespace Characters
 			return false;
 		}
 
+		public virtual bool RemoveAllModifiers()
+		{
+			if (m_statModifiers.Count > 0)
+			{
+				m_statModifiers.Clear();
+				m_isDirty = true;
+				return true;
+			}
+
+			return false;
+		}
+
 		public virtual bool RemoveAllModifiersFromSource(object source)
 		{
 			int numRemovals = m_statModifiers.RemoveAll(mod => mod.source == source);

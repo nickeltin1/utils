@@ -27,9 +27,9 @@ namespace nickeltin.Cameras.TriDimensional
         [Serializable]
         private class InterpolationSettings
         {
-            [Range(0, 1)] public float positionLerpSpeed = 0.5f;
-            [Range(0, 1)] public float localPositionLerpSpeed = 0.5f;
-            [Range(0, 1)] public float rotationLerpSpeed = 0.5f;
+            public float positionLerpSpeed = 100f;
+            public float localPositionLerpSpeed = 100f;
+            public float rotationLerpSpeed = 100f;
         }
 
         public static Settings copiedSettings = new Settings();
@@ -128,12 +128,12 @@ namespace nickeltin.Cameras.TriDimensional
                 m_targetedCameraLocalPos = new Vector3(m_settings.x, m_settings.y, 0);
                 
                 transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
-                    m_lerpSettings.positionLerpSpeed);
+                    m_lerpSettings.positionLerpSpeed * Time.deltaTime);
 
                 //if (!shaking)
                 //{
                     m_camera.transform.localPosition = Vector3.Lerp(m_camera.transform.localPosition, 
-                        m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed);
+                        m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed * Time.deltaTime);
                 //}
             }
 
@@ -142,7 +142,8 @@ namespace nickeltin.Cameras.TriDimensional
                 m_targetedRotation = m_target.transform.rotation;
             }
             
-            transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, m_lerpSettings.rotationLerpSpeed);
+            transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, 
+                m_lerpSettings.rotationLerpSpeed * Time.deltaTime);
         }
 
         public Settings GetSettings()

@@ -14,10 +14,7 @@ namespace nickeltin.Cameras.TriDimensional
         public bool overrideCameraSettings => m_overrideCameraSettings;
         public CameraRig.Settings settings => m_settings;
         
-        public void ChangeTarget()
-        {
-            onChange?.Invoke(this);
-        }
+        public void ChangeTarget() => onChange?.Invoke(this);
 
 #if UNITY_EDITOR
         protected override void CopySettings() => CameraRig.copiedSettings = m_settings;
