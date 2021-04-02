@@ -30,13 +30,12 @@ namespace nickeltin.ObjectPooling
         
         public abstract T Get();
 
-        public void Add(IList<T> objects, [DefaultParameterValue(false)] [Optional] bool forceParent)
+        public void Add(IList<T> objects, bool forceParent = false)
         {
             for (int i = objects.Count - 1; i >= 0; i--) Add(objects[i], forceParent);
-
         }
         
-        public virtual bool Add(T poolObject, [DefaultParameterValue(false)] [Optional] bool forceParent)
+        public virtual bool Add(T poolObject, bool forceParent = false)
         {
             if (pool.Contains(poolObject)) return false;
             
@@ -54,7 +53,7 @@ namespace nickeltin.ObjectPooling
             else if (outOfPoolObjects.Contains(poolObject)) outOfPoolObjects.Remove(poolObject);
         }
 
-        public void ReturnAllObjectsToPool([DefaultParameterValue(false)] [Optional] bool forceParent)
+        public void ReturnAllObjectsToPool(bool forceParent = false)
         {
             Add(outOfPoolObjects, forceParent);
         }

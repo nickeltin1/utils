@@ -120,19 +120,21 @@ namespace nickeltin.StateMachine
         /// </summary>
         public override void SwitchState(Enum type) => SwitchState(GetState(type));
         
+        
         /// <summary>
         /// Ends current state, and starts new.
         /// </summary>
+        /// <param name="forceSwitch">If true, even if old state equals to new state, it will be restarted.</param>
         /// <returns>Is switching successful</returns>
-        public bool SwitchState(T to)
+        public bool SwitchState(T to, bool forceSwitch = false)
         {
             if (to != null && m_states.ContainsValue(to))
             {
-                if (to == CurrentState) return false;
+                if (!forceSwitch && to == CurrentState) return false;
                 PassStateToEngine(CurrentState, DataMode.Remove);
-                if(enabled) CurrentState?.OnStateEnd();
+                if (enabled) CurrentState?.OnStateEnd();
                 CurrentState = to;
-                if(enabled) CurrentState.OnStateStart();
+                if (enabled) CurrentState.OnStateStart();
                 PassStateToEngine(CurrentState, DataMode.Add);
                 return true;
             }
@@ -141,6 +143,7 @@ namespace nickeltin.StateMachine
             return false;
         }
 
+        
         public void AddState(T newState)
         {
             if (!m_states.ContainsKey(newState.implicitType))
@@ -179,7 +182,7 @@ namespace nickeltin.StateMachine
         /// <summary>
         /// Exits currently running state.
         /// </summary>
-        public T ExitState()
+        public T EndCurrentState()
         {
             PassStateToEngine(CurrentState, DataMode.Remove);
             if(enabled)CurrentState?.OnStateEnd();
@@ -187,7 +190,7 @@ namespace nickeltin.StateMachine
             CurrentState = null;
             return exitState;
         }
-        
+
         /// <summary>
         /// Returns state if its exists, else returns null.
         /// </summary>

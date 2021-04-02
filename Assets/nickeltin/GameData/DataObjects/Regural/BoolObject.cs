@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using nickeltin.Editor.Utility;
+using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = "GameData/BoolObject")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(BoolObject))]
     public class BoolObject : DataObject<bool>
     {
         

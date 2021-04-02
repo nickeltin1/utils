@@ -47,7 +47,7 @@ namespace nickeltin.Other
             this.m_owner = owner;
         }
         
-        public void Start([Optional][DefaultParameterValue(-1)] float t, [Optional][DefaultParameterValue(null)] Action onTimesUp)
+        public void Start(float t = - 1, Action onTimesUp = null)
         {
             if(IsRunning) return;
             timerTicker = m_owner.StartCoroutine(Execute(t == -1 ? m_time : t, onTimesUp ?? m_action));

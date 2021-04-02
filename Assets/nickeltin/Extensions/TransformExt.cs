@@ -44,5 +44,9 @@ namespace nickeltin.Extensions
             for (int i = transform.childCount - 1; i >= 0; i--) childs[i] = transform.GetChild(i);
             return childs;
         }
+
+
+        public static Vector3 DirectionTo(this Transform from, Transform to) => from.position.DirectionTo(to.position);
+        public static Vector3 DirectionTo(this Transform from, MonoBehaviour to) => from.position.DirectionTo(to.transform.position);
     }
 }

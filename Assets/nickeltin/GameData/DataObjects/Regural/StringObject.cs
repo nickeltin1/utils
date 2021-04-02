@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using nickeltin.Editor.Utility;
+using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = "GameData/StringObject")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(StringObject))]
     public class StringObject : DataObject<string>
     {
         

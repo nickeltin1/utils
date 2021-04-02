@@ -19,5 +19,27 @@ namespace nickeltin.Extensions
             quaternion.Set(x ?? quaternion.x, y ?? quaternion.y, z ?? quaternion.z, quaternion.w);
             return quaternion;
         }
+
+        public static Quaternion Clamp(this ref Quaternion quaternion, Vector3 min, Vector3 max)
+        {
+            quaternion.x /= quaternion.w;
+            quaternion.y /= quaternion.w;
+            quaternion.z /= quaternion.w;
+            quaternion.w = 1.0f;
+ 
+            float angleX = 2.0f * Mathf.Rad2Deg * Mathf.Atan(quaternion.x);
+            angleX = Mathf.Clamp(angleX, min.x, max.x);
+            quaternion.x = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleX);
+ 
+            float angleY = 2.0f * Mathf.Rad2Deg * Mathf.Atan(quaternion.y);
+            angleY = Mathf.Clamp(angleY, min.y, max.y);
+            quaternion.y = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleY);
+ 
+            float angleZ = 2.0f * Mathf.Rad2Deg * Mathf.Atan(quaternion.z);
+            angleZ = Mathf.Clamp(angleZ, min.z, max.z);
+            quaternion.z = Mathf.Tan(0.5f * Mathf.Deg2Rad * angleZ);
+ 
+            return quaternion.normalized;
+        }
     }
 }

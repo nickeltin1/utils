@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using nickeltin.Editor.Utility;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving
@@ -7,7 +8,7 @@ namespace nickeltin.GameData.Saving
     /// All items in registry will be registered to saves database, but will not be LOADED/SAVED.
     /// Can be accessed from database with <see cref="SaveSystem.GetSavedItem{T}"/>.
     /// </summary>
-    [CreateAssetMenu(menuName = "GameData/Saving/SaveRegistry")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(SaveRegistry))]
     public sealed class SaveRegistry : SaveRegistry<SaveableBase> { }
 
     /// <summary>

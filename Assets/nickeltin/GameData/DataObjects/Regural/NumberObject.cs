@@ -1,9 +1,10 @@
 ﻿using nickeltin.Extensions;
+using nickeltin.Editor.Utility;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = "GameData/NumberObject")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(NumberObject))]
     public class NumberObject : DataObject<float>
     {
         public enum NumberType { Int, Float }

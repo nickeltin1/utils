@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using nickeltin.Extensions;
 using nickeltin.GameData.DataObjects;
+using nickeltin.Editor.Utility;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving
@@ -13,7 +14,7 @@ namespace nickeltin.GameData.Saving
     /// Also if its provided inside <see cref="MonoSave"/> will hold its data.
     /// Can store any <see cref="object"/>, assign them with <see cref="SetObject{T}"/>, or get with <see cref="GetObject{T}"/>.
     /// </summary>
-    [CreateAssetMenu(menuName = "GameData/Saving/GenericSave")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(GenericSave))]
     public sealed class GenericSave : Saveable<object[]>
     {
         [Serializable]
@@ -24,15 +25,15 @@ namespace nickeltin.GameData.Saving
         }
         
         [Serializable]
-        public class Entry<T> where T : DataObjectReferenceBase
+        public class Entry<T> where T : VariableReferenceBase
         {
             public T defaultValue;
             public T value;
         }
         
-        [SerializeField] private Entry<NumberReference>[] m_numbers;
-        [SerializeField] private Entry<StringReference>[] m_strings;
-        [SerializeField] private Entry<BoolReference>[] m_bools;
+        [SerializeField] private Entry<VariableReference<float>>[] m_numbers;
+        [SerializeField] private Entry<VariableReference<string>>[] m_strings;
+        [SerializeField] private Entry<VariableReference<bool>>[] m_bools;
         
         private object[] m_objects;
         private Dictionary<string, object> m_monoSavesDictionary;
@@ -78,7 +79,7 @@ namespace nickeltin.GameData.Saving
         public bool SetString(string s, int id) => TryToSetArrayValue(m_strings, s, id);
         public bool SetBool(bool b, int id) => TryToSetArrayValue(m_bools, b, id);
 
-        private bool TryToSetArrayValue<T>(Entry<T>[] array, object value, int index) where T : DataObjectReferenceBase
+        private bool TryToSetArrayValue<T>(Entry<T>[] array, object value, int index) where T : VariableReferenceBase
         {
             if (array.InRange(index))
             {
@@ -150,7 +151,7 @@ namespace nickeltin.GameData.Saving
         }
         
         private static void SerializeArray<T>(Entry<T>[] from, object[] to, int startingIndex, out int lastItemIndex) 
-            where T : DataObjectReferenceBase
+            where T : VariableReferenceBase
         {
             for (int i = 0; i < from.Length; i++)
             {
@@ -161,7 +162,7 @@ namespace nickeltin.GameData.Saving
         }
 
         private static void DeserializeArray<T>(object[] from, Entry<T>[] to, int startingIndex, out int lastItemIndex)
-            where T : DataObjectReferenceBase
+            where T : VariableReferenceBase
         {
             for (int i = 0; i < to.Length; i++)
             {
@@ -171,7 +172,7 @@ namespace nickeltin.GameData.Saving
             lastItemIndex = startingIndex + to.Length;
         }
         
-        private static void LoadDefaultToArray<T>(Entry<T>[] array) where T : DataObjectReferenceBase
+        private static void LoadDefaultToArray<T>(Entry<T>[] array) where T : VariableReferenceBase
         {
             for (int i = array.Length - 1; i >= 0; i--)
             {

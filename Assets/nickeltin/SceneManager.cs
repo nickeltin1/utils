@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using nickeltin.Editor.Attributes;
+using nickeltin.Editor.Types;
 using nickeltin.Events;
 using nickeltin.Singletons;
 using UnityEngine;
@@ -40,16 +40,16 @@ namespace nickeltin.SceneManagment
         [Serializable]
         private struct BaseScenes
         {
-            [Scene] public string uiScene;
-            [Scene] public string initializeScene;
-            [Scene] public string tutorialScene;
+            public SceneReference uiScene;
+            public SceneReference initializeScene;
+            public SceneReference tutorialScene;
         }
         
         
         [SerializeField] private Settings m_settings;
         [SerializeField] private Events m_events;
         [SerializeField] private BaseScenes m_baseScenes;
-        [SerializeField, Scene] private List<string> m_levels;
+        [SerializeField] private List<SceneReference> m_levels;
 
         public static event Action afterInitialization;
         public static event Action afterUILoaded;

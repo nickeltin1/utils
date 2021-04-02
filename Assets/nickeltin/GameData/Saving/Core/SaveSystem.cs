@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using nickeltin.Editor.Attributes;
 using nickeltin.GameData.Saving.SerializationSurrogates;
+using nickeltin.Editor.Utility;
 using nickeltin.Singletons;
 using UnityEditor;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace nickeltin.GameData.Saving
     /// Controls all saves in the game, handles autosave events, contains all saves database, get it with
     /// <see cref="GetSavedItem{T}"/>. All entries can be assigned in Inspector, or with <see cref="AddSavedItem"/>
     /// </summary>
-    [CreateAssetMenu(menuName = "GameData/Saving/SaveSystem")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(SaveSystem))]
     public sealed class SaveSystem : SOSingleton<SaveSystem>
     {
         private class SaveSystemAutoSaver : MonoBehaviour

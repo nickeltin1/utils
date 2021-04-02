@@ -195,7 +195,7 @@ namespace nickeltin.StateMachine
                 PassStateToEngine(CurrentState_Internal, DataMode.Add, type);
             }
         }
-        
+
         public abstract void SwitchState(Enum type);
         protected abstract StateBase CurrentState_Internal { get; }
         protected abstract StateBase MainState_Internal { get; }

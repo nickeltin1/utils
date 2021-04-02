@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
+    [Serializable]
     public abstract class DataObject<T> : ScriptableObject
     {
         [TextArea, SerializeField] private string m_developmentDescription = "";

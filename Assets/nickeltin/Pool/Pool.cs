@@ -9,7 +9,7 @@ namespace nickeltin.ObjectPooling
     /// </summary>
     /// <typeparam name="T">PoolObject</typeparam>
     [Serializable]
-    public class Pool<T> : PoolBase<T> where T : Component, IPoolObject<T>
+    public class Pool<T> : PoolBase<T> where T : Component//, IPoolObject<T>
     {
         public Pool(T poolObject, Transform poolParent = null, int size = 200, Action<T> onItemFirstSpawn = null ) : 
             base(poolObject, poolParent, size, onItemFirstSpawn) { }
@@ -27,7 +27,7 @@ namespace nickeltin.ObjectPooling
                 else
                 {
                     T newObj = SpawnItem();
-                    newObj.Pool = this;
+                    AssignPoolToObject(newObj);
                     Add(newObj);
                 }
             }
@@ -43,10 +43,15 @@ namespace nickeltin.ObjectPooling
         {
             if (base.Add(poolObject, forceParent))
             {
-                poolObject.Pool = this;
+                AssignPoolToObject(poolObject);
                 return true;
             }
             return false;
+        }
+
+        private void AssignPoolToObject(T obj)
+        {
+            if (obj is IPoolObject<T> p) p.Pool = this;
         }
     }
     

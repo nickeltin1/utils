@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using nickeltin.Editor.Attributes;
+using nickeltin.Editor.Utility;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving
@@ -7,7 +8,7 @@ namespace nickeltin.GameData.Saving
     /// <summary>
     /// Packs all your saves into one file, all of them is added to saves database, as well as Package itself.
     /// </summary>
-    [CreateAssetMenu(menuName = "GameData/Saving/SavePackage")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(SavePackage))]
     public sealed class SavePackage : Saveable<object[]>
     {
         [SerializeField] private List<SaveableBase> m_saves;

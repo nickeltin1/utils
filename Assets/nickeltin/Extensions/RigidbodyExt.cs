@@ -6,8 +6,20 @@ namespace nickeltin.Extensions
 {
     public static class RigidbodyExt
     {
-        public static void MoveTween(this Rigidbody rigidbody, MonoBehaviour parent, Vector3 to, 
+        public static void MoveToPoint(this Rigidbody rigidbody, MonoBehaviour parent, Vector3 to, 
             float time, Action onComplete = null)
+        {
+           MoveToPoint_Internal(rigidbody, parent, to, time, onComplete, rigidbody.MovePosition);
+        }
+        
+        public static void MoveToPointKinematic(this Rigidbody rigidbody, MonoBehaviour parent, Vector3 to, 
+            float time, Action onComplete = null)
+        {
+            MoveToPoint_Internal(rigidbody, parent, to, time, onComplete, v => rigidbody.transform.position = v);
+        }
+
+        private static void MoveToPoint_Internal(Rigidbody rigidbody, MonoBehaviour parent, Vector3 to, 
+            float time, Action onComplete = null, Action<Vector3> onUpdate = null)
         {
             IEnumerator Move()
             {
@@ -18,13 +30,11 @@ namespace nickeltin.Extensions
 
                 for (int i = 1; i <= fixedFramesCount; i++)
                 {
-                    rigidbody.MovePosition(position + (positionChange * i));
+                    onUpdate?.Invoke(position + (positionChange * i));
                     yield return new WaitForFixedUpdate();
                 }
-
                 onComplete?.Invoke();
             }
-
             parent.StartCoroutine(Move());
         }
     }

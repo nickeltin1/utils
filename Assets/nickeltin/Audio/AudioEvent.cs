@@ -1,11 +1,12 @@
 ﻿using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
+using nickeltin.Editor.Utility;
 using UnityEditor;
 using UnityEngine;
 
 namespace nickeltin.Audio
 {
-    [CreateAssetMenu(menuName = "Audio/AudioEvent")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.audioMenu + nameof(AudioEvent))]
     public class AudioEvent : ScriptableObject
     {
         private static AudioSource previewSource;

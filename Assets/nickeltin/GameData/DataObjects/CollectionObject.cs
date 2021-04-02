@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
@@ -7,6 +8,8 @@ namespace nickeltin.GameData.DataObjects
     {
         [SerializeField] protected List<T> m_collection;
 
+        public int Count => m_collection.Count;
+        
         public override IList<T> Value { get => m_collection;}
 
         public void AddRange(IEnumerable<T> range, bool invokeUpdate = true)
@@ -42,7 +45,9 @@ namespace nickeltin.GameData.DataObjects
             m_collection.Clear();
             if(invokeUpdate) InvokeUpdate();
         }
-        
+
+        public void Sort(Comparison<T> comparison) => m_collection.Sort(comparison);
+
         public T this [int i]
         {
             get => m_collection[i];

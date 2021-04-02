@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using nickeltin.Editor.Utility;
+using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = "GameData/VectorObject")]
+    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(VectorObject))]
     public class VectorObject : DataObject<Vector3>
     {
         
