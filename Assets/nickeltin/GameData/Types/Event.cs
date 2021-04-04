@@ -19,7 +19,7 @@ namespace nickeltin.GameData.Types
     [Serializable]
     public class Event<T> : EventBase
     {
-        public T invokeData;
+        [SerializeField] private T invokeData;
         
         public event Action<T> onInvoke;
         

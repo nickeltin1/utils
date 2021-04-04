@@ -22,10 +22,8 @@ namespace nickeltin.GameData.Editor
             EditorGUI.BeginChangeCheck();
         }
 
-        protected void DrawProperty(Rect position, params SerializedProperty[] properties)
+        protected void DrawPopup(ref Rect position)
         {
-            if (Application.isPlaying) GUI.enabled = false;
-            
             Rect buttonRect = new Rect(position);
             buttonRect.yMin += m_popupStyle.margin.top;
             buttonRect.width = m_popupStyle.fixedWidth + m_popupStyle.margin.right;
@@ -33,6 +31,13 @@ namespace nickeltin.GameData.Editor
             
             m_referenceType.enumValueIndex = EditorGUI.Popup(buttonRect, m_referenceType.enumValueIndex, 
                 m_referenceType.enumDisplayNames, m_popupStyle);
+        }
+        
+        protected void DrawProperty(Rect position, params SerializedProperty[] properties)
+        {
+            if (Application.isPlaying) GUI.enabled = false;
+            
+            DrawPopup(ref position);
             
             for (int i = 0; i < properties.Length; i++)
             {

@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a840c4ce87c41aa4090e77dd5d5dc93a, type: 3}
-  m_Name: OnJumpButtonClick
+  m_Script: {fileID: 11500000, guid: 90be7b16af4b98746bcdbe3b18b9308f, type: 3}
+  m_Name: OnButtonClick
   m_EditorClassIdentifier: 
-  _description: Event should be invoked on "Jump" button click
+  _description: Should be invoke on "Jump" button click

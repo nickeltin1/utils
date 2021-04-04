@@ -21,7 +21,7 @@ namespace nickeltin.GameData.DataObjects
                 if (m_eventObject != null) return m_eventObject.Source;
                 return null;
             }
-        } 
+        }
     }
     
     [Serializable]
@@ -38,7 +38,7 @@ namespace nickeltin.GameData.DataObjects
                 if (m_eventObject != null) return m_eventObject.Source;
                 return null;
             }
-        } 
+        }
     }
     
     [Serializable]
