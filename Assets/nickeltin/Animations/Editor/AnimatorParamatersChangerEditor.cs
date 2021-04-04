@@ -1,7 +1,7 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-namespace nickeltin.Events.Editor
+namespace nickeltin.GameData.Events.Editor
 {
     [CustomEditor(typeof(AnimatorParamatersChanger))]
     public class AnimatorParamatersChangerEditor : UnityEditor.Editor

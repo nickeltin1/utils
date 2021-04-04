@@ -1,4 +1,4 @@
-using nickeltin.Events;
+using nickeltin.GameData.Events;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]

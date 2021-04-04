@@ -1,11 +1,11 @@
 ﻿using System;
-using nickeltin.Experimental.GlobalVariables;
+using nickeltin.GameData.GlobalVariables;
 using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
     [Serializable]
-    public class VariableReference<ValueType> : VariableReferenceBase //where ObjectType : DataObject<ValueType>
+    public class VariableReference<ValueType> : VariableReferenceBase
     {
         public enum ReferenceType
         {
@@ -34,12 +34,18 @@ namespace nickeltin.GameData.DataObjects
         {
             m_constantValue = (ValueType) value;
             if (m_dataObject != null) m_dataObject.Value = m_constantValue;
-            if (m_globalVariable.HasSource) m_globalVariable.Value = m_constantValue;
+            if (m_globalVariable.HasRegistry) m_globalVariable.Value = m_constantValue;
         }
 
         public static implicit operator ValueType(VariableReference<ValueType> reference)
         {
             return reference.Value;
         }
+    }
+    
+    public abstract class VariableReferenceBase
+    {
+        public abstract object GetValueWithoutType();
+        public abstract void SetValueWithoutType(object value);
     }
 }

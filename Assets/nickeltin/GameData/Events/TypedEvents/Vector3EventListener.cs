@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Events
+namespace nickeltin.GameData.Events
 {
     [AddComponentMenu("Events/Vector3EventListener")]
-    public sealed class Vector3EventListener : GenericEventListener<Vector3> { }
+    public sealed class Vector3EventListener : EventListener<Vector3> { }
 }

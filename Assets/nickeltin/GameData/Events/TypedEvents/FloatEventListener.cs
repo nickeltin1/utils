@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Events
+namespace nickeltin.GameData.Events
 {
     [AddComponentMenu("Events/FloatEventListener")]
-    public sealed class FloatEventListener : GenericEventListener<float> { }
+    public sealed class FloatEventListener : EventListener<float> { }
 }

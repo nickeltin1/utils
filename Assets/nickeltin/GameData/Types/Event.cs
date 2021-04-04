@@ -1,10 +1,14 @@
 ﻿using System;
+using UnityEngine;
 
-namespace nickeltin.Experimental.GlobalVariables.Types
+namespace nickeltin.GameData.Types
 {
     [Serializable]
     public class Event : EventBase
     {
+        //Empty variable for making it objects Serializable
+        [SerializeField] private int _; 
+        
         public event Action onInvoke;
 
         public void Invoke() => onInvoke?.Invoke();

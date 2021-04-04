@@ -10,8 +10,8 @@ using UnityEngine;
 
 namespace nickeltin.Editor.PropertyDrawers
 {
-    [CustomPropertyDrawer(typeof(LinkedLists<,>), true)]
-    public class LinkedListsDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(LinkedArrays<,>), true)]
+    public class LinkedArraysDrawer : PropertyDrawer
     {
         private const string DuplicatedKeyErrorMessage = "You have duplicated keys, some changes can be lost!";
         private const string KeyTypeErrorMessage = "The key type does not support serialization";
@@ -30,6 +30,8 @@ namespace nickeltin.Editor.PropertyDrawers
 
         private float elementHeight;
         private bool foldoutRList;
+
+        private LinkedListsSettingsAttribute settings;
 
         protected int SelectedIndex { get; private set; }
         protected ReorderableList RList { get; private set; }
@@ -53,9 +55,17 @@ namespace nickeltin.Editor.PropertyDrawers
         private void OnEnable(SerializedProperty property)
         {
             isEnabled = true;
+            
+            if (Attribute.IsDefined(fieldInfo, typeof(LinkedListsSettingsAttribute)))
+            {
+                settings = (LinkedListsSettingsAttribute) Attribute.GetCustomAttribute(fieldInfo,
+                    typeof(LinkedListsSettingsAttribute));
+            }
+            
             foldoutRList = EditorPrefs.GetBool(property.name);
             InitializeList(property);
             InitializeRedBoxVariables();
+
         }
 
         protected virtual void InitializeRedBoxVariables()
@@ -87,7 +97,9 @@ namespace nickeltin.Editor.PropertyDrawers
             {
                 hasDuplicatedKey = false;
                 rect.y += space;
+                if (settings != null && settings.runtimeImmutable && Application.isPlaying) GUI.enabled = false;
                 RList.DoList(rect);
+                GUI.enabled = true;
             }
             
             EditorPrefs.SetBool(property.name, foldoutRList);
@@ -115,16 +127,14 @@ namespace nickeltin.Editor.PropertyDrawers
             bool displayAddButton = true;
             bool displayRemoveButton = true;
             
-            if (Attribute.IsDefined(fieldInfo, typeof(LinkedListsSettingsAttribute)))
+            if (settings != null)
             {
-                var settings = (LinkedListsSettingsAttribute) Attribute.GetCustomAttribute(fieldInfo, typeof(LinkedListsSettingsAttribute));
-                
                 draggable = settings.draggable;
                 displayHeader = settings.displayHeader;
                 displayAddButton = settings.displayAddButton;
                 displayRemoveButton = settings.displayRemoveButton;
-                
             }
+            
             return new ReorderableList(serializedObj, elements, draggable, displayHeader, displayAddButton, displayRemoveButton)
             {
                 drawHeaderCallback = DrawHeader,
@@ -172,6 +182,7 @@ namespace nickeltin.Editor.PropertyDrawers
 
         protected virtual void DrawElement(Rect rect, int index, bool isActive, bool isFocused)
         {
+            //if (settings != null && settings.runtimeImmutable && Application.isPlaying) GUI.enabled = false;
             rect.position = new Vector2(rect.position.x + 10, rect.position.y);
             SerializedProperty key = KeysProperty.GetArrayElementAtIndex(index);
             SerializedProperty value = ValuesProperty.GetArrayElementAtIndex(index);
@@ -191,8 +202,8 @@ namespace nickeltin.Editor.PropertyDrawers
                 key, value);
             OnAfterDrawProperties();
             EditorGUIUtility.labelWidth = oldWidth;
-
-           CheckRedBoxForElement(rect, key, index);
+            CheckRedBoxForElement(rect, key, index);
+            //GUI.enabled = true;
         }
 
         protected virtual Rect DrawPropertiesForElement(Rect keyRect, Rect valueRect, SerializedProperty keyProp, SerializedProperty valueProp)

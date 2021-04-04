@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Experimental.GlobalVariables
+namespace nickeltin.GameData.GlobalVariables
 {
     public abstract class VariablesRegistryBase : ScriptableObject
     {

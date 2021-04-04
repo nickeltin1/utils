@@ -1,5 +1,4 @@
-﻿using nickeltin.Experimental.GlobalVariables;
-using nickeltin.Editor.Utility;
+﻿using nickeltin.Editor.Utility;
 using UnityEngine;
 
 namespace nickeltin.GameData.GlobalVariables.RegistersTypes

@@ -1,7 +1,7 @@
 ﻿using nickeltin.Editor.Utility;
 using UnityEngine;
 
-namespace nickeltin.Experimental.GlobalVariables
+namespace nickeltin.GameData.GlobalVariables.RegistersTypes
 {
     [CreateAssetMenu(menuName = MenuPathsUtility.registryMenu + nameof(StringRegistry))]
     public class StringRegistry : GlobalVariablesRegistry<string>

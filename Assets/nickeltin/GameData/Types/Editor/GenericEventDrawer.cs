@@ -1,8 +1,7 @@
-﻿using nickeltin.Experimental.GlobalVariables.Types;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
-namespace nickeltin.Experimental.GlobalVariables.Editor
+namespace nickeltin.GameData.Types.Editor
 {
     [CustomPropertyDrawer(typeof(Event<>), true)]
     public class GenericEventDrawer : EventDrawer
@@ -10,7 +9,7 @@ namespace nickeltin.Experimental.GlobalVariables.Editor
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             float halfWidth =  position.width / 2;
-            position.width = halfWidth;
+            position.width = halfWidth - EditorGUIUtility.standardVerticalSpacing;
             SerializedProperty invokeData = property.FindPropertyRelative("invokeData");
             EditorGUI.PropertyField(position, invokeData, GUIContent.none);
             position.x += halfWidth;

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace nickeltin.Events
+namespace nickeltin.GameData.Events
 {
     public class AnimationEvent : MonoBehaviour
     {

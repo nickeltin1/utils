@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using nickeltin.Editor.Types;
-using nickeltin.Events;
+using nickeltin.GameData.Events;
 using nickeltin.Singletons;
 using UnityEngine;
 using UnityEngine.SceneManagement;

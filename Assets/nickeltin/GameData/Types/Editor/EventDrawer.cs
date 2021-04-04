@@ -1,12 +1,10 @@
-﻿using nickeltin.Experimental.GlobalVariables.Types;
-using nickeltin.Extensions;
+﻿using nickeltin.Extensions;
 using UnityEditor;
 using UnityEngine;
-using Event = nickeltin.Experimental.GlobalVariables.Types.Event;
 
-namespace nickeltin.Experimental.GlobalVariables.Editor
+namespace nickeltin.GameData.Types.Editor
 {
-    [CustomPropertyDrawer(typeof(Event))]
+    [CustomPropertyDrawer(typeof(Event), false)]
     public class EventDrawer : PropertyDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

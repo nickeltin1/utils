@@ -7,34 +7,37 @@ namespace nickeltin.Editor.PropertyDrawers
 {
     public abstract class GenericObjectDrawer : PropertyDrawer
     {
-        protected bool CacheGenericType(Type baseType, SerializedProperty property, ref Type typeSource, 
-            ref Type parameterSource)
+        protected bool CacheGenericType(Type baseType, SerializedProperty property, ref Type type, 
+            ref Type[] parameters)
         {
-            if (typeSource == null)
+            if (type == null)
             {
-                parameterSource = property.GetGenericParameterType();
-                typeSource = baseType.GetGenericInheritor(parameterSource);
-                if (typeSource == null) return false;
+                parameters = property.GetGenericParametersTypes();
+                type = baseType.GetGenericInheritor(parameters);
+                if (type == null) return false;
             }
 
             return true;
         }
 
         protected void DrawGenericObjectField(Rect position, SerializedProperty property, GUIContent label, Type type, 
-            Type parameter)
+            Type[] parameters)
         {
             if (type != null) EditorGUI.ObjectField(position, property, type, label);
-            else DrawGenericNotFoundError(position, parameter, label);
+            else DrawGenericNotFoundError(position, parameters, label);
         }
 
-        protected void DrawGenericNotFoundError(Rect position, Type type, GUIContent label)
+        protected void DrawGenericNotFoundError(Rect position, Type[] parameters, GUIContent label)
         {
-
             if (label != GUIContent.none)
             {
                 EditorGUI.LabelField(position, label);
                 position.x += EditorGUIUtility.labelWidth + 2;
             }
+
+            string type = "";
+            foreach (var param in parameters) type += param;
+
             EditorGUI.HelpBox(position, $"Generic type with parameter {type} not found", MessageType.Error);
         }
     }

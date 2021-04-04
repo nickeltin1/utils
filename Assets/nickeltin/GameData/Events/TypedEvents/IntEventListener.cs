@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-namespace nickeltin.Events
+namespace nickeltin.GameData.Events
 {
     [AddComponentMenu("Events/IntEventListener")]
-    public sealed class IntEventListener : GenericEventListener<int> { }
+    public sealed class IntEventListener : EventListener<int> { }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Reflection;
 using UnityEditor;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace nickeltin.Extensions
 {
@@ -151,7 +152,7 @@ namespace nickeltin.Extensions
             {
                 return prop.doubleValue;
             }
-            else if (typ == "long")
+            if (typ == "long")
             {
                 return prop.longValue;
             }
@@ -159,24 +160,33 @@ namespace nickeltin.Extensions
         }
         
         
-        public static Type GetGenericParameterType(this SerializedProperty property)
+        public static Type[] GetGenericParametersTypes(this SerializedProperty property)
         {
             Type parentType = property.serializedObject.targetObject.GetType();
             string path = property.propertyPath;
             string[] perDot = path.Split('.');
-            FieldInfo fi = parentType.GetField(perDot[0], PublicOrNotInstance);;
+            
+            FieldInfo GetField(string fieldName) => parentType.GetField(fieldName, PublicOrNotInstance);
+            
+            FieldInfo fieldInfo = GetField(perDot[0]);
+
+            while (fieldInfo == null && parentType.BaseType != null)
+            {
+                fieldInfo = GetField(perDot[0]);
+                if (fieldInfo == null) parentType = parentType.BaseType;
+            }
+            
             for (var i = 1; i < perDot.Length; i++)
             {
-                string fieldName = perDot[i];
-                if (fi != null) parentType = fi.FieldType;
-                fi = parentType.GetField(fieldName, PublicOrNotInstance);;
+                if (fieldInfo != null) parentType = fieldInfo.FieldType;
+                fieldInfo = GetField(perDot[i]);
             }
 
-            if (fi != null)
+            if (fieldInfo != null)
             {
-                return TypeExt.GetGenericParameterTypeFromFullName(fi.FieldType.ToString());
+                return TypeExt.GetGenericHierarchy(fieldInfo.FieldType.ToString());
             }
-            return null;
+            return new[] {typeof(Object)};
         }
     }
 #endif

@@ -1,38 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using UnityEngine;
 
 namespace nickeltin.Extensions
 {
     public static class TypeExt
     {
-        public static Type GetGenericInheritor(this Type parentType, Type parameterType)
+        public static Type GetGenericInheritor(this Type parentType, Type[] parameterType)
         {
             var types = Assembly.GetAssembly(parentType).GetTypes(); 
             foreach (Type type in types)
             {
                 if (type.IsClass && !type.IsAbstract && type.BaseType != null && type.BaseType.IsGenericType && 
-                    type.BaseType.GetGenericTypeDefinition() == parentType &&
-                    parameterType == TypeExt.GetGenericParameterTypeFromFullName(type.BaseType.ToString()))
+                    type.BaseType.GetGenericTypeDefinition() == parentType)
                 {
-                    return type;
+                    var hierarchy = TypeExt.GetGenericHierarchy(type.BaseType.ToString());
+                    if (hierarchy.Length != parameterType.Length) continue;
+
+                    bool parametersMatch = true;
+                    for (var i = 0; i < parameterType.Length; i++)
+                    {
+                        if (parameterType[i] != hierarchy[i])
+                        {
+                            parametersMatch = false;
+                            break;
+                        }
+                    }
+
+                    if (parametersMatch) return type;
                 }
             }
             
             return null;
         }
         
-        public static Type GetGenericParameterTypeFromFullName(string fullName)
+        public static Type[] GetGenericHierarchy(string fullName)
         {
-            int start = fullName.IndexOf('[')+1;
-            fullName = fullName.Substring(start, fullName.IndexOf(']') - start);
-            string assemblyName = fullName.Split('.').First();
-            Type t;
-            if (assemblyName.Equals(nameof(System))) t = Type.GetType(fullName);
-            else t = Type.GetType($"{fullName}, {assemblyName}");
-            return t;
+            const char openChar = '[';
+            const char closeChar = ']';
+            
+            List<Type> types = new List<Type>();
+            var v = fullName.Split(new []{openChar, closeChar}, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var s in v) types.Add(Type.GetType(s));
+            types.RemoveAt(0);
+            return types.ToArray();
         }
     }
 }

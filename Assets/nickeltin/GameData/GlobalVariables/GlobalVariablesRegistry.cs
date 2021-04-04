@@ -1,23 +1,29 @@
+using System;
 using System.Linq;
 using nickeltin.Editor.Attributes;
 using nickeltin.Editor.Types;
 using UnityEngine;
 
-namespace nickeltin.Experimental.GlobalVariables
+namespace nickeltin.GameData.GlobalVariables
 {
     public abstract class GlobalVariablesRegistry<T> : VariablesRegistryBase
     {
-        [SerializeField, LinkedListsSettings(false, false)] private LinkedLists<string, T> m_entries;
+        [SerializeField, LinkedListsSettings(false, false, runtimeImmutable: true)] private LinkedArrays<string, T> m_entries;
+
+        /// <summary> <see cref="int"/> - id of the entry, <see cref="T"/> - new entry value. </summary>
+        public event Action<int, T> onEntryChanged;
         
         public override string[] Keys => m_entries.Keys.ToArray();
-        public override int Count => m_entries.Count;
-
-
-        public T this [string key] => m_entries[key];
+        public override int Count => m_entries.Length;
+        
         public T this [int id]
         {
             get => m_entries[id];
-            set => m_entries[id] = value;
+            set
+            {
+                m_entries[id] = value;
+                onEntryChanged?.Invoke(id, value);
+            }
         }
     }
 }
