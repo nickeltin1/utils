@@ -1,5 +1,4 @@
-﻿using nickeltin.GameData.DataObjects;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
 
 namespace nickeltin.UI
@@ -7,7 +6,7 @@ namespace nickeltin.UI
     [RequireComponent(typeof(TMP_Text))]
     public class NumberLabel : MonoBehaviour
     {
-        [SerializeField] protected NumberObject m_source;
+        [SerializeField] protected SourceVariant<float> m_source;
         [SerializeField] [Range(0, 4)] protected int m_digitsAfterPoint = 2; 
         [SerializeField] protected string m_prefix;
         [SerializeField] protected string m_postfix;
@@ -22,18 +21,18 @@ namespace nickeltin.UI
             m_value.text = m_prefix + newValue.ToString("F" + m_digitsAfterPoint) + m_postfix;
         }
     
-        protected virtual void OnEnable()
+        private void OnEnable()
         {
-            if (m_source != null)
+            if (m_source.CurrentSourcePresented)
             {
-                m_source.onValueChanged += UpdateValue;
+                m_source.BindEvent(UpdateValue);
                 UpdateValue(m_source.Value);
             }
         }
 
-        protected virtual void OnDisable()
+        private void OnDisable()
         {
-            if (m_source != null) m_source.onValueChanged -= UpdateValue;
+            if (m_source.CurrentSourcePresented) m_source.UnbindEvent(UpdateValue);
         }
     }
 }

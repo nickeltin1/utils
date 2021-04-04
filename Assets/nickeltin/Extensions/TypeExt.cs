@@ -43,7 +43,7 @@ namespace nickeltin.Extensions
             var v = fullName.Split(new []{openChar, closeChar}, StringSplitOptions.RemoveEmptyEntries);
             foreach (var s in v) types.Add(Type.GetType(s));
             types.RemoveAt(0);
-            return types.ToArray();
+            return types.Count > 0 ? types.ToArray() : null;
         }
     }
 }

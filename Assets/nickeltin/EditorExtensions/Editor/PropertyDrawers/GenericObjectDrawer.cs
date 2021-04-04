@@ -13,8 +13,13 @@ namespace nickeltin.Editor.PropertyDrawers
             if (type == null)
             {
                 parameters = property.GetGenericParametersTypes();
-                type = baseType.GetGenericInheritor(parameters);
-                if (type == null) return false;
+                
+                if (parameters != null)
+                {
+                    type = baseType.GetGenericInheritor(parameters);
+                    if (type == null) return false;
+                }
+                else type = property.GetObjectType();
             }
 
             return true;
@@ -36,7 +41,7 @@ namespace nickeltin.Editor.PropertyDrawers
             }
 
             string type = "";
-            foreach (var param in parameters) type += param;
+            if (parameters != null) for (var i = 0; i < parameters.Length; i++) type += parameters[i];
 
             EditorGUI.HelpBox(position, $"Generic type with parameter {type} not found", MessageType.Error);
         }

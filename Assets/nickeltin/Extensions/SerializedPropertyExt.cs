@@ -163,30 +163,52 @@ namespace nickeltin.Extensions
         public static Type[] GetGenericParametersTypes(this SerializedProperty property)
         {
             Type parentType = property.serializedObject.targetObject.GetType();
-            string path = property.propertyPath;
-            string[] perDot = path.Split('.');
-            
-            FieldInfo GetField(string fieldName) => parentType.GetField(fieldName, PublicOrNotInstance);
-            
-            FieldInfo fieldInfo = GetField(perDot[0]);
+            string[] perDot = property.GetFullPropertyPath();
+            FieldInfo fieldInfo = GetFieldInfo(perDot[0], parentType);
 
             while (fieldInfo == null && parentType.BaseType != null)
             {
-                fieldInfo = GetField(perDot[0]);
+                fieldInfo = GetFieldInfo(perDot[0], parentType);
                 if (fieldInfo == null) parentType = parentType.BaseType;
             }
             
             for (var i = 1; i < perDot.Length; i++)
             {
                 if (fieldInfo != null) parentType = fieldInfo.FieldType;
-                fieldInfo = GetField(perDot[i]);
+                fieldInfo = GetFieldInfo(perDot[i], parentType);
             }
 
             if (fieldInfo != null)
             {
                 return TypeExt.GetGenericHierarchy(fieldInfo.FieldType.ToString());
             }
-            return new[] {typeof(Object)};
+            return null;
+        }
+
+        public static Type GetObjectType(this SerializedProperty property)
+        {
+            Type parentType = property.serializedObject.targetObject.GetType();
+            string[] perDot = property.GetFullPropertyPath();
+            FieldInfo fieldInfo = GetFieldInfo(perDot[0], parentType);
+            
+            for (var i = 1; i < perDot.Length; i++)
+            {
+                if (fieldInfo != null) parentType = fieldInfo.FieldType;
+                fieldInfo = GetFieldInfo(perDot[i], parentType);
+            }
+
+            return fieldInfo.FieldType;
+        }
+
+        private static string[] GetFullPropertyPath(this SerializedProperty property)
+        {
+            string path = property.propertyPath;
+            return path.Split('.');
+        }
+
+        private static FieldInfo GetFieldInfo(string fieldName, Type @form)
+        {
+            return form.GetField(fieldName, PublicOrNotInstance);
         }
     }
 #endif
