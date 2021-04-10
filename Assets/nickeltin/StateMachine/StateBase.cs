@@ -8,10 +8,10 @@ namespace nickeltin.StateMachine
         [Serializable]
         public enum Type { NotAssigned, Main, Disabled, Enabled }
         
-        protected Func<bool> m_onStateStart;
-        protected Func<bool> m_onUpdate;
-        protected Func<bool> m_onFixedUpdate;
-        protected Func<bool> m_onStateEnd;
+        public Func<bool> onStateStart { get; protected set; }
+        public Func<bool> onUpdate { get; protected set; }
+        public Func<bool> onFixedUpdate { get; protected set; }
+        public Func<bool> onStateEnd { get; protected set; }
 
         protected Action m_onGizmosDraw; 
 
@@ -29,18 +29,18 @@ namespace nickeltin.StateMachine
         public void Override(Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
             Func<bool> onStateEnd = null)
         {
-            m_onStateStart = onStateStart ?? m_onStateStart;
-            m_onUpdate = onUpdate ?? m_onUpdate;
-            m_onFixedUpdate = onFixedUpdate ?? m_onFixedUpdate;
-            m_onStateEnd = onStateEnd ?? m_onStateEnd;
+            this.onStateStart = onStateStart ?? this.onStateStart;
+            this.onUpdate = onUpdate ?? this.onUpdate;
+            this.onFixedUpdate = onFixedUpdate ?? this.onFixedUpdate;
+            this.onStateEnd = onStateEnd ?? this.onStateEnd;
         }
 
         public void AddGizmos(Action onGizmosDraw) => m_onGizmosDraw = onGizmosDraw;
 
-        public virtual bool OnStateStart() => ExecuteAction(m_onStateStart);
-        public virtual bool OnUpdate() => ExecuteAction(m_onUpdate);
-        public virtual bool OnFixedUpdate() => ExecuteAction(m_onFixedUpdate);
-        public virtual bool OnStateEnd() => ExecuteAction(m_onStateEnd);
+        public virtual bool OnStateStart() => ExecuteAction(onStateStart);
+        public virtual bool OnUpdate() => ExecuteAction(onUpdate);
+        public virtual bool OnFixedUpdate() => ExecuteAction(onFixedUpdate);
+        public virtual bool OnStateEnd() => ExecuteAction(onStateEnd);
 
         public virtual void OnGizmosDraw() => m_onGizmosDraw?.Invoke();
         

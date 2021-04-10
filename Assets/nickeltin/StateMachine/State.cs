@@ -32,10 +32,10 @@ namespace nickeltin.StateMachine
         public State(T type, Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
             Func<bool> onStateEnd = null, params Transition[] transitions) : this(type)
         {
-            m_onStateStart = onStateStart;
-            m_onUpdate = onUpdate;
-            m_onFixedUpdate = onFixedUpdate;
-            m_onStateEnd = onStateEnd;
+            this.onStateStart = onStateStart;
+            this.onUpdate = onUpdate;
+            this.onFixedUpdate = onFixedUpdate;
+            this.onStateEnd = onStateEnd;
             this.m_transitions = new List<Transition>(transitions); 
         }
     }

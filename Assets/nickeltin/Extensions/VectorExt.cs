@@ -108,6 +108,14 @@ namespace nickeltin.Extensions
             return screenPoint;
         }
 
+        public static Vector2 FromWorldToCanvasPosition(this Vector3 worldPos, Camera cam, Canvas canvas)
+        {
+            Vector2 screenPoint = RectTransformUtility.WorldToScreenPoint(cam, worldPos);
+            screenPoint -= canvas.pixelRect.size / 2;
+            screenPoint *= canvas.scaleFactor;
+            return screenPoint;
+        }
+
         public static Vector3 RandomOffset(this Vector3 vector, Vector3 offsetRange)
         {
             return vector + Random.insideUnitSphere.MultNonRef(offsetRange);

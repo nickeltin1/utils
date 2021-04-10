@@ -22,6 +22,7 @@ namespace nickeltin.Cameras.TriDimensional
             public float y;
             public bool alignWithTargetRotation;
             [AllowNesting, HideIf("alignWithTargetRotation")] public Vector3 rotation;
+            public float fov;
         }
         
         [Serializable]
@@ -30,9 +31,10 @@ namespace nickeltin.Cameras.TriDimensional
             public float positionLerpSpeed = 100f;
             public float localPositionLerpSpeed = 100f;
             public float rotationLerpSpeed = 100f;
+            public float fovLerpSpeed = 100f;
         }
 
-        public static Settings copiedSettings = new Settings();
+        public static Settings copiedSettings; 
         public new static Camera camera { get; private set; }
         public static Camera uiCamera { get; private set; }
         public static CameraRig current { get; private set; }
@@ -44,7 +46,9 @@ namespace nickeltin.Cameras.TriDimensional
         [SerializeField] private InterpolationSettings m_lerpSettings;
         [SerializeField, DisableIf("m_hasTarget")] private Settings m_defaultSettings;
 
-        private bool m_hasTarget => m_target != null && m_target.overrideCameraSettings;
+        //private float m_targetedFov;
+        
+        private bool m_hasTarget => m_target != null;
         
         public bool updatePosition { get; set; } = true;
         
@@ -56,11 +60,11 @@ namespace nickeltin.Cameras.TriDimensional
             set => m_updateType = value;
         }
 
-        public float fov
-        {
-            get => m_camera.fieldOfView;
-            set => m_camera.fieldOfView = value;
-        }
+        // public float fov
+        // {
+        //     get => m_targetedFov;
+        //     set => m_targetedFov = value;
+        // }
         
         private Settings m_settings;
         private Quaternion m_targetedRotation;
@@ -75,6 +79,7 @@ namespace nickeltin.Cameras.TriDimensional
             
             camera = m_camera;
             uiCamera = m_uiCamera;
+            //fov = m_camera.fieldOfView;
         }
 
         private void OnEnable() => CameraTarget.onChange += ChangeTarget;
@@ -115,34 +120,20 @@ namespace nickeltin.Cameras.TriDimensional
         
         private void Update_Internal()
         {
-            if(m_camera == null) return;
+            if( m_camera == null) return;
             
-            if (!Application.isPlaying) return;
+            if (!Application.isPlaying || m_target == null) return;
 
-            if (m_target == null)
-            {
-                m_settings = m_defaultSettings;
-                if (!m_settings.alignWithTargetRotation) m_targetedRotation = Quaternion.Euler(m_settings.rotation);
-                else m_targetedRotation = transform.rotation;
-            }
-            else
-            {
-                m_settings = m_target.settings;
-                if (m_settings.alignWithTargetRotation) m_targetedRotation = m_target.transform.rotation;
-                else m_targetedRotation = Quaternion.Euler(m_settings.rotation);
-            }
-
+            m_settings = m_target != null ? m_target.settings : m_defaultSettings;
+                
             m_camera.transform.LookAt(transform);
-            
+
             if(updatePosition)
             {
                 m_targetedCameraLocalPos = new Vector3(m_settings.x, m_settings.y, 0);
-
-                if (m_target != null)
-                {
-                    transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
-                        m_lerpSettings.positionLerpSpeed * Time.deltaTime);
-                }
+                
+                transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
+                    m_lerpSettings.positionLerpSpeed * Time.deltaTime);
 
                 //if (!shaking)
                 //{
@@ -151,8 +142,18 @@ namespace nickeltin.Cameras.TriDimensional
                 //}
             }
 
+            if(m_settings.alignWithTargetRotation)
+            {
+                m_targetedRotation = m_target.transform.rotation;
+            }
+            
             transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, 
                 m_lerpSettings.rotationLerpSpeed * Time.deltaTime);
+
+            if (m_camera != null)
+            {
+                m_camera.fieldOfView =  Mathf.Lerp(m_camera.fieldOfView, m_settings.fov, m_lerpSettings.fovLerpSpeed * Time.deltaTime);
+            }
         }
 
         public Settings GetSettings()
@@ -171,11 +172,22 @@ namespace nickeltin.Cameras.TriDimensional
 
             return settings;
         }
-        
+
+
+        public void SetSettings(Settings settings)
+        {
+            m_settings = settings;
+            if(!settings.alignWithTargetRotation) m_targetedRotation = Quaternion.Euler(m_settings.rotation);
+        }
 
         public void ChangeTarget(CameraTarget target)
         {
-            if (target != null) m_target = target;
+            if (target != null)
+            {
+                if (target.overrideCameraSettings) SetSettings(target.settings);
+                else SetSettings(m_defaultSettings);
+                m_target = target;
+            }
         }
 
         public void Shake(float t, float amplitude)
@@ -191,6 +203,7 @@ namespace nickeltin.Cameras.TriDimensional
                 }
 
                 shaking = false;
+                SetSettings(m_settings);
             }
 
             StartCoroutine(Shake());
@@ -215,17 +228,22 @@ namespace nickeltin.Cameras.TriDimensional
 
         private void ApplySettings_Editor(Settings settings)
         {
-            if (m_camera != null) m_camera.transform.localPosition = new Vector3(settings.x, settings.y, 0);
-            if (!settings.alignWithTargetRotation)
+            if (m_camera != null)
             {
-                transform.rotation = Quaternion.Euler(settings.rotation);;
+                m_camera.transform.localPosition = new Vector3(settings.x, settings.y, 0);
+                m_camera.fieldOfView = settings.fov;
             }
+            transform.rotation = Quaternion.Euler(settings.rotation);
         }
 
 #if UNITY_EDITOR
         protected override void CopySettings() => copiedSettings = GetSettings();
 
-        protected override void PasteSettings() => ApplySettings_Editor(copiedSettings);
+        protected override void PasteSettings()
+        {
+            m_defaultSettings = copiedSettings;
+            ApplySettings_Editor(m_defaultSettings);
+        }
 #endif
     }
 }

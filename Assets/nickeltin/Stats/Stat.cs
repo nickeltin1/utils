@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using nickeltin.StateMachine;
 using UnityEngine;
 
 namespace Characters
@@ -14,9 +15,12 @@ namespace Characters
 		protected float m_lastBaseValue;
 
 		[SerializeField] protected float m_value;
-		public virtual float Value {
-			get {
-				if(m_isDirty || m_lastBaseValue != baseValue) {
+		public virtual float Value 
+		{
+			get 
+			{
+				if(m_isDirty || m_lastBaseValue != baseValue) 
+				{
 					m_lastBaseValue = baseValue;
 					m_value = CalculateFinalValue();
 					m_isDirty = false;
@@ -126,5 +130,7 @@ namespace Characters
 			// Workaround for float calculation errors, like displaying 12.00001 instead of 12
 			return (float)Math.Round(finalValue, 4);
 		}
+
+		public static implicit operator float(Stat stat) => stat.Value;
 	}
 }
