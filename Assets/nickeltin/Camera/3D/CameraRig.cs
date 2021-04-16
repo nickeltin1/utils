@@ -46,8 +46,6 @@ namespace nickeltin.Cameras.TriDimensional
         [SerializeField] private InterpolationSettings m_lerpSettings;
         [SerializeField, DisableIf("m_hasTarget")] private Settings m_defaultSettings;
 
-        //private float m_targetedFov;
-        
         private bool m_hasTarget => m_target != null;
         
         public bool updatePosition { get; set; } = true;
@@ -59,12 +57,7 @@ namespace nickeltin.Cameras.TriDimensional
             get => m_updateType;
             set => m_updateType = value;
         }
-
-        // public float fov
-        // {
-        //     get => m_targetedFov;
-        //     set => m_targetedFov = value;
-        // }
+        
         
         private Settings m_settings;
         private Quaternion m_targetedRotation;
@@ -79,7 +72,6 @@ namespace nickeltin.Cameras.TriDimensional
             
             camera = m_camera;
             uiCamera = m_uiCamera;
-            //fov = m_camera.fieldOfView;
         }
 
         private void OnEnable() => CameraTarget.onChange += ChangeTarget;
@@ -105,20 +97,20 @@ namespace nickeltin.Cameras.TriDimensional
                 AlignPositionWithTarget_Editor();
             }
             
-            if(m_updateType == UpdateType.Update) Update_Internal();
+            if(m_updateType == UpdateType.Update) Update_Internal(Time.deltaTime);
         }
         
         private void FixedUpdate()
         {
-           if(m_updateType == UpdateType.FixedUpdate) Update_Internal();
+           if(m_updateType == UpdateType.FixedUpdate) Update_Internal(Time.fixedDeltaTime);
         }
 
         private void LateUpdate()
         {
-            if(m_updateType == UpdateType.LateUpdate) Update_Internal();
+            if(m_updateType == UpdateType.LateUpdate) Update_Internal(Time.deltaTime);
         }
         
-        private void Update_Internal()
+        private void Update_Internal(float timeStep)
         {
             if( m_camera == null) return;
             
@@ -133,12 +125,12 @@ namespace nickeltin.Cameras.TriDimensional
                 m_targetedCameraLocalPos = new Vector3(m_settings.x, m_settings.y, 0);
                 
                 transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
-                    m_lerpSettings.positionLerpSpeed * Time.deltaTime);
+                    m_lerpSettings.positionLerpSpeed * timeStep);
 
                 //if (!shaking)
                 //{
                     m_camera.transform.localPosition = Vector3.Lerp(m_camera.transform.localPosition, 
-                        m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed * Time.deltaTime);
+                        m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed * timeStep);
                 //}
             }
 
@@ -148,11 +140,11 @@ namespace nickeltin.Cameras.TriDimensional
             }
             
             transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, 
-                m_lerpSettings.rotationLerpSpeed * Time.deltaTime);
+                m_lerpSettings.rotationLerpSpeed * timeStep);
 
             if (m_camera != null)
             {
-                m_camera.fieldOfView =  Mathf.Lerp(m_camera.fieldOfView, m_settings.fov, m_lerpSettings.fovLerpSpeed * Time.deltaTime);
+                m_camera.fieldOfView =  Mathf.Lerp(m_camera.fieldOfView, m_settings.fov, m_lerpSettings.fovLerpSpeed * timeStep);
             }
         }
 

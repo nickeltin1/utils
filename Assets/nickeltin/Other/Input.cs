@@ -29,11 +29,10 @@ namespace nickeltin.Other
 
         static Input()
         {
-            m_engine = new GameObject("input").AddComponent<Engine>();
-            m_engine.gameObject.hideFlags = HideFlags.HideAndDontSave;
+            var engine = new GameObject("input").AddComponent<Engine>();
+            engine.gameObject.hideFlags = HideFlags.HideAndDontSave;
         }
-        
-        private static Engine m_engine;
+
         private static Vector2 lastPointerSwipedPosition;
 
         public const float SWIPE_THRESHOLD = 0.01f;
@@ -126,5 +125,9 @@ namespace nickeltin.Other
         public static bool LeftSwipe() => LeftSwipe(swipeThreshold);
 
         public static bool RightSwipe() => RightSwipe(swipeThreshold);
+
+        public static bool GetKeyDown(KeyCode key) => UnityEngine.Input.GetKeyDown(key);
+        public static bool GetKey(KeyCode key) => UnityEngine.Input.GetKey(key);
+        public static bool GetKeyUp(KeyCode key) => UnityEngine.Input.GetKeyUp(key);
     }
 }

@@ -35,7 +35,7 @@ namespace nickeltin.UI
         public void BindEvent(Action<T> onValueChanged)
         {
             if (m_sourceType == SourceType.DataObject) m_dataObjectSource.onValueChanged += onValueChanged;
-            else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.UnbindEvent(onValueChanged);
+            else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.BindEvent(onValueChanged);
         }
 
         public void UnbindEvent(Action<T> onValueChanged)

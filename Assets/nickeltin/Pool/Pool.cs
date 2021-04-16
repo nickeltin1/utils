@@ -16,12 +16,12 @@ namespace nickeltin.ObjectPooling
         
         public override T Get()
         {
-            if (pool.Count == 0)
+            if (m_pool.Count == 0)
             {
-                if (outOfPoolObjects.Count >= size)
+                if (m_outOfPoolObjects.Count >= m_size)
                 {
-                    T extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
-                    outOfPoolObjects.RemoveAt(outOfPoolObjects.Count - 1);
+                    T extractedObject = m_outOfPoolObjects[m_outOfPoolObjects.Count - 1];
+                    m_outOfPoolObjects.RemoveAt(m_outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
                 else
@@ -32,16 +32,16 @@ namespace nickeltin.ObjectPooling
                 }
             }
 
-            T obj = pool[pool.Count - 1];
-            pool.RemoveAt(pool.Count - 1);    
-            outOfPoolObjects.Add(obj);
+            T obj = m_pool[m_pool.Count - 1];
+            m_pool.RemoveAt(m_pool.Count - 1);    
+            m_outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);
             return obj;
         }
 
-        public override bool Add(T poolObject, bool forceParent = false)
+        public override bool Add(T poolObject, bool forceParent = false,  bool keepActive = false)
         {
-            if (base.Add(poolObject, forceParent))
+            if (base.Add(poolObject, forceParent, keepActive))
             {
                 AssignPoolToObject(poolObject);
                 return true;
@@ -66,20 +66,20 @@ namespace nickeltin.ObjectPooling
         
         public override Transform Get()
         {
-            if (pool.Count == 0)
+            if (m_pool.Count == 0)
             {
-                if (outOfPoolObjects.Count >= size)
+                if (m_outOfPoolObjects.Count >= m_size)
                 {
-                    Transform extractedObject = outOfPoolObjects[outOfPoolObjects.Count - 1];
-                    outOfPoolObjects.RemoveAt(outOfPoolObjects.Count - 1);
+                    Transform extractedObject = m_outOfPoolObjects[m_outOfPoolObjects.Count - 1];
+                    m_outOfPoolObjects.RemoveAt(m_outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
                 else Add(SpawnItem());
             }
 
-            Transform obj = pool[pool.Count - 1];
-            pool.RemoveAt(pool.Count - 1);
-            outOfPoolObjects.Add(obj);
+            Transform obj = m_pool[m_pool.Count - 1];
+            m_pool.RemoveAt(m_pool.Count - 1);
+            m_outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);
             return obj;
         }

@@ -9,59 +9,62 @@ namespace nickeltin.ObjectPooling
     [Serializable]
     public abstract class PoolBase<T> where T : Component
     {
-        [SerializeField] protected List<T> pool;
-        protected T poolObject;
-        public Transform parent { get; }
-        protected List<T> outOfPoolObjects;
-        protected int size;
-        public int TotalCount { get => outOfPoolObjects.Count + pool.Count; }
-        private Action<T> onItemFirstSpawn;
+        [SerializeField] protected List<T> m_pool;
+        protected T m_poolObject;
+        protected List<T> m_outOfPoolObjects;
+        protected int m_size;
+        private Action<T> m_onItemFirstSpawn;
+        
+        public Transform Parent { get; }
+        public int TotalCount { get => m_outOfPoolObjects.Count + m_pool.Count; }
+
+        public IReadOnlyList<T> Items => m_pool;
 
         protected PoolBase(T poolObject, Transform poolParent, int size, Action<T> onItemFirstSpawn)
         {
-            this.pool = new List<T>();
-            this.outOfPoolObjects = new List<T>();
-            this.poolObject = poolObject;
-            this.onItemFirstSpawn = onItemFirstSpawn;
-            this.parent = poolParent == null ? new GameObject(poolObject.name + "_pool").transform : poolParent;
-            this.size = size;
-            if (poolObject.gameObject.activeInHierarchy) this.Add(poolObject, true);
+            this.m_pool = new List<T>();
+            this.m_outOfPoolObjects = new List<T>();
+            this.m_poolObject = poolObject;
+            this.m_onItemFirstSpawn = onItemFirstSpawn;
+            this.Parent = poolParent == null ? new GameObject(poolObject.name + "_pool").transform : poolParent;
+            this.m_size = size;
+            if (poolObject.gameObject.activeInHierarchy) this.Add(poolObject, true, false);
         }
         
         public abstract T Get();
 
-        public void Add(IList<T> objects, bool forceParent = false)
+        public void Add(IList<T> objects, bool forceParent = false, bool keepActive = false)
         {
-            for (int i = objects.Count - 1; i >= 0; i--) Add(objects[i], forceParent);
+            for (int i = objects.Count - 1; i >= 0; i--) Add(objects[i], forceParent, keepActive);
         }
         
-        public virtual bool Add(T poolObject, bool forceParent = false)
+        public virtual bool Add(T poolObject, bool forceParent = false, bool keepActive = false)
         {
-            if (pool.Contains(poolObject)) return false;
+            if (m_pool.Contains(poolObject)) return false;
             
-            if(forceParent) poolObject.transform.SetParent(parent);
-            poolObject.gameObject.SetActive(false);
-            pool.Add(poolObject);
-            outOfPoolObjects.Remove(poolObject);
+            if(forceParent) poolObject.transform.SetParent(Parent);
+            if(!keepActive) poolObject.gameObject.SetActive(false);
+            m_pool.Add(poolObject);
+            m_outOfPoolObjects.Remove(poolObject);
             
             return true;
         }
 
         public void Remove(T poolObject)
         {
-            if (pool.Contains(poolObject)) pool.Remove(poolObject);
-            else if (outOfPoolObjects.Contains(poolObject)) outOfPoolObjects.Remove(poolObject);
+            if (m_pool.Contains(poolObject)) m_pool.Remove(poolObject);
+            else if (m_outOfPoolObjects.Contains(poolObject)) m_outOfPoolObjects.Remove(poolObject);
         }
 
-        public void ReturnAllObjectsToPool(bool forceParent = false)
+        public void ReturnAllObjectsToPool(bool forceParent = false, bool keepActive = false)
         {
-            Add(outOfPoolObjects, forceParent);
+            Add(m_outOfPoolObjects, forceParent, keepActive);
         }
 
         protected T SpawnItem()
         {
-            T obj = Object.Instantiate(poolObject, parent);
-            onItemFirstSpawn?.Invoke(obj);
+            T obj = Object.Instantiate(m_poolObject, Parent);
+            m_onItemFirstSpawn?.Invoke(obj);
             return obj;
         }
     }

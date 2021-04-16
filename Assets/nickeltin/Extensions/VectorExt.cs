@@ -149,5 +149,10 @@ namespace nickeltin.Extensions
 
         public static Quaternion LookRotation(this Vector3 from, Vector3 to) => LookRotation(@from.DirectionTo(to));
         public static Quaternion LookRotation(this Vector3 direction) => Quaternion.LookRotation(direction);
+        
+        public static Vector3 Parabola(this Vector3 start, Vector3 highest, Vector3 end, float t)
+        {
+            return Vector3.Lerp(Vector3.Lerp( start, highest, t), Vector3.Lerp( highest, end, t), t);
+        }
     }
 }
