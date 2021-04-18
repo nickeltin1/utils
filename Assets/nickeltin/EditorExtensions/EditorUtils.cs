@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using nickeltin.Editor.Utility;
 using nickeltin.Singletons;
 using UnityEditor;
 using UnityEngine;
@@ -9,8 +10,6 @@ namespace nickeltin.Editor
 {
     public static class EditorUtils
     {
-        private const string parentMenu = "Utils/";
-        
         public static void ClearConsole()
         {
 #if UNITY_EDITOR
@@ -23,13 +22,13 @@ namespace nickeltin.Editor
         
 #if UNITY_EDITOR
 
-        [MenuItem(parentMenu + "DataPath")]
+        [MenuItem(MenuPathsUtility.utilsMenu + "DataPath")]
         private static void PresistentDataPath()
         {
             EditorUtility.RevealInFinder(Application.persistentDataPath);
         }
         
-        [MenuItem(parentMenu + "Spawn BootStrapper")]
+        [MenuItem(MenuPathsUtility.utilsMenu +  "Spawn BootStrapper")]
         private static void SpawnSOSBootstraper()
         {
             SOSInitializer sosInitializer = new GameObject("BootStrapper").AddComponent<SOSInitializer>();

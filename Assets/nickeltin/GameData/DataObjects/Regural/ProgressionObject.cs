@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace nickeltin.Other
 {
-    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(ProgressionObject))]
+    [CreateAssetMenu(menuName = MenuPathsUtility.dataObjectsMenu + nameof(ProgressionObject))]
     public sealed class ProgressionObject : DataObject<AnimationCurve>
     {
         public override AnimationCurve Value { get => m_value; }

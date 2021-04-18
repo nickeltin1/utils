@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(VectorObject))]
+    [CreateAssetMenu(menuName = MenuPathsUtility.dataObjectsMenu + nameof(VectorObject))]
     public class VectorObject : DataObject<Vector3>
     {
         

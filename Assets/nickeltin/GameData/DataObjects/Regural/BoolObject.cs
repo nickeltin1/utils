@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(BoolObject))]
+    [CreateAssetMenu(menuName = MenuPathsUtility.dataObjectsMenu + nameof(BoolObject))]
     public class BoolObject : DataObject<bool>
     {
         

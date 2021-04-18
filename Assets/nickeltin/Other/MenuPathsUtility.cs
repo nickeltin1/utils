@@ -10,7 +10,7 @@
         
         public const string dataObjects = "DataObjects/";
         
-        public const string gameDataMenu = baseMenu + dataObjects;
+        public const string dataObjectsMenu = baseMenu + dataObjects;
 
         public const string registries = "Registries/";
 
@@ -24,5 +24,7 @@
         public const string audio = "Audio/";
         
         public const string audioMenu = baseMenu + audio;
+
+        public const string utilsMenu = baseMenu + "Utils/";
     }
 }

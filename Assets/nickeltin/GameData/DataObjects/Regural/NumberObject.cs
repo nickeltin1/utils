@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.DataObjects
 {
-    [CreateAssetMenu(menuName = MenuPathsUtility.gameDataMenu + nameof(NumberObject))]
+    [CreateAssetMenu(menuName = MenuPathsUtility.dataObjectsMenu + nameof(NumberObject))]
     public class NumberObject : DataObject<float>
     {
         public enum NumberType { Int, Float }
