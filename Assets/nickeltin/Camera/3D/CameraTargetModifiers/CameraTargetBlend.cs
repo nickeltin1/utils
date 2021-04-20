@@ -1,20 +1,14 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace nickeltin.Cameras.TriDimensional
+namespace nickeltin.Cameras.TriDimensional.CameraTargetModifiers
 {
-    [RequireComponent(typeof(CameraTarget))]
-    public class CameraTargetBlend : MonoBehaviour
+    public class CameraTargetBlend : CameraTargetModifier
     {
         public Transform target;
         [SerializeField, Range(0,1)] private float m_targetX;
         [SerializeField, Range(0,1)] private float m_targetY;
         [SerializeField, Range(0,1)] private float m_targetZ;
         
-        public CameraTarget cameraTarget { get; private set; }
-
-        private void Awake() => cameraTarget = GetComponent<CameraTarget>();
-
         private void Update()
         {
             if(target == null) return;

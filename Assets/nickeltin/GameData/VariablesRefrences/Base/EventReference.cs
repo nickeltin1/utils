@@ -22,6 +22,8 @@ namespace nickeltin.GameData.DataObjects
                 return null;
             }
         }
+
+        public void Invoke(T invokeData) => Source?.Invoke(invokeData);
     }
     
     [Serializable]
@@ -39,6 +41,8 @@ namespace nickeltin.GameData.DataObjects
                 return null;
             }
         }
+
+        public void Invoke() => Source?.Invoke();
     }
     
     [Serializable]
@@ -48,6 +52,4 @@ namespace nickeltin.GameData.DataObjects
         
         [SerializeField] protected ReferenceType m_referenceType = ReferenceType.EventObject;
     }
-    
-    
 }

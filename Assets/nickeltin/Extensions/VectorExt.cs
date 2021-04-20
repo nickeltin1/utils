@@ -154,5 +154,15 @@ namespace nickeltin.Extensions
         {
             return Vector3.Lerp(Vector3.Lerp( start, highest, t), Vector3.Lerp( highest, end, t), t);
         }
+
+        public static Vector3 Abs(this ref Vector3 vector)
+        {
+            return vector = new Vector3(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
+        }
+
+        public static Vector3 AbsNoRef(this Vector3 vector)
+        {
+            return new Vector3(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
+        }
     }
 }

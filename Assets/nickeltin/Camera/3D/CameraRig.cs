@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using nickeltin.Editor.Attributes;
+using nickeltin.Extensions;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -18,8 +19,7 @@ namespace nickeltin.Cameras.TriDimensional
         [Serializable]
         public struct Settings
         {
-            public float x;
-            public float y;
+            public Vector2 offset;
             public bool alignWithTargetRotation;
             [AllowNesting, HideIf("alignWithTargetRotation")] public Vector3 rotation;
             public float fov;
@@ -122,7 +122,7 @@ namespace nickeltin.Cameras.TriDimensional
 
             if(updatePosition)
             {
-                m_targetedCameraLocalPos = new Vector3(m_settings.x, m_settings.y, 0);
+                m_targetedCameraLocalPos = m_settings.offset;
                 
                 transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
                     m_lerpSettings.positionLerpSpeed * timeStep);
@@ -158,8 +158,7 @@ namespace nickeltin.Cameras.TriDimensional
 
             if (m_camera != null)
             {
-                settings.x = m_camera.transform.localPosition.x;
-                settings.y = m_camera.transform.localPosition.y;
+                settings.offset = new Vector2(m_camera.transform.localPosition.x, m_camera.transform.localPosition.y);
             }
 
             return settings;
@@ -189,7 +188,7 @@ namespace nickeltin.Cameras.TriDimensional
                 shaking = true;
                 for (float i = 0; i < t; i+=Time.deltaTime)
                 {
-                    Vector3 pos = new Vector3(m_settings.x, m_settings.y, 0) + (Random.insideUnitSphere * amplitude);
+                    Vector3 pos = m_settings.offset.ToVector3(0) + (Random.insideUnitSphere * amplitude);
                     m_camera.transform.localPosition = pos;
                     yield return null;
                 }
@@ -222,7 +221,7 @@ namespace nickeltin.Cameras.TriDimensional
         {
             if (m_camera != null)
             {
-                m_camera.transform.localPosition = new Vector3(settings.x, settings.y, 0);
+                m_camera.transform.localPosition = settings.offset.ToVector3(0);
                 m_camera.fieldOfView = settings.fov;
             }
             transform.rotation = Quaternion.Euler(settings.rotation);
