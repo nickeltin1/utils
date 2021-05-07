@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.Editor
 {
-    [CustomPropertyDrawer(typeof(VariableReference<>), true)]
+    [CustomPropertyDrawer(typeof(VarRef<>), true)]
     public sealed class VariableReferenceDrawer : ReferenceDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

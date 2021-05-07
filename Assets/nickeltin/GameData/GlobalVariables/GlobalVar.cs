@@ -4,7 +4,7 @@ using UnityEngine;
 namespace nickeltin.GameData.GlobalVariables
 {
     [Serializable]
-    public sealed class GlobalVariable<T>
+    public sealed class GlobalVar<T>
     {
         [SerializeField] private GlobalVariablesRegistry<T> m_registry;
         [SerializeField] private int m_entryIndex;
@@ -20,7 +20,7 @@ namespace nickeltin.GameData.GlobalVariables
             set => m_registry[m_entryIndex] = value;
         }
 
-        public static implicit operator T(GlobalVariable<T> obj) => obj.Value;
+        public static implicit operator T(GlobalVar<T> obj) => obj.Value;
 
         public override string ToString() => Value.ToString();
         

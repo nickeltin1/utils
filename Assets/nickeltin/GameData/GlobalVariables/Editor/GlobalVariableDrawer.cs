@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace nickeltin.GameData.GlobalVariables.Editor
 {
-    [CustomPropertyDrawer(typeof(GlobalVariable<>))]
+    [CustomPropertyDrawer(typeof(GlobalVar<>))]
     public class GlobalVariableDrawer : GenericObjectDrawer
     {
         private const string m_registryIsEmptyMessage = "Registry is empty";

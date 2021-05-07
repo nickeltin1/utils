@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using nickeltin.Editor.Types;
+using nickeltin.GameData.DataObjects;
 using nickeltin.GameData.Events;
 using nickeltin.Singletons;
 using UnityEngine;
@@ -21,11 +22,11 @@ namespace nickeltin.SceneManagment
         [Serializable]
         private struct Events
         {
-            public EventObject afterInitialization;
-            public EventObject afterUILoaded;
-            public IntEvent afterLevelLoad;
-            public IntEvent afterLevelCompleted;
-            public IntEvent beforeLevelReload;
+            public EventRef afterInitialization;
+            public EventRef afterUILoaded;
+            public EventRef<int> afterLevelLoad;
+            public EventRef<int> afterLevelCompleted;
+            public EventRef<int> beforeLevelReload;
         }
         
         [Serializable]
@@ -104,7 +105,7 @@ namespace nickeltin.SceneManagment
                     LoadScene(m_baseScenes.uiScene, LoadSceneMode.Additive);
                     LogEvent("UI loaded");
                     afterUILoaded?.Invoke();
-                    if(m_events.afterUILoaded != null) m_events.afterUILoaded.Invoke();
+                    m_events.afterUILoaded?.Invoke();
                 }
 
                 if (m_baseScenes.initializeScene != null)
@@ -115,7 +116,7 @@ namespace nickeltin.SceneManagment
                     }
                     LogEvent("Initailzation scene loaded");
                     afterInitialization?.Invoke();
-                    if(m_events.afterInitialization != null) m_events.afterInitialization.Invoke();
+                    m_events.afterInitialization?.Invoke();
                 }
             }
         }
@@ -127,7 +128,7 @@ namespace nickeltin.SceneManagment
                 currentLevelId = -1;
                 LoadScene(m_baseScenes.tutorialScene);
                 afterLevelLoad?.Invoke(-1);
-                if(instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(-1);
+                instance.m_events.afterLevelLoad?.Invoke(-1);
             }
             else LoadLevel(m_settings.startFromLevelId);
         }
@@ -172,7 +173,7 @@ namespace nickeltin.SceneManagment
             levelsCompleted++;
             instance.Save(GetNextLevelId());
             afterLevelCompleted?.Invoke(currentLevelId);
-            if(instance.m_events.afterLevelCompleted != null) instance.m_events.afterLevelCompleted.Invoke(currentLevelId);
+            instance.m_events.afterLevelCompleted?.Invoke(currentLevelId);
         }
 
         public static void CompleteTutorial()
@@ -180,13 +181,13 @@ namespace nickeltin.SceneManagment
             tutorialCompleted = true;
             instance.Save(instance.m_settings.startFromLevelId);
             afterLevelCompleted?.Invoke(-1);
-            if(instance.m_events.afterLevelCompleted != null) instance.m_events.afterLevelCompleted.Invoke(-1);
+            instance.m_events.afterLevelCompleted?.Invoke(-1);
         }
 
         public static void ReloadLevel()
         {
             beforeLevelReload?.Invoke(currentLevelId);
-            if(instance.m_events.beforeLevelReload != null) instance.m_events.beforeLevelReload.Invoke(currentLevelId);
+            instance.m_events.beforeLevelReload?.Invoke(currentLevelId);
             LoadLevel(currentLevelId);
         }
 
@@ -198,7 +199,7 @@ namespace nickeltin.SceneManagment
                 currentLevelId = levelId;
                 LogEvent($"Level with id {levelId} loaded");
                 afterLevelLoad?.Invoke(levelId);
-                if (instance.m_events.afterLevelLoad != null) instance.m_events.afterLevelLoad.Invoke(levelId);
+                instance.m_events.afterLevelLoad?.Invoke(levelId);
             }
 
             if (levelId < 0) Load(instance.m_baseScenes.tutorialScene);

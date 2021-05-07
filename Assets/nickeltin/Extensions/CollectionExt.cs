@@ -32,9 +32,13 @@ namespace nickeltin.Extensions
         }
         
         public static T GetRandom<T>(this IList<T> list) => list[random.Next(0, list.Count)];
+        public static T GetRandom<T>(this IReadOnlyList<T> list) => list[random.Next(0, list.Count)];
 
         public static T GetRandom<T>(this T[] list) => list[random.Next(0, list.Length)];
 
+        public static T GetRandom<T>(this IReadOnlyList<T> list, Random randomSource) => list[randomSource.Next(0, list.Count)];
+        
+        
         public static void FillDefault<T>(this T[] array) where T : new()
         {
             for (int i = 0; i < array.GetLength(0); i++) array[i] = new T();
@@ -104,10 +108,15 @@ namespace nickeltin.Extensions
         
         public static void Shuffle<T>(this T[] array)
         {
+            array.Shuffle(random);
+        }
+        
+        public static void Shuffle<T>(this T[] array, Random seed)
+        {
             int n = array.Length;
             while (n > 1)
             {
-                int k = random.Next(n);
+                int k = seed.Next(n);
                 n--;
                 T temp = array[n];
                 array[n] = array[k];

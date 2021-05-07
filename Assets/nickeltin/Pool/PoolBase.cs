@@ -19,6 +19,8 @@ namespace nickeltin.ObjectPooling
         public int TotalCount { get => m_outOfPoolObjects.Count + m_pool.Count; }
 
         public IReadOnlyList<T> Items => m_pool;
+        public IReadOnlyList<T> OutOfPoolItems => m_outOfPoolObjects;
+        
 
         protected PoolBase(T poolObject, Transform poolParent, int size, Action<T> onItemFirstSpawn)
         {

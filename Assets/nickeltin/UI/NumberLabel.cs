@@ -6,7 +6,7 @@ namespace nickeltin.UI
     [RequireComponent(typeof(TMP_Text))]
     public class NumberLabel : MonoBehaviour
     {
-        [SerializeField] protected SourceVariant<float> m_source;
+        [SerializeField] protected VarObjRef<float> m_source;
         [SerializeField] [Range(0, 4)] protected int m_digitsAfterPoint = 2; 
         [SerializeField] protected string m_prefix;
         [SerializeField] protected string m_postfix;

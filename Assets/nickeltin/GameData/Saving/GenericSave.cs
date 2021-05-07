@@ -31,9 +31,9 @@ namespace nickeltin.GameData.Saving
             public T value;
         }
         
-        [SerializeField] private Entry<VariableReference<float>>[] m_numbers;
-        [SerializeField] private Entry<VariableReference<string>>[] m_strings;
-        [SerializeField] private Entry<VariableReference<bool>>[] m_bools;
+        [SerializeField] private Entry<VarRef<float>>[] m_numbers;
+        [SerializeField] private Entry<VarRef<string>>[] m_strings;
+        [SerializeField] private Entry<VarRef<bool>>[] m_bools;
         
         private object[] m_objects;
         private Dictionary<string, object> m_monoSavesDictionary;

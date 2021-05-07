@@ -164,5 +164,10 @@ namespace nickeltin.Extensions
         {
             return new Vector3(Mathf.Abs(vector.x), Mathf.Abs(vector.y), Mathf.Abs(vector.z));
         }
+
+        public static float DownDot(this Transform transform)
+        {
+            return Vector3.Dot(-transform.up, Vector3.down);
+        }
     }
 }

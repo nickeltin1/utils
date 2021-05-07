@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace nickeltin.UI.Editor
 {
-    [CustomPropertyDrawer(typeof(SourceVariant<>), true)]
-    public class SourceVariantDrawer : ReferenceDrawer
+    [CustomPropertyDrawer(typeof(VarObjRef<>), true)]
+    public class VariableObjectReferenceDrawer : ReferenceDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {

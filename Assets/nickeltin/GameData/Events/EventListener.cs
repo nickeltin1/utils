@@ -7,7 +7,7 @@ namespace nickeltin.GameData.Events
     [AddComponentMenu("Events/EventListener")]
     public sealed class EventListener : MonoBehaviour
     {
-        [SerializeField] private EventReference m_event;
+        [SerializeField] private EventRef m_event;
         [SerializeField] private UnityEvent m_response;
 
         private void OnEnable()
@@ -25,7 +25,7 @@ namespace nickeltin.GameData.Events
     
     public abstract class EventListener<T> : MonoBehaviour
     {
-        [SerializeField] private EventReference<T> m_event;
+        [SerializeField] private EventRef<T> m_event;
         [SerializeField] private UnityEvent<T> m_response;
 
         private void OnEnable()

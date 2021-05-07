@@ -6,13 +6,13 @@ using UnityEngine;
 namespace nickeltin.UI
 {
     [Serializable]
-    public class SourceVariant<T>
+    public sealed class VarObjRef<T>
     {
         [Serializable] public enum SourceType { DataObject, GlobalVariable }
 
         [SerializeField] private SourceType m_sourceType;
         [SerializeField] private DataObject<T> m_dataObjectSource;
-        [SerializeField] private GlobalVariable<T> m_globalVariableSource;
+        [SerializeField] private GlobalVar<T> m_globalVariableSource;
 
         public T Value
         {
@@ -20,6 +20,11 @@ namespace nickeltin.UI
             {
                 if (m_sourceType == SourceType.DataObject) return m_dataObjectSource.Value;
                 return m_globalVariableSource.Value;
+            }
+            set
+            {
+                if (m_sourceType == SourceType.DataObject) m_dataObjectSource.Value = value;
+                else m_globalVariableSource.Value = value;
             }
         }
         
@@ -43,5 +48,7 @@ namespace nickeltin.UI
             if (m_sourceType == SourceType.DataObject) m_dataObjectSource.onValueChanged -= onValueChanged;
             else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.UnbindEvent(onValueChanged);
         }
+        
+        public static implicit operator T(VarObjRef<T> obj) => obj.Value;
     }
 }

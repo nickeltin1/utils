@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using nickeltin.Extensions;
 using UnityEditor;
+using UnityEngine;
 
 namespace nickeltin.GameData.Editor.TypeCreation
 {
@@ -22,10 +23,11 @@ namespace nickeltin.GameData.Editor.TypeCreation
                 throw new ArgumentException("Parent type is not specified");
             }
             
+            
             string path = EditorUtility.SaveFilePanelInProject("Save event object", 
                 $"{parameterTypes[parameterTypes.Length - 1].Name}{name}", 
                 "cs", "Please enter a file name to save the texture to");
-            
+
             if (path.IsNullOrEmpty()) return;
             
             StringBuilder stringBuilder = new StringBuilder();

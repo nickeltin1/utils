@@ -26,7 +26,7 @@ namespace nickeltin.GameData.Editor.TypeCreation
         private static void ShowWindow()
         {
             var window = GetWindow<TypeCreatorEditorWindow>();
-            window.titleContent = new GUIContent(nameof(TypeCreatorEditorWindow));
+            window.titleContent = new GUIContent("TypeCreator");
             window.Show();
         }
 

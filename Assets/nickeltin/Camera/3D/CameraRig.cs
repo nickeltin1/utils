@@ -138,6 +138,10 @@ namespace nickeltin.Cameras.TriDimensional
             {
                 m_targetedRotation = m_target.transform.rotation;
             }
+            else
+            {
+                m_targetedRotation = Quaternion.Euler(m_target.settings.rotation);
+            }
             
             transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, 
                 m_lerpSettings.rotationLerpSpeed * timeStep);

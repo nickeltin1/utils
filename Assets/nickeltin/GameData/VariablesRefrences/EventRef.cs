@@ -8,10 +8,10 @@ using Event = nickeltin.GameData.Types.Event;
 namespace nickeltin.GameData.DataObjects
 {
     [Serializable]
-    public sealed class EventReference<T> : EventReferenceBase
+    public sealed class EventRef<T> : EventReferenceBase
     {
         [SerializeField] private EventObject<T> m_eventObject;
-        [SerializeField] private GlobalVariable<Event<T>> m_globalEvent;
+        [SerializeField] private GlobalVar<Event<T>> m_globalEvent;
 
         public Event<T> Source
         {
@@ -27,10 +27,10 @@ namespace nickeltin.GameData.DataObjects
     }
     
     [Serializable]
-    public sealed class EventReference : EventReferenceBase
+    public sealed class EventRef : EventReferenceBase
     {
         [SerializeField] private EventObject m_eventObject;
-        [SerializeField] private GlobalVariable<Event> m_globalEvent;
+        [SerializeField] private GlobalVar<Event> m_globalEvent;
         
         public Event Source
         {
