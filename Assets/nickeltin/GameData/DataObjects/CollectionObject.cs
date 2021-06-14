@@ -6,15 +6,15 @@ namespace nickeltin.GameData.DataObjects
 {
     public abstract class CollectionObject<T> : DataObject<IList<T>>
     {
-        [SerializeField] protected List<T> m_collection;
+        [SerializeField] protected List<T> _collection;
 
-        public int Count => m_collection.Count;
+        public int Count => _collection.Count;
         
-        public override IList<T> Value { get => m_collection;}
+        public override IList<T> Value => _collection;
 
         public void AddRange(IEnumerable<T> range, bool invokeUpdate = true)
         {
-            m_collection.AddRange(range);
+            _collection.AddRange(range);
             if(invokeUpdate) InvokeUpdate();
         }
         
@@ -22,38 +22,38 @@ namespace nickeltin.GameData.DataObjects
         {
             if (uniqueEntry)
             {
-                if (!m_collection.Contains(item))
+                if (!_collection.Contains(item))
                 {
-                    m_collection.Add(item);
+                    _collection.Add(item);
                     if(invokeUpdate) InvokeUpdate();
                 }
                 return;
             }
             
-            m_collection.Add(item); 
+            _collection.Add(item); 
             if(invokeUpdate) InvokeUpdate();
         }
         
         public void RemoveItem(T item, bool invokeUpdate = true)
         {
-            m_collection.Remove(item);
+            _collection.Remove(item);
             if(invokeUpdate) InvokeUpdate();
         }
 
         public void Clear(bool invokeUpdate = true)
         {
-            m_collection.Clear();
+            _collection.Clear();
             if(invokeUpdate) InvokeUpdate();
         }
 
-        public void Sort(Comparison<T> comparison) => m_collection.Sort(comparison);
+        public void Sort(Comparison<T> comparison) => _collection.Sort(comparison);
 
         public T this [int i]
         {
-            get => m_collection[i];
+            get => _collection[i];
             set
             {
-                m_collection[i] = value;
+                _collection[i] = value;
                 InvokeUpdate();
             }
         }

@@ -9,13 +9,13 @@ namespace nickeltin.GameData.Events.Types
         //Empty variable for making its object Serializable
         [SerializeField] private int _; 
         
-        private event Action m_onInvoke;
+        private event Action _onInvoke;
 
-        public void Bind(Action onInvoke) => m_onInvoke += onInvoke;
+        public void Bind(Action onInvoke) => _onInvoke += onInvoke;
 
-        public void Unbind(Action onInvoke) => m_onInvoke -= onInvoke;
+        public void Unbind(Action onInvoke) => _onInvoke -= onInvoke;
 
-        public void Invoke() => m_onInvoke?.Invoke();
+        public void Invoke() => _onInvoke?.Invoke();
         
         public override void InvokeWithDefaultData() => Invoke();
     }
@@ -25,13 +25,13 @@ namespace nickeltin.GameData.Events.Types
     {
         [SerializeField] public T invokeData;
         
-        private event Action<T> m_onInvoke;
+        private event Action<T> _onInvoke;
 
-        public void Bind(Action<T> onInvoke) => m_onInvoke += onInvoke;
+        public void Bind(Action<T> onInvoke) => _onInvoke += onInvoke;
 
-        public void Unbind(Action<T> onInvoke) => m_onInvoke -= onInvoke;
+        public void Unbind(Action<T> onInvoke) => _onInvoke -= onInvoke;
 
-        public void Invoke(T invokeData) => m_onInvoke?.Invoke(invokeData);
+        public void Invoke(T invokeData) => _onInvoke?.Invoke(invokeData);
         public override void InvokeWithDefaultData() => Invoke(invokeData);
     }
     

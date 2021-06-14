@@ -1,8 +1,7 @@
 ﻿using System;
-using Game.Scripts.nickeltin.GameData.Saving;
-using Game.Scripts.nickeltin.GameData.VariablesRefrences;
 using nickeltin.GameData.DataObjects;
 using nickeltin.GameData.GlobalVariables;
+using nickeltin.GameData.VariablesRefrences;
 using UnityEngine;
 
 namespace nickeltin.GameData.References
@@ -12,26 +11,26 @@ namespace nickeltin.GameData.References
     {
         public enum ReferenceType { Constant, DataObject, GlobalVariable }
 
-        [SerializeField] protected ReferenceType m_referenceType;
-        [SerializeField] protected T m_constantValue;
-        [SerializeField] protected DataObject<T> m_dataObject; 
-        [SerializeField] protected GlobalVar<T> m_globalVariable;
+        [SerializeField] protected ReferenceType _referenceType;
+        [SerializeField] protected T _constantValue;
+        [SerializeField] protected DataObject<T> _dataObject; 
+        [SerializeField] protected GlobalVar<T> _globalVariable;
         
 
         public T Value
         {
             get
             {
-                if (m_referenceType == ReferenceType.DataObject) return m_dataObject;
-                if (m_referenceType == ReferenceType.GlobalVariable) return m_globalVariable;
+                if (_referenceType == ReferenceType.DataObject) return _dataObject;
+                if (_referenceType == ReferenceType.GlobalVariable) return _globalVariable;
 
-                return m_constantValue;
+                return _constantValue;
             }
             set
             {
-                if (m_referenceType == ReferenceType.DataObject) m_dataObject.Value = value;
-                if (m_referenceType == ReferenceType.GlobalVariable) m_globalVariable.Value = value;
-                else m_constantValue = value;
+                if (_referenceType == ReferenceType.DataObject) _dataObject.Value = value;
+                if (_referenceType == ReferenceType.GlobalVariable) _globalVariable.Value = value;
+                else _constantValue = value;
             }
         }
         

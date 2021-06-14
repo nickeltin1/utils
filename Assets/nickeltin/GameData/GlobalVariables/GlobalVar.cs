@@ -7,18 +7,18 @@ namespace nickeltin.GameData.GlobalVariables
     [Serializable]
     public sealed class GlobalVar<T> : IEventBinder<T>
     {
-        [SerializeField] private GlobalVariablesRegistry<T> m_registry;
-        [SerializeField] private int m_entryIndex;
+        [SerializeField] private GlobalVariablesRegistry<T> _registry;
+        [SerializeField] private int _entryIndex;
         
-        private event Action<T> m_onValueChanged;
+        private event Action<T> _onValueChanged;
         
-        public bool HasRegistry => m_registry != null;
+        public bool HasRegistry => _registry != null;
 
         
         public T Value
         {
-            get => m_registry[m_entryIndex]; 
-            set => m_registry[m_entryIndex] = value;
+            get => _registry[_entryIndex]; 
+            set => _registry[_entryIndex] = value;
         }
 
         public static implicit operator T(GlobalVar<T> obj) => obj.Value;
@@ -27,15 +27,15 @@ namespace nickeltin.GameData.GlobalVariables
         
         private void OnRegistryUpdate(int id, T value)
         {
-            if(id == m_entryIndex) m_onValueChanged?.Invoke(Value);
+            if(id == _entryIndex) _onValueChanged?.Invoke(Value);
         }
 
         public void BindEvent(Action<T> onValueChanged)
         {
             if (HasRegistry)
             {
-                if (m_onValueChanged == null) m_registry.onEntryChanged += OnRegistryUpdate;
-                m_onValueChanged += onValueChanged;
+                if (_onValueChanged == null) _registry.onEntryChanged += OnRegistryUpdate;
+                _onValueChanged += onValueChanged;
             }
         }
 
@@ -43,11 +43,11 @@ namespace nickeltin.GameData.GlobalVariables
         {
             if (HasRegistry)
             {
-                m_registry.onEntryChanged -= OnRegistryUpdate;
-                m_onValueChanged -= onValueChanged;
+                _registry.onEntryChanged -= OnRegistryUpdate;
+                _onValueChanged -= onValueChanged;
             }
         }
 
-        public void UnbindAllEvents() => m_onValueChanged = null;
+        public void UnbindAllEvents() => _onValueChanged = null;
     }
 }

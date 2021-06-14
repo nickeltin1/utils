@@ -13,53 +13,53 @@ namespace nickeltin.StateMachine
         {
 #if UNITY_EDITOR
             private const int historyLength = 10;
-            [SerializeField] private string[] m_statesHistory = new string[historyLength];
-            private float m_lastStateTime;
-            private string m_lastStateName;
+            [SerializeField] private string[] _statesHistory = new string[historyLength];
+            private float _lastStateTime;
+            private string _lastStateName;
             
             private readonly int lastIndex = (historyLength - 1).Clamp0NoRef();
-            private string timePassed => " lasted for " + Mathf.Abs(-Time.time + m_lastStateTime).ToString("F2") + "sec.";
+            private string timePassed => " lasted for " + Mathf.Abs(-Time.time + _lastStateTime).ToString("F2") + "sec.";
 
             public void LogState(StateBase state)
             {
-                m_statesHistory[lastIndex] = !m_lastStateName.IsNullOrEmpty() ? m_lastStateName + timePassed : "";
-                m_statesHistory.ShiftLeft(1);
+                _statesHistory[lastIndex] = !_lastStateName.IsNullOrEmpty() ? _lastStateName + timePassed : "";
+                _statesHistory.ShiftLeft(1);
                 string stateName = state != null ? state.implicitType.ToString() : "NULL";
-                m_statesHistory[lastIndex] = stateName;
-                m_lastStateName = stateName;
-                m_lastStateTime = Time.time;
+                _statesHistory[lastIndex] = stateName;
+                _lastStateName = stateName;
+                _lastStateTime = Time.time;
             }
             
-            private readonly List<Action> m_gizmos = new List<Action>();
+            private readonly List<Action> _gizmos = new List<Action>();
             
             private void OnDrawGizmos()
             {
-                for (var i = 0; i < m_gizmos.Count; i++) m_gizmos[i]?.Invoke();
+                for (var i = 0; i < _gizmos.Count; i++) _gizmos[i]?.Invoke();
             }
             
-            public void AddGizmos(Action gizmoAction) => m_gizmos.Add(gizmoAction);
+            public void AddGizmos(Action gizmoAction) => _gizmos.Add(gizmoAction);
 
-            public void RemoveGizmos(Action gizmoAction) => m_gizmos.Remove(gizmoAction);
+            public void RemoveGizmos(Action gizmoAction) => _gizmos.Remove(gizmoAction);
 #endif
             public event Action<Enum> onStateTransition; 
             
-            private readonly List<Func<bool>> m_updateList = new List<Func<bool>>();
-            private readonly List<Func<bool>> m_fixedUpdateList = new List<Func<bool>>();
-            private readonly List<Transition> m_updateTransitions = new List<Transition>();
-            private readonly List<Transition> m_fixedUpdateTransitions = new List<Transition>();
+            private readonly List<Func<bool>> _updateList = new List<Func<bool>>();
+            private readonly List<Func<bool>> _fixedUpdateList = new List<Func<bool>>();
+            private readonly List<Transition> _updateTransitions = new List<Transition>();
+            private readonly List<Transition> _fixedUpdateTransitions = new List<Transition>();
            
 
             public void AddData(Func<bool> onFixedUpdate = null, Func<bool> onUpdate = null)
             {
-                if (onFixedUpdate != null && !m_fixedUpdateList.Contains(onFixedUpdate)) 
-                    m_fixedUpdateList.Add(onFixedUpdate);
-                if (onUpdate != null && !m_updateList.Contains(onUpdate)) m_updateList.Add(onUpdate);
+                if (onFixedUpdate != null && !_fixedUpdateList.Contains(onFixedUpdate)) 
+                    _fixedUpdateList.Add(onFixedUpdate);
+                if (onUpdate != null && !_updateList.Contains(onUpdate)) _updateList.Add(onUpdate);
             }
             
             public void RemoveData(Func<bool> onFixedUpdate = null, Func<bool> onUpdate = null)
             {
-                if (onFixedUpdate != null) m_fixedUpdateList.Remove(onFixedUpdate);
-                if (onUpdate != null) m_updateList.Remove(onUpdate);
+                if (onFixedUpdate != null) _fixedUpdateList.Remove(onFixedUpdate);
+                if (onUpdate != null) _updateList.Remove(onUpdate);
             }
             
 
@@ -70,9 +70,9 @@ namespace nickeltin.StateMachine
                     for (int i = 0; i < transitions.Count; i++)
                     {
                         if (transitions[i].conditionValidationMode == UpdateType.Update)
-                            m_updateTransitions.Add(transitions[i]);
+                            _updateTransitions.Add(transitions[i]);
                         else if (transitions[i].conditionValidationMode == UpdateType.FixedUpdate) 
-                            m_fixedUpdateTransitions.Add(transitions[i]);
+                            _fixedUpdateTransitions.Add(transitions[i]);
                     }
                 }
             }
@@ -84,24 +84,24 @@ namespace nickeltin.StateMachine
                     for (int i = transitions.Count - 1; i >= 0; i--)
                     {
                         if (transitions[i].conditionValidationMode == UpdateType.Update)
-                            m_updateTransitions.Remove(transitions[i]);
+                            _updateTransitions.Remove(transitions[i]);
                         else if (transitions[i].conditionValidationMode == UpdateType.FixedUpdate) 
-                            m_fixedUpdateTransitions.Remove(transitions[i]);
+                            _fixedUpdateTransitions.Remove(transitions[i]);
                     }
                 }
             }
             
             public void ClearData()
             {
-                m_updateList.Clear();
-                m_fixedUpdateList.Clear();
-                m_updateTransitions.Clear();
-                m_fixedUpdateTransitions.Clear();
+                _updateList.Clear();
+                _fixedUpdateList.Clear();
+                _updateTransitions.Clear();
+                _fixedUpdateTransitions.Clear();
             }
             
-            private void Update() => Iterate(m_updateTransitions, m_updateList);
+            private void Update() => Iterate(_updateTransitions, _updateList);
 
-            private void FixedUpdate() => Iterate(m_fixedUpdateTransitions, m_fixedUpdateList);
+            private void FixedUpdate() => Iterate(_fixedUpdateTransitions, _fixedUpdateList);
             
             private void Iterate(IReadOnlyList<Transition> transitions, IReadOnlyList<Func<bool>> actions)
             {
@@ -115,32 +115,32 @@ namespace nickeltin.StateMachine
         
         protected enum DataMode { Add, Remove }
         
-        private bool m_enabled = true;
+        private bool _enabled = true;
         public bool enabled
         {
-            get => m_enabled;
-            set => m_enabled = m_engine.enabled = value;
+            get => _enabled;
+            set => _enabled = m_engine.enabled = value;
         }
         
-        private bool m_updateEnabled = true;
+        private bool _updateEnabled = true;
         public bool updateEnabled
         {
-            get => m_updateEnabled;
+            get => _updateEnabled;
             set
             {
-                ApplySettings(m_updateEnabled, value, UpdateType.Update);
-                m_updateEnabled = value;
+                ApplySettings(_updateEnabled, value, UpdateType.Update);
+                _updateEnabled = value;
             }
         }
 
-        private bool m_fixedUpdateEnabled;
+        private bool _fixedUpdateEnabled;
         public bool fixedUpdateEnabled
         {
-            get => m_fixedUpdateEnabled;
+            get => _fixedUpdateEnabled;
             set
             {
-                ApplySettings(m_fixedUpdateEnabled, value, UpdateType.FixedUpdate);
-                m_fixedUpdateEnabled = value;
+                ApplySettings(_fixedUpdateEnabled, value, UpdateType.FixedUpdate);
+                _fixedUpdateEnabled = value;
             }
         }
         

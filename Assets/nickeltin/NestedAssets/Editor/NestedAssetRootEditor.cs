@@ -104,7 +104,7 @@ namespace nickeltin.NestedAssets.Editor
             CacheChildsProperty();
             _childs.arraySize++;
             _childs.GetArrayElementAtIndex(_childs.arraySize-1).objectReferenceValue = child;
-            serializedObject?.ApplyModifiedProperties();
+            serializedObject.ApplyModifiedProperties();
         }
 
         private Object RemoveChild(int index)

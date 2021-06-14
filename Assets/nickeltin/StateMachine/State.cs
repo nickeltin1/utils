@@ -20,14 +20,14 @@ namespace nickeltin.StateMachine
     /// <typeparam name="T">State Type - enum</typeparam>
     public class State<T> : StateBase where T : Enum
     {
-        [SerializeField] protected T m_type;
+        [SerializeField] protected T _type;
 
-        public T explicitType => m_type;
-        public override Enum implicitType => m_type;
+        public T explicitType => _type;
+        public override Enum implicitType => _type;
 
         public State() { }
 
-        public State(T type) => this.m_type = type;
+        public State(T type) => this._type = type;
 
         public State(T type, Func<bool> onStateStart = null, Func<bool> onUpdate = null, Func<bool> onFixedUpdate = null, 
             Func<bool> onStateEnd = null, params Transition[] transitions) : this(type)
@@ -36,7 +36,7 @@ namespace nickeltin.StateMachine
             this.onUpdate = onUpdate;
             this.onFixedUpdate = onFixedUpdate;
             this.onStateEnd = onStateEnd;
-            this.m_transitions = new List<Transition>(transitions); 
+            this._transitions = new List<Transition>(transitions); 
         }
     }
 }

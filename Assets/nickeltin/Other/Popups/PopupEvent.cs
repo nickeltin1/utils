@@ -27,7 +27,7 @@ namespace nickeltin.Other.Popups
             public float width => Screen.width * _width;
         }
 
-        public Data data => m_event.invokeData;
+        public Data data => _event.invokeData;
 
         public void Invoke(Vector3 worldPos)
         {

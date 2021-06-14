@@ -1,8 +1,8 @@
 using System;
-using Game.Scripts.nickeltin.GameData.VariablesRefrences;
 using nickeltin.GameData.DataObjects;
 using nickeltin.GameData.Events.Types;
 using nickeltin.GameData.GlobalVariables;
+using nickeltin.GameData.VariablesRefrences;
 using UnityEngine;
 
 namespace nickeltin.GameData.References
@@ -12,21 +12,21 @@ namespace nickeltin.GameData.References
     {
         [Serializable] public enum SourceType { DataObject, GlobalVariable }
 
-        [SerializeField] private SourceType m_sourceType;
-        [SerializeField] private DataObject<T> m_dataObjectSource;
-        [SerializeField] private GlobalVar<T> m_globalVariableSource;
+        [SerializeField] private SourceType _sourceType;
+        [SerializeField] private DataObject<T> _dataObjectSource;
+        [SerializeField] private GlobalVar<T> _globalVariableSource;
 
         public T Value
         {
             get
             {
-                if (m_sourceType == SourceType.DataObject) return m_dataObjectSource.Value;
-                return m_globalVariableSource.Value;
+                if (_sourceType == SourceType.DataObject) return _dataObjectSource.Value;
+                return _globalVariableSource.Value;
             }
             set
             {
-                if (m_sourceType == SourceType.DataObject) m_dataObjectSource.Value = value;
-                else m_globalVariableSource.Value = value;
+                if (_sourceType == SourceType.DataObject) _dataObjectSource.Value = value;
+                else _globalVariableSource.Value = value;
             }
         }
         
@@ -34,21 +34,21 @@ namespace nickeltin.GameData.References
         {
             get
             {
-                if (m_sourceType == SourceType.DataObject) return m_dataObjectSource != null;
-                return m_globalVariableSource.HasRegistry;
+                if (_sourceType == SourceType.DataObject) return _dataObjectSource != null;
+                return _globalVariableSource.HasRegistry;
             }
         }
         
         public void BindEvent(Action<T> onValueChanged)
         {
-            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.BindEvent(onValueChanged);
-            else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.BindEvent(onValueChanged);
+            if (_sourceType == SourceType.DataObject) _dataObjectSource.BindEvent(onValueChanged);
+            else if (_sourceType == SourceType.GlobalVariable) _globalVariableSource.BindEvent(onValueChanged);
         }
 
         public void UnbindEvent(Action<T> onValueChanged)
         {
-            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.UnbindEvent(onValueChanged);
-            else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.UnbindEvent(onValueChanged);
+            if (_sourceType == SourceType.DataObject) _dataObjectSource.UnbindEvent(onValueChanged);
+            else if (_sourceType == SourceType.GlobalVariable) _globalVariableSource.UnbindEvent(onValueChanged);
         }
         
         public static implicit operator T(VarObjRef<T> obj) => obj.Value;

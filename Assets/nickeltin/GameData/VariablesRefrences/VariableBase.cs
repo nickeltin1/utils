@@ -1,6 +1,6 @@
-﻿using Game.Scripts.nickeltin.GameData.Saving;
+﻿using nickeltin.GameData.Saving;
 
-namespace Game.Scripts.nickeltin.GameData.VariablesRefrences
+namespace nickeltin.GameData.VariablesRefrences
 {
     public abstract class VariableBase : IValueWithoutTypeProvider
     {

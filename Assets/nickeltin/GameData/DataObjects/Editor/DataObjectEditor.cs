@@ -9,9 +9,9 @@ namespace nickeltin.GameData.Editor
     {
         public override void OnInspectorGUI()
         {
-            SerializedProperty description = serializedObject.FindProperty("m_developmentDescription");
-            SerializedProperty readOnly = serializedObject.FindProperty("m_readonly");
-            SerializedProperty value = serializedObject.FindProperty("m_value");
+            SerializedProperty description = serializedObject.FindProperty("_developmentDescription");
+            SerializedProperty readOnly = serializedObject.FindProperty("_readonly");
+            SerializedProperty value = serializedObject.FindProperty("_value");
 
             EditorExtension.DrawScriptField(this);
 
@@ -24,7 +24,7 @@ namespace nickeltin.GameData.Editor
             EditorGUILayout.PropertyField(value, true);
             EditorGUI.EndDisabledGroup();
             
-            DrawPropertiesExcluding(serializedObject, "m_Script", "m_value", "m_readonly");
+            DrawPropertiesExcluding(serializedObject, "m_Script");
             
             serializedObject.ApplyModifiedProperties();
         }

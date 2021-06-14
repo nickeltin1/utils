@@ -49,15 +49,15 @@ namespace nickeltin.StateMachine
     {
         public T MainState { get; private set; }
         
-        private T m_currentState;
+        private T _currentState;
         public T CurrentState
         {
-            get => m_currentState;
+            get => _currentState;
             private set
             {
-                m_currentState = value;
+                _currentState = value;
                 #if UNITY_EDITOR
-                m_engine.LogState(m_currentState);
+                m_engine.LogState(_currentState);
                 #endif
             }
         }
@@ -220,7 +220,7 @@ namespace nickeltin.StateMachine
             else Debug.LogError($"{oldState} doesn't exist, and cannot be overwritten");
         }
         
-        protected override StateBase CurrentState_Internal => m_currentState;
+        protected override StateBase CurrentState_Internal => _currentState;
         protected override StateBase MainState_Internal => MainState;
     }
 }

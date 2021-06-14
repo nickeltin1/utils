@@ -1,4 +1,4 @@
-﻿namespace Game.Scripts.nickeltin.GameData.Saving
+﻿namespace nickeltin.GameData.Saving
 {
     public interface IValueWithoutTypeProvider
     {

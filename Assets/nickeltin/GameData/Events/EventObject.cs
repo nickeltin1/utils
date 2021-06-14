@@ -9,26 +9,26 @@ namespace nickeltin.GameData.Events
     [CreateAssetMenu(menuName = MenuPathsUtility.eventsMenu + nameof(EventObject))]
     public sealed class EventObject : ScriptableObject, IEventBinder
     {
-        [SerializeField] private Event m_event;
+        [SerializeField] private Event _event;
 
-        public void Invoke() => m_event.Invoke();
+        public void Invoke() => _event.Invoke();
         
-        public void BindEvent(Action onEventInvoke) => m_event.Bind(onEventInvoke);
+        public void BindEvent(Action onEventInvoke) => _event.Bind(onEventInvoke);
 
-        public void UnbindEvent(Action onEventInvoke) => m_event.Unbind(onEventInvoke);
+        public void UnbindEvent(Action onEventInvoke) => _event.Unbind(onEventInvoke);
     }
     
     [Serializable]
     public abstract class EventObject<T> : ScriptableObject, IEventBinder<T>
     {
-        [SerializeField] protected Event<T> m_event;
+        [SerializeField] protected Event<T> _event;
 
-        public void Invoke(T invokeData) => m_event.Invoke(invokeData);
+        public void Invoke(T invokeData) => _event.Invoke(invokeData);
         
-        public void BindEvent(Action<T> onEventInvoke) => m_event.Bind(onEventInvoke);
+        public void BindEvent(Action<T> onEventInvoke) => _event.Bind(onEventInvoke);
 
-        public void UnbindEvent(Action<T> onEventInvoke) => m_event.Unbind(onEventInvoke);
+        public void UnbindEvent(Action<T> onEventInvoke) => _event.Unbind(onEventInvoke);
 
-        public virtual void Invoke() => m_event.InvokeWithDefaultData();
+        public virtual void Invoke() => _event.InvokeWithDefaultData();
     }
 }

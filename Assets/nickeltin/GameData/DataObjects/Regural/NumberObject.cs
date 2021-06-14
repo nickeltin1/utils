@@ -31,8 +31,8 @@ namespace nickeltin.GameData.DataObjects
         {
             get
             {
-                if (m_type.Equals(NumberType.Int)) return (int)m_value;
-                return m_value;
+                if (m_type.Equals(NumberType.Int)) return (int)_value;
+                return _value;
             }
             set
             {
@@ -45,12 +45,12 @@ namespace nickeltin.GameData.DataObjects
 
         private void OnValidate()
         {
-            if (m_type.Equals(NumberType.Int)) m_value = (int) m_value;
+            if (m_type.Equals(NumberType.Int)) _value = (int) _value;
         }
 
         /// <summary>
         /// Value from 0 to 1, depends on min/max values
         /// </summary>
-        public float NormalizedValue => m_value.To01Ratio(m_minValue, m_maxValue);
+        public float NormalizedValue => _value.To01Ratio(m_minValue, m_maxValue);
     }
 }

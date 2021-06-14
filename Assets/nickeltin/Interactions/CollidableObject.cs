@@ -6,7 +6,7 @@ namespace nickeltin.Interactions
 {
    public class CollidableObject : MonoBehaviour
    {
-      [SerializeField] private UnityEvent<Collider> m_onTriggerEnter;
+      [SerializeField] private UnityEvent<Collider> _onTriggerEnter;
       public event Action<Collider> onTriggerEnter;
       
       [SerializeField] private UnityEvent<Collision> m_onCollisionEnter;
@@ -15,7 +15,7 @@ namespace nickeltin.Interactions
       private void OnTriggerEnter(Collider other)
       {
          onTriggerEnter?.Invoke(other);
-         m_onTriggerEnter.Invoke(other);
+         _onTriggerEnter.Invoke(other);
       }
 
       private void OnCollisionEnter(Collision other)

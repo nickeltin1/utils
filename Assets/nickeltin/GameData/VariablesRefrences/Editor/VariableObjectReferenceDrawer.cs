@@ -14,10 +14,10 @@ namespace nickeltin.GameData.Editor
             
             BeginProperty(ref position, property, ref label);
             
-            CacheReferenceType(property, "m_sourceType");
+            CacheReferenceType(property, "_sourceType");
             
-            SerializedProperty dataObject = property.FindPropertyRelative("m_dataObjectSource");
-            SerializedProperty globalVariable = property.FindPropertyRelative("m_globalVariableSource");
+            SerializedProperty dataObject = property.FindPropertyRelative("_dataObjectSource");
+            SerializedProperty globalVariable = property.FindPropertyRelative("_globalVariableSource");
             
             DrawProperty(position, property, dataObject, globalVariable);
             

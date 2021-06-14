@@ -13,10 +13,10 @@ namespace nickeltin.GameData.Editor
             
             BeginProperty(ref position, property, ref label);
             
-            CacheReferenceType(property, "m_referenceType");
+            CacheReferenceType(property, "_referenceType");
             
-            SerializedProperty eventObject = property.FindPropertyRelative("m_eventObject");
-            SerializedProperty gloablEvent = property.FindPropertyRelative("m_globalEvent");
+            SerializedProperty eventObject = property.FindPropertyRelative("_eventObject");
+            SerializedProperty gloablEvent = property.FindPropertyRelative("_globalEvent");
 
             DrawProperty(position, property,eventObject, gloablEvent);
 

@@ -39,6 +39,6 @@ namespace nickeltin.Audio
             }
         }
 
-        public void Play(AudioSource source) => m_event.invokeData.Play(source);
+        public void Play(AudioSource source) => _event.invokeData.Play(source);
     }
 }

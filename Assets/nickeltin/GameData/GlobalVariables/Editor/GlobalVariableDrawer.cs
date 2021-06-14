@@ -20,8 +20,8 @@ namespace nickeltin.GameData.GlobalVariables.Editor
             bool typeFound = CacheGenericType(typeof(GlobalVariablesRegistry<>), 
                 property, ref _sourceType, ref _sourceParameters);
             
-            SerializedProperty registry = property.FindPropertyRelative("m_registry");
-            SerializedProperty entryIndex = property.FindPropertyRelative("m_entryIndex");
+            SerializedProperty registry = property.FindPropertyRelative("_registry");
+            SerializedProperty entryIndex = property.FindPropertyRelative("_entryIndex");
 
             Rect topLine = new Rect(position) {height = EditorGUIUtility.singleLineHeight};
             

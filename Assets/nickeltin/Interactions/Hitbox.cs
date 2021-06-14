@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace nickeltin.Interactions
 {
@@ -7,9 +6,9 @@ namespace nickeltin.Interactions
     public class Hitbox : MonoBehaviour
     {
         public new Collider collider;
-        [SerializeField] private MonoBehaviour m_owner;
+        [SerializeField] private MonoBehaviour _owner;
 
-        public bool HasOwner => m_owner != null; 
+        public bool HasOwner => _owner != null; 
 
         private void OnValidate()
         {
@@ -18,12 +17,12 @@ namespace nickeltin.Interactions
 
         public void SetOwner<T>(T owner) where T : MonoBehaviour
         {
-            this.m_owner = owner;
+            this._owner = owner;
         }
         
         public bool TryGetOwner<T>(out T owner)
         {
-            if (HasOwner && this.m_owner is T requestedObject)
+            if (HasOwner && this._owner is T requestedObject)
             {
                 owner = requestedObject;
                 return true;

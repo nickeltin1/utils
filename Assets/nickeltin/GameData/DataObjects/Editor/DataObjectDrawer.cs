@@ -9,12 +9,12 @@ namespace nickeltin.GameData.Editor
     [CustomPropertyDrawer(typeof(DataObject<>), true)]
     public class DataObjectDrawer : GenericObjectDrawer
     {
-        private Type m_objectType;
-        private Type[] m_objectParameters;
+        private Type _objectType;
+        private Type[] _objectParameters;
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent _label)
         {
-            CacheGenericType(typeof(DataObject<>), property, ref m_objectType, ref m_objectParameters);
+            CacheGenericType(typeof(DataObject<>), property, ref _objectType, ref _objectParameters);
             
             GUIContent label = new GUIContent(_label);
             
@@ -26,7 +26,7 @@ namespace nickeltin.GameData.Editor
             EditorGUI.BeginChangeCheck();
             
             
-            DrawGenericObjectField(topLine, property, label, m_objectType, m_objectParameters);
+            DrawGenericObjectField(topLine, property, label, _objectType, _objectParameters);
             
             EditorGUI.EndProperty();
 

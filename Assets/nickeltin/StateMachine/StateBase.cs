@@ -13,11 +13,11 @@ namespace nickeltin.StateMachine
         public Func<bool> onFixedUpdate { get; protected set; }
         public Func<bool> onStateEnd { get; protected set; }
 
-        protected Action m_onGizmosDraw; 
+        protected Action _onGizmosDraw; 
 
-        protected List<Transition> m_transitions;
+        protected List<Transition> _transitions;
 
-        public IReadOnlyList<Transition> transitions => m_transitions;
+        public IReadOnlyList<Transition> transitions => _transitions;
 
         public abstract Enum implicitType { get; }
 
@@ -35,14 +35,14 @@ namespace nickeltin.StateMachine
             this.onStateEnd = onStateEnd ?? this.onStateEnd;
         }
 
-        public void AddGizmos(Action onGizmosDraw) => m_onGizmosDraw = onGizmosDraw;
+        public void AddGizmos(Action onGizmosDraw) => _onGizmosDraw = onGizmosDraw;
 
         public virtual bool OnStateStart() => ExecuteAction(onStateStart);
         public virtual bool OnUpdate() => ExecuteAction(onUpdate);
         public virtual bool OnFixedUpdate() => ExecuteAction(onFixedUpdate);
         public virtual bool OnStateEnd() => ExecuteAction(onStateEnd);
 
-        public virtual void OnGizmosDraw() => m_onGizmosDraw?.Invoke();
+        public virtual void OnGizmosDraw() => _onGizmosDraw?.Invoke();
         
         private static bool ExecuteAction(Func<bool> action)
         {
