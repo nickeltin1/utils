@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.Events;
 using Object = UnityEngine.Object;
 
 namespace nickeltin.ObjectPooling
@@ -14,14 +15,14 @@ namespace nickeltin.ObjectPooling
         public Pool(T poolObject, Transform poolParent = null, int size = 200, Action<T> onItemFirstSpawn = null ) : 
             base(poolObject, poolParent, size, onItemFirstSpawn) { }
         
-        public override T Get()
+        public override T Get(Transform parent = null)
         {
-            if (m_pool.Count == 0)
+            if (_pool.Count == 0)
             {
-                if (m_outOfPoolObjects.Count >= m_size)
+                if (_outOfPoolObjects.Count >= _size)
                 {
-                    T extractedObject = m_outOfPoolObjects[m_outOfPoolObjects.Count - 1];
-                    m_outOfPoolObjects.RemoveAt(m_outOfPoolObjects.Count - 1);
+                    T extractedObject = _outOfPoolObjects[_outOfPoolObjects.Count - 1];
+                    _outOfPoolObjects.RemoveAt(_outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
                 else
@@ -32,10 +33,11 @@ namespace nickeltin.ObjectPooling
                 }
             }
 
-            T obj = m_pool[m_pool.Count - 1];
-            m_pool.RemoveAt(m_pool.Count - 1);    
-            m_outOfPoolObjects.Add(obj);
+            T obj = _pool[_pool.Count - 1];
+            _pool.RemoveAt(_pool.Count - 1);    
+            _outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);
+            if(parent != null) obj.transform.SetParent(parent);
             return obj;
         }
 
@@ -51,7 +53,7 @@ namespace nickeltin.ObjectPooling
 
         private void AssignPoolToObject(T obj)
         {
-            if (obj is IPoolObject<T> p) p.Pool = this;
+            if (obj is IPoolItem<T> p) p.Pool = this;
         }
     }
     
@@ -64,23 +66,24 @@ namespace nickeltin.ObjectPooling
         public Pool(Transform poolObject, Transform poolParent = null, int size = 200, 
             Action<Transform> onItemFirstSpawn = null) : base(poolObject, poolParent, size, onItemFirstSpawn) { }
         
-        public override Transform Get()
+        public override Transform Get(Transform parent = null)
         {
-            if (m_pool.Count == 0)
+            if (_pool.Count == 0)
             {
-                if (m_outOfPoolObjects.Count >= m_size)
+                if (_outOfPoolObjects.Count >= _size)
                 {
-                    Transform extractedObject = m_outOfPoolObjects[m_outOfPoolObjects.Count - 1];
-                    m_outOfPoolObjects.RemoveAt(m_outOfPoolObjects.Count - 1);
+                    Transform extractedObject = _outOfPoolObjects[_outOfPoolObjects.Count - 1];
+                    _outOfPoolObjects.RemoveAt(_outOfPoolObjects.Count - 1);
                     Add(extractedObject);
                 }
                 else Add(SpawnItem());
             }
 
-            Transform obj = m_pool[m_pool.Count - 1];
-            m_pool.RemoveAt(m_pool.Count - 1);
-            m_outOfPoolObjects.Add(obj);
+            Transform obj = _pool[_pool.Count - 1];
+            _pool.RemoveAt(_pool.Count - 1);
+            _outOfPoolObjects.Add(obj);
             obj.gameObject.SetActive(true);
+            if(parent != null) obj.transform.SetParent(parent);
             return obj;
         }
     }

@@ -1,10 +1,11 @@
 ﻿using System;
+using nickeltin.GameData.Events.Types;
 using UnityEngine;
 
 namespace nickeltin.GameData.GlobalVariables
 {
     [Serializable]
-    public sealed class GlobalVar<T>
+    public sealed class GlobalVar<T> : IEventBinder<T>
     {
         [SerializeField] private GlobalVariablesRegistry<T> m_registry;
         [SerializeField] private int m_entryIndex;

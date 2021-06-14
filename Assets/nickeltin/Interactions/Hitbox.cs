@@ -1,20 +1,29 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace nickeltin.Interactions
 {
     [RequireComponent(typeof(Collider))]
     public class Hitbox : MonoBehaviour
     {
-        public MonoBehaviour owner;
-        
+        public new Collider collider;
+        [SerializeField] private MonoBehaviour m_owner;
+
+        public bool HasOwner => m_owner != null; 
+
+        private void OnValidate()
+        {
+            if (collider == null) collider = GetComponent<Collider>();
+        }
+
         public void SetOwner<T>(T owner) where T : MonoBehaviour
         {
-            this.owner = owner;
+            this.m_owner = owner;
         }
         
         public bool TryGetOwner<T>(out T owner)
         {
-            if (this.owner is T requestedObject)
+            if (HasOwner && this.m_owner is T requestedObject)
             {
                 owner = requestedObject;
                 return true;

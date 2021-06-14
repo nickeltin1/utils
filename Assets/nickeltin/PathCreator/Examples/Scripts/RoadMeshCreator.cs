@@ -1,12 +1,24 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace nickeltin.PathCreation.Examples {
-    public class RoadMeshCreator : PathSceneTool {
-        [Header ("Road settings")]
-        public float roadWidth = .4f;
-        [Range (0, .5f)]
-        public float thickness = .15f;
+    public class RoadMeshCreator : PathSceneTool 
+    {
+        private class MeshHolder : MonoBehaviour
+        {
+            public MeshFilter filter { get; private set; }
+            public new MeshRenderer renderer { get; private set; }
+
+            public MeshHolder Init(Transform parent)
+            {
+                filter = gameObject.AddComponent<MeshFilter>();
+                renderer = gameObject.AddComponent<MeshRenderer>();
+                transform.SetParent(parent);
+                return this;
+            }
+        }
+        
+        [Header ("Road settings")] public float roadWidth = .4f;
+        [Range (0, 5f)] public float thickness = .15f;
         public bool flattenSurface;
 
         [Header ("Material settings")]
@@ -14,22 +26,22 @@ namespace nickeltin.PathCreation.Examples {
         public Material undersideMaterial;
         public float textureTiling = 1;
 
-        [SerializeField, HideInInspector]
-        GameObject meshHolder;
+        [SerializeField, HideInInspector] private MeshHolder meshHolder;
+        
+        private Mesh mesh;
 
-        MeshFilter meshFilter;
-        MeshRenderer meshRenderer;
-        Mesh mesh;
-
-        protected override void PathUpdated () {
-            if (pathCreator != null) {
-                AssignMeshComponents ();
-                AssignMaterials ();
-                CreateRoadMesh ();
+        protected override void PathUpdated() 
+        {
+            if (pathCreator != null) 
+            {
+                AssignMeshHolder();
+                AssignMaterials();
+                CreateRoadMesh();
             }
         }
 
-        void CreateRoadMesh () {
+        private void CreateRoadMesh() 
+        {
             Vector3[] verts = new Vector3[path.NumPoints * 8];
             Vector2[] uvs = new Vector2[verts.Length];
             Vector3[] normals = new Vector3[verts.Length];
@@ -89,13 +101,16 @@ namespace nickeltin.PathCreation.Examples {
                 normals[vertIndex + 7] = localRight;
 
                 // Set triangle indices
-                if (i < path.NumPoints - 1 || path.isClosedLoop) {
-                    for (int j = 0; j < triangleMap.Length; j++) {
+                if (i < path.NumPoints - 1 || path.isClosedLoop) 
+                {
+                    for (int j = 0; j < triangleMap.Length; j++) 
+                    {
                         roadTriangles[triIndex + j] = (vertIndex + triangleMap[j]) % verts.Length;
                         // reverse triangle map for under road so that triangles wind the other way and are visible from underneath
                         underRoadTriangles[triIndex + j] = (vertIndex + triangleMap[triangleMap.Length - 1 - j] + 2) % verts.Length;
                     }
-                    for (int j = 0; j < sidesTriangleMap.Length; j++) {
+                    for (int j = 0; j < sidesTriangleMap.Length; j++) 
+                    {
                         sideOfRoadTriangles[triIndex * 2 + j] = (vertIndex + sidesTriangleMap[j]) % verts.Length;
                     }
 
@@ -115,40 +130,35 @@ namespace nickeltin.PathCreation.Examples {
             mesh.SetTriangles (sideOfRoadTriangles, 2);
             mesh.RecalculateBounds ();
         }
-
-        // Add MeshRenderer and MeshFilter components to this gameobject if not already attached
-        void AssignMeshComponents () {
-
-            if (meshHolder == null) {
-                meshHolder = new GameObject ("Road Mesh Holder");
-            }
-
-            meshHolder.transform.rotation = Quaternion.identity;
-            meshHolder.transform.position = Vector3.zero;
-            meshHolder.transform.localScale = Vector3.one;
-
-            // Ensure mesh renderer and filter components are assigned
-            if (!meshHolder.gameObject.GetComponent<MeshFilter> ()) {
-                meshHolder.gameObject.AddComponent<MeshFilter> ();
-            }
-            if (!meshHolder.GetComponent<MeshRenderer> ()) {
-                meshHolder.gameObject.AddComponent<MeshRenderer> ();
-            }
-
-            meshRenderer = meshHolder.GetComponent<MeshRenderer> ();
-            meshFilter = meshHolder.GetComponent<MeshFilter> ();
-            if (mesh == null) {
-                mesh = new Mesh ();
-            }
-            meshFilter.sharedMesh = mesh;
+        
+        private void AssignMeshHolder() 
+        {
+            if (mesh == null) mesh = new Mesh();
+            
+            if(meshHolder != null) return;
+            
+            meshHolder = new GameObject ("road_mesh_holder").AddComponent<MeshHolder>().Init(transform);
+            
+            meshHolder.filter.sharedMesh = mesh;
         }
 
-        void AssignMaterials () {
-            if (roadMaterial != null && undersideMaterial != null) {
-                meshRenderer.sharedMaterials = new Material[] { roadMaterial, undersideMaterial, undersideMaterial };
-                meshRenderer.sharedMaterials[0].mainTextureScale = new Vector3 (1, textureTiling);
+        private void AssignMaterials() 
+        {
+            if (roadMaterial != null && undersideMaterial != null) 
+            {
+                meshHolder.renderer.sharedMaterials = new[] { roadMaterial, undersideMaterial, undersideMaterial };
+                meshHolder.renderer.sharedMaterials[0].mainTextureScale = new Vector3 (1, textureTiling);
             }
         }
 
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (meshHolder != null)
+            {
+                if (Application.isPlaying) Object.Destroy(meshHolder.gameObject);
+                else Object.DestroyImmediate(meshHolder.gameObject);
+            }
+        }
     }
 }

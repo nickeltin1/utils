@@ -27,13 +27,13 @@ namespace nickeltin.Other
                     Gizmos.DrawCube(box.center, box.size);
                     break;
                 case SphereCollider sphere:
-                    Gizmos.matrix = Matrix4x4.Rotate(transform.rotation);
+                    Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, Vector3.one);
                     Vector3 scale = transform.lossyScale;
                     scale.Abs();
                     float maxScale = scale.x;
                     if (scale.y > maxScale) maxScale = scale.y;
                     if (scale.z > maxScale) maxScale = scale.z;
-                    Gizmos.DrawSphere(transform.position + sphere.center, sphere.radius * maxScale);
+                    Gizmos.DrawSphere(sphere.center, sphere.radius * maxScale);
                     break;
                 case CapsuleCollider capsule:
                     //TODO:

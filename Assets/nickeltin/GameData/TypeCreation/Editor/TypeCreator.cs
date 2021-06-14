@@ -22,8 +22,7 @@ namespace nickeltin.GameData.Editor.TypeCreation
             {
                 throw new ArgumentException("Parent type is not specified");
             }
-            
-            
+
             string path = EditorUtility.SaveFilePanelInProject("Save event object", 
                 $"{parameterTypes[parameterTypes.Length - 1].Name}{name}", 
                 "cs", "Please enter a file name to save the texture to");
@@ -35,7 +34,10 @@ namespace nickeltin.GameData.Editor.TypeCreation
 
             foreach (var type in parameterTypes)
             {
-                if (!usedNamespaces.Contains(type.Namespace)) usedNamespaces.Add(type.Namespace);
+                if (type.Namespace != null && !usedNamespaces.Contains(type.Namespace))
+                {
+                    usedNamespaces.Add(type.Namespace);
+                }
             }
 
             foreach (var @namespace in usedNamespaces)
@@ -44,9 +46,14 @@ namespace nickeltin.GameData.Editor.TypeCreation
             }
             
             stringBuilder.AppendLine($"using {nameof(UnityEngine)};");
-            stringBuilder.AppendLine($"using {nameof(nickeltin)}.{nameof(nickeltin.Editor)}.{nameof(nickeltin.Editor.Utility)};");
+
+            if (menuPath != null)
+            {
+                stringBuilder.AppendLine($"using {nameof(nickeltin)}.{nameof(nickeltin.Editor)}.{nameof(nickeltin.Editor.Utility)};");
+            }
 
             string usings = stringBuilder.ToString();
+            
             stringBuilder.Clear();
 
             stringBuilder.Append(genericParentType.Name.Split('`').First());

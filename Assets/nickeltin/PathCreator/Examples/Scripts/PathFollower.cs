@@ -1,4 +1,6 @@
 ﻿using System;
+using nickeltin.Editor.Attributes;
+using nickeltin.Extensions;
 using UnityEngine;
 
 namespace nickeltin.PathCreation.Examples
@@ -18,45 +20,78 @@ namespace nickeltin.PathCreation.Examples
         public UpdateType updateType = UpdateType.Update;
         public float speed = 5;
         public bool updateRotation = true;
+        [ShowIf("updateRotation")] public bool useDirectionToRotate = true;
 
 
         public float distanceTravelled { get; set; }
         public bool stopped = false;
         
-        private void Start() 
+        private VertexPath path;
+
+        private void OnEnable()
         {
-            if (pathCreator != null) pathCreator.pathUpdated += OnPathChanged;
+            if (pathCreator != null) pathCreator.pathUpdated += RefreshPath;
+        }
+
+        private void OnDisable()
+        {
+            if (pathCreator != null) pathCreator.pathUpdated -= RefreshPath;
         }
 
 
         private void FixedUpdate()
         {
-            if(updateType == UpdateType.FixedUpdate) Update_Internal();
+            if(updateType == UpdateType.FixedUpdate) Update_Internal(Time.fixedDeltaTime);
         }
 
         private void Update()
         {
-            if(updateType == UpdateType.Update) Update_Internal();
+            if(updateType == UpdateType.Update) Update_Internal(Time.deltaTime);
         }
 
         private void LateUpdate()
         {
-            if(updateType == UpdateType.LateUpdate) Update_Internal();
+            if(updateType == UpdateType.LateUpdate) Update_Internal(Time.deltaTime);
+        }
+
+        public void SetPath(VertexPath path)
+        {
+            OnDisable();
+            pathCreator = null;
+            this.path = path;
         }
         
-        private void Update_Internal()
+        private void Update_Internal(float delta)
         {
-            if (pathCreator != null && !stopped)
+            if (!stopped)
             {
-                distanceTravelled += speed * Time.deltaTime;
-                transform.position = pathCreator.path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
-                if(updateRotation) transform.rotation = pathCreator.path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
+                if (pathCreator != null) path = pathCreator.path;
+                
+                if (path == null) return;
+
+                distanceTravelled += speed * delta;
+                transform.position = path.GetPointAtDistance(distanceTravelled, endOfPathInstruction);
+                if (updateRotation)
+                {
+                    if (useDirectionToRotate)
+                    {
+                        var rot =  path
+                            .GetDirectionAtDistance(distanceTravelled, endOfPathInstruction).LookRotation();
+                        rot.Set(x: 0, z: 0);
+                        transform.rotation = rot;
+                    }
+                    else
+                    {
+                        transform.rotation = path.GetRotationAtDistance(distanceTravelled, endOfPathInstruction);
+                    }
+                }
             }
         }
         
-        private void OnPathChanged() 
+        public void RefreshPath()
         {
-            distanceTravelled = pathCreator.path.GetClosestDistanceAlongPath(transform.position);
+            if (pathCreator != null) path = pathCreator.path;
+            distanceTravelled = path.GetClosestDistanceAlongPath(transform.position);
         }
     }
 }

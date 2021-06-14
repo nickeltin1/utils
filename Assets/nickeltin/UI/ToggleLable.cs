@@ -1,4 +1,4 @@
-﻿using System;
+﻿using nickeltin.GameData.References;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -37,12 +37,12 @@ namespace nickeltin.UI
         
         private void OnEnable()
         {
-            if (m_source.CurrentSourcePresented) m_source.BindEvent(UpdateValue);
+            if (m_source.HasSource) m_source.BindEvent(UpdateValue);
         }
 
         private void OnDisable()
         {
-            if (m_source.CurrentSourcePresented) m_source.UnbindEvent(UpdateValue);
+            if (m_source.HasSource) m_source.UnbindEvent(UpdateValue);
         }
     }
 }

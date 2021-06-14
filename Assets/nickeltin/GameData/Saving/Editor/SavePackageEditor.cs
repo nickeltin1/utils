@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using nickeltin.EditorExtensions.Editor;
+using UnityEditor;
 
 namespace nickeltin.GameData.Saving.Editor
 {
@@ -8,8 +9,9 @@ namespace nickeltin.GameData.Saving.Editor
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
-            SaveableBaseEditor.OnInspectorGUI_Internal(this);
-            
+         
+            base.OnInspectorGUI();
+
             SavePackage obj = (SavePackage) target;
             
             EditorGUILayout.HelpBox(
@@ -32,9 +34,12 @@ namespace nickeltin.GameData.Saving.Editor
                     MessageType.Warning);
             }
 
+
+            SerializedProperty saves = serializedObject.FindProperty("_saves");
+
+            EditorGUILayout.PropertyField(saves);
+                
             serializedObject.ApplyModifiedProperties();
-            
-            base.OnInspectorGUI();
         }
     }
 }

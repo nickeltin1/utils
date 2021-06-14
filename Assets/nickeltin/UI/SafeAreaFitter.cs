@@ -1,4 +1,5 @@
 ﻿using System;
+using nickeltin.Editor.Attributes;
 using UnityEngine;
 
 namespace nickeltin.UI
@@ -21,6 +22,7 @@ namespace nickeltin.UI
             Fit();
         }
 
+        [Button("Force Fit")]
         public void Fit()
         {
             var safeArea = Screen.safeArea;

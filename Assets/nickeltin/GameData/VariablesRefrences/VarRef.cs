@@ -1,21 +1,24 @@
 ﻿using System;
+using Game.Scripts.nickeltin.GameData.Saving;
+using Game.Scripts.nickeltin.GameData.VariablesRefrences;
+using nickeltin.GameData.DataObjects;
 using nickeltin.GameData.GlobalVariables;
 using UnityEngine;
 
-namespace nickeltin.GameData.DataObjects
+namespace nickeltin.GameData.References
 {
     [Serializable]
-    public class VarRef<ValueType> : VariableReferenceBase
+    public class VarRef<T> : VariableReferenceBase
     {
         public enum ReferenceType { Constant, DataObject, GlobalVariable }
 
         [SerializeField] protected ReferenceType m_referenceType;
-        [SerializeField] protected ValueType m_constantValue;
-        [SerializeField] protected DataObject<ValueType> m_dataObject; 
-        [SerializeField] protected GlobalVar<ValueType> m_globalVariable;
+        [SerializeField] protected T m_constantValue;
+        [SerializeField] protected DataObject<T> m_dataObject; 
+        [SerializeField] protected GlobalVar<T> m_globalVariable;
         
 
-        public ValueType Value
+        public T Value
         {
             get
             {
@@ -33,19 +36,10 @@ namespace nickeltin.GameData.DataObjects
         }
         
         public override object GetValueWithoutType() => Value;
-        public override void SetValueWithoutType(object value)
-        {
-            m_constantValue = (ValueType) value;
-            if (m_dataObject != null) m_dataObject.Value = m_constantValue;
-            if (m_globalVariable.HasRegistry) m_globalVariable.Value = m_constantValue;
-        }
+        public override void SetValueWithoutType(object value) => Value = (T) value;
 
-        public static implicit operator ValueType(VarRef<ValueType> reference) => reference.Value;
+        public static implicit operator T(VarRef<T> reference) => reference.Value;
     }
     
-    public abstract class VariableReferenceBase
-    {
-        public abstract object GetValueWithoutType();
-        public abstract void SetValueWithoutType(object value);
-    }
+    public abstract class VariableReferenceBase : VariableBase { }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using nickeltin.Extensions;
+using nickeltin.Extensions.Editor;
+using nickeltin.GameData.References;
 using UnityEditor;
 using UnityEngine;
 
@@ -22,6 +24,7 @@ namespace nickeltin.Editor.PropertyDrawers
                 else type = property.GetObjectType();
             }
 
+            
             return true;
         }
 
@@ -38,12 +41,25 @@ namespace nickeltin.Editor.PropertyDrawers
             {
                 EditorGUI.LabelField(position, label);
                 position.x += EditorGUIUtility.labelWidth + 2;
+                position.width -= EditorGUIUtility.labelWidth + 2;
             }
 
             string type = "";
             if (parameters != null) for (var i = 0; i < parameters.Length; i++) type += parameters[i];
 
             EditorGUI.HelpBox(position, $"Generic type with parameter {type} not found", MessageType.Error);
+        }
+
+        protected bool IsInsideVariableReference(SerializedProperty property)
+        {
+            Type parentType = property.GetParentType();
+            if (parentType.BaseType == typeof(VariableReferenceBase) 
+                || parentType.BaseType  == typeof(VariableObjectReferenceBase))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

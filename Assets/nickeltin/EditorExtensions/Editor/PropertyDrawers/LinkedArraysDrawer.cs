@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using nickeltin.Editor.Attributes;
 using nickeltin.Editor.Types;
-using nickeltin.Extensions;
+using nickeltin.Extensions.Editor;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;

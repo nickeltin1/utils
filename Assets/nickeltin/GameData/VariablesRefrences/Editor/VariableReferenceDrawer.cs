@@ -1,4 +1,4 @@
-﻿using nickeltin.GameData.DataObjects;
+﻿using nickeltin.GameData.References;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,7 +19,7 @@ namespace nickeltin.GameData.Editor
             SerializedProperty dataObject = property.FindPropertyRelative("m_dataObject");
             SerializedProperty globalVariable = property.FindPropertyRelative("m_globalVariable");
             
-            DrawProperty(position, constantValue, dataObject, globalVariable);
+            DrawProperty(position, property,constantValue, dataObject, globalVariable);
 
             EndProperty(property);
         }

@@ -185,6 +185,15 @@ namespace nickeltin.Cameras.TriDimensional
             }
         }
 
+        public bool AlignPositionWithTarget()
+        {
+            if (m_target == null) return false;
+            
+            transform.position = m_target.transform.position;
+
+            return true;
+        }
+        
         public void Shake(float t, float amplitude)
         {
             IEnumerator Shake()

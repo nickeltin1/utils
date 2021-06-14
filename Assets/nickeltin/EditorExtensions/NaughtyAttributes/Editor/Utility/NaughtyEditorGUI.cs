@@ -124,8 +124,7 @@ namespace nickeltin.Editor.Attributes
 		/// <param name="selectedValueIndex">The index of the value from the values array</param>
 		/// <param name="values">The values of the dropdown</param>
 		/// <param name="displayOptions">The display options for the values</param>
-		public static void Dropdown(
-			Rect rect, SerializedObject serializedObject, object target, FieldInfo dropdownField,
+		public static void Dropdown(Rect rect, SerializedObject serializedObject, object target, FieldInfo dropdownField,
 			string label, int selectedValueIndex, object[] values, string[] displayOptions)
 		{
 			EditorGUI.BeginChangeCheck();

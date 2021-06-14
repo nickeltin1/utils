@@ -16,13 +16,13 @@ namespace nickeltin.GameData.Saving
     /// Use <see cref="GetLocalId"/> to get entry id, and Indexer (instance[int localId]) to get item with Id.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class SaveRegistry<T> : RegistryItem where T : SaveableBase
+    public  class SaveRegistry<T> : RegistryItem where T : SaveableBase
     {
         [SerializeField] private List<T> m_entries;
 
         public IReadOnlyList<T> Entries => m_entries;
         
-        public override bool Register()
+        public override bool Register(SaveSystem saveSystem)
         {
             bool value = true;
             
@@ -30,8 +30,8 @@ namespace nickeltin.GameData.Saving
             {
                 if (save != null)
                 {
-                    save.UseGUID = true;
-                    if(!save.Register()) value = false;
+                    save.SaveID.useGUID = true;
+                    if(!save.Register(saveSystem)) value = false;
                 }
             }
 

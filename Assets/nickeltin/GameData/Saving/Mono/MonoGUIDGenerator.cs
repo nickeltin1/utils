@@ -13,7 +13,7 @@ namespace nickeltin.GameData.Saving
             GetComponentsInChildren(true, saves);
             if (TryGetComponent<MonoSave>(out var itself)) saves.Add(itself);
             Undo.RecordObjects(saves.ToArray(), "Generating GUID's");
-            for (int i = saves.Count - 1; i >= 0; i--) saves[i].GenerateGUID();
+            for (int i = saves.Count - 1; i >= 0; i--) saves[i].SaveID.GenerateGUID();
             Debug.Log($"{saves.Count} GUID's generated");
         }
 #endif

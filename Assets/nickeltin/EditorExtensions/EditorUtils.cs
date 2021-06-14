@@ -5,7 +5,6 @@ using nickeltin.Singletons;
 using UnityEditor;
 using UnityEngine;
 
-
 namespace nickeltin.Editor
 {
     public static class EditorUtils
@@ -33,14 +32,13 @@ namespace nickeltin.Editor
         {
             SOSInitializer sosInitializer = new GameObject("BootStrapper").AddComponent<SOSInitializer>();
             Undo.RegisterCreatedObjectUndo(sosInitializer.gameObject, "BootStrapper created");
-            SOSBase[] sosInProject = Resources.FindObjectsOfTypeAll<SOSBase>();
-            if (sosInProject.Length > 0)
+            if(sosInitializer.RefreshList() > 0)
             {
-                sosInitializer.AddItems(sosInProject);
                 Debug.Log($"BootStrapper spawned, Scriptable Object Singletones from your project added automatically." +
                           $"If some of them is missing add them manualy");
             }
         }
+        
 #endif
     }
 }

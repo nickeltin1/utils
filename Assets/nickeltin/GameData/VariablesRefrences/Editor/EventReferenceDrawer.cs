@@ -18,7 +18,7 @@ namespace nickeltin.GameData.Editor
             SerializedProperty eventObject = property.FindPropertyRelative("m_eventObject");
             SerializedProperty gloablEvent = property.FindPropertyRelative("m_globalEvent");
 
-            DrawProperty(position, eventObject, gloablEvent);
+            DrawProperty(position, property,eventObject, gloablEvent);
 
             EndProperty(property);
         }

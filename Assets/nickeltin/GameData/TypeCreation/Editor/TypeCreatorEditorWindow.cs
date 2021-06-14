@@ -1,24 +1,26 @@
 ﻿using System;
 using nickeltin.Editor.Utility;
+using nickeltin.Extensions;
 using nickeltin.GameData.DataObjects;
 using nickeltin.GameData.Events;
+using nickeltin.GameData.Events.Types;
 using nickeltin.GameData.GlobalVariables;
-using nickeltin.GameData.Types;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace nickeltin.GameData.Editor.TypeCreation
 {
     public class TypeCreatorEditorWindow : EditorWindow
     {
-        private const string m_dataObjectName = "DataObject";
-        private const string m_eventName = "EventObject";
+        private const string m_dataObjectName = "Data Object";
+        private const string m_eventName = "Event Object";
         private const string m_registryName = "Registry";
-        private const string m_eventRegistryName= "EventReigstry";
+        private const string m_eventRegistryName= "Event Reigstry";
+        private const string m_eventListenerName = "Event Listener"; 
         
         
         private int m_toolbarValue;
+
         private readonly GUILayoutOption m_buttonLayout = GUILayout.Height(40f);
         private MonoScript m_type;
         
@@ -33,13 +35,14 @@ namespace nickeltin.GameData.Editor.TypeCreation
         private void OnGUI()
         {
             GUILayout.Space(10f);
-            this.m_toolbarValue = GUILayout.Toolbar(this.m_toolbarValue, new[]
+            this.m_toolbarValue = GUILayout.SelectionGrid(this.m_toolbarValue, new[]
             {
                 m_dataObjectName,
                 m_eventName,
                 m_registryName, 
-                m_eventRegistryName
-            });
+                m_eventRegistryName,
+                m_eventListenerName
+            }, 3);
             GUILayout.Space(20f);
 
             m_type = EditorGUILayout.ObjectField(new GUIContent("Custom Type"), m_type, typeof(MonoScript), false) as MonoScript;
@@ -58,7 +61,8 @@ namespace nickeltin.GameData.Editor.TypeCreation
                 {
                     TypeCreator.Create(typeof(DataObject<>), "Object", 
                         $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.dataObjectsMenu)}",
-                        m_type.GetClass());
+                        GetTargetedType());
+                    
                 }
             }
             //Event
@@ -68,7 +72,7 @@ namespace nickeltin.GameData.Editor.TypeCreation
                 {
                     TypeCreator.Create(typeof(EventObject<>), "Event", 
                         $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.eventsMenu)}",
-                        m_type.GetClass());
+                        GetTargetedType());
                 }
             }
             //Registry
@@ -78,7 +82,7 @@ namespace nickeltin.GameData.Editor.TypeCreation
                 {
                     TypeCreator.Create(typeof(GlobalVariablesRegistry<>), "Registry", 
                         $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.registryMenu)}", 
-                        m_type.GetClass());
+                        GetTargetedType());
                 }
             }
             //EventRegistry
@@ -88,11 +92,44 @@ namespace nickeltin.GameData.Editor.TypeCreation
                 {
                     TypeCreator.Create(typeof(GlobalVariablesRegistry<>), "EventRegistry", 
                         $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.eventsRegistryMenu)}",
-                        typeof(Event<>), m_type.GetClass());
+                        typeof(Event<>), GetTargetedType());
+                };
+            }
+            //EventListener
+            else if (m_toolbarValue == 4)
+            {
+                if(DrawButton(m_eventListenerName))
+                {
+                    TypeCreator.Create(typeof(EventListener<>), "EventListener", 
+                        null, GetTargetedType());
                 };
             }
 
             GUI.enabled = true;
+        }
+
+        private Type GetTargetedType()
+        {
+            Type type = m_type.GetClass();
+            
+            if (type == null)
+            {
+                string typeDefenition = m_type.ToString();
+                
+                var parts = typeDefenition.Split(new [] {"namespace"}, 
+                    StringSplitOptions.RemoveEmptyEntries)[1].Split(' ')[1].Split('\n');
+                
+                typeDefenition = parts[0].Trim() + "." + m_type.name;
+                
+                type = TypeExt.GetType(typeDefenition);
+            }
+
+            if (type != null && !type.IsSerializable)
+            {
+                throw new Exception($"{type} is not serializable");
+            }
+            
+            return type;
         }
 
         private bool DrawButton(string postfix)

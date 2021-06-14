@@ -1,28 +1,34 @@
 ﻿using System;
 using nickeltin.Editor.Utility;
-using nickeltin.GameData.Types;
+using nickeltin.GameData.Events.Types;
 using UnityEngine;
-using Event = nickeltin.GameData.Types.Event;
+using Event = nickeltin.GameData.Events.Types.Event;
 
 namespace nickeltin.GameData.Events
 {
     [CreateAssetMenu(menuName = MenuPathsUtility.eventsMenu + nameof(EventObject))]
-    public sealed class EventObject : ScriptableObject
+    public sealed class EventObject : ScriptableObject, IEventBinder
     {
         [SerializeField] private Event m_event;
 
-        public Event Source => m_event;
-        
         public void Invoke() => m_event.Invoke();
+        
+        public void BindEvent(Action onEventInvoke) => m_event.Bind(onEventInvoke);
+
+        public void UnbindEvent(Action onEventInvoke) => m_event.Unbind(onEventInvoke);
     }
     
     [Serializable]
-    public abstract class EventObject<T> : ScriptableObject
+    public abstract class EventObject<T> : ScriptableObject, IEventBinder<T>
     {
-        [SerializeField] private Event<T> m_event;
+        [SerializeField] protected Event<T> m_event;
 
-        public Event<T> Source => m_event;
-        
         public void Invoke(T invokeData) => m_event.Invoke(invokeData);
+        
+        public void BindEvent(Action<T> onEventInvoke) => m_event.Bind(onEventInvoke);
+
+        public void UnbindEvent(Action<T> onEventInvoke) => m_event.Unbind(onEventInvoke);
+
+        public virtual void Invoke() => m_event.InvokeWithDefaultData();
     }
 }

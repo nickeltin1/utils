@@ -1,58 +1,44 @@
-﻿using nickeltin.Editor.Attributes;
+﻿using System;
+using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
 using nickeltin.Editor.Utility;
+using nickeltin.GameData.DataObjects;
+using nickeltin.GameData.Events;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Audio;
 
 namespace nickeltin.Audio
 {
     [CreateAssetMenu(menuName = MenuPathsUtility.audioMenu + nameof(AudioEvent))]
-    public class AudioEvent : ScriptableObject
+    public class AudioEvent : EventObject<AudioEvent.Data>
     {
-        private static AudioSource previewSource;
-        
-        [SerializeField] private AudioClip[] m_clips;
-        [SerializeField, MinMaxSlider(0, 2)] private Vector2 m_volume;
-        [SerializeField, MinMaxSlider(0, 2)] private Vector2 m_pitch;
-        
-        public bool hasClips => m_clips != null && m_clips.Length > 0;
-        /// <summary>
-        /// Returns random clip if has any, otherwise returns null
-        /// </summary>
-        public AudioClip clip => hasClips ? m_clips.GetRandom() : null;
-        /// <summary>
-        /// Gets random volume within 0 - 2 range
-        /// </summary>
-        public float volume => m_volume.GetRandomValueBetweenAxis();
-        /// <summary>
-        /// Gets random pitch within 0 - 2 range
-        /// </summary>
-        public float pitch => m_pitch.GetRandomValueBetweenAxis();
-        
-        
-        public void Play(AudioSource source)
+        [Serializable]
+        public class Data
         {
-            if(!hasClips) return;
-
-            source.clip = clip;
-            source.volume = volume;
-            source.pitch = pitch;
-            source.Play();
-        }
+            [SerializeField] private AudioClip[] _clips;
+            [SerializeField, MinMaxSlider(0, 2)] private Vector2 _volume = new Vector2(1,1);
+            [SerializeField, MinMaxSlider(0, 2)] private Vector2 _pitch = new Vector2(1,1);
+            [SerializeField] private AudioMixerGroup _mixerGroup;
         
+            public bool HasClips => _clips != null && _clips.Length > 0;
+            public AudioClip Clip => HasClips ? _clips.GetRandom() : null;
+            public float Volume => _volume.GetRandomValueBetweenAxis();
+            public float Pitch => _pitch.GetRandomValueBetweenAxis();
+            public AudioMixerGroup MixerGroup => _mixerGroup;
+       
         
-#if UNITY_EDITOR
-        [Button("Preview")]        
-        private void Play_Editor()
-        {
-            if (previewSource == null)
+            public void Play(AudioSource source)
             {
-                previewSource = EditorUtility.CreateGameObjectWithHideFlags("audio_preview", HideFlags.HideAndDontSave)
-                    .AddComponent<AudioSource>();
+                if(!HasClips) return;
+
+                source.clip = Clip;
+                source.volume = Volume;
+                source.pitch = Pitch;
+                source.Play();
             }
-            
-            Play(previewSource);
         }
-#endif
+
+        public void Play(AudioSource source) => m_event.invokeData.Play(source);
     }
 }

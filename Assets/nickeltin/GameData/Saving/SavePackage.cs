@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using nickeltin.Editor.Attributes;
 using nickeltin.Editor.Utility;
+using nickeltin.Extensions;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving
@@ -11,53 +12,49 @@ namespace nickeltin.GameData.Saving
     [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(SavePackage))]
     public sealed class SavePackage : Saveable<object[]>
     {
-        [SerializeField] private List<SaveableBase> m_saves;
-        public IReadOnlyList<SaveableBase> Saves => m_saves;
+        [SerializeField, HideInInspector] private SaveableBase[] _saves;
+        public IReadOnlyList<SaveableBase> Saves => _saves;
         
-        protected override void Deserialize(object[] obj)
+        protected override void Deserialize(SaveSystem saveSystem, object[] obj)
         {
-            for (int i = 0; i < m_saves.Count; i++)
+            for (int i = 0; i < _saves.Length; i++)
             {
-                m_saves[i].SetFileWithoutType(obj[i]);
+                _saves[i].SetFileWithoutType(saveSystem, obj[i]);
             }
         }
 
         protected override object[] Serialize()
         {
-            object[] obj = new object[m_saves.Count];
+            object[] obj = new object[_saves.Length];
 
-            for (int i = 0; i < m_saves.Count; i++)
-            {
-                obj[i] = m_saves[i].GetFileWithoutType();
-            }
+            for (int i = 0; i < _saves.Length; i++) obj[i] = _saves[i].GetFileWithoutType();
 
             return obj;
         }
 
-        public override bool Register()
+        public override bool Register(SaveSystem saveSystem)
         {
-            bool value = base.Register();
+            bool value = base.Register(saveSystem);
             
-            foreach (var save in m_saves)
+            foreach (var save in _saves)
             {
-                if(!save.Register()) value = false;
+                if(!save.Register(saveSystem)) value = false;
             }
-
             return value;
         }
 
         public override void SetLoadState(bool state)
         {
             base.SetLoadState(state);
-            foreach (var save in m_saves)
+            foreach (var save in _saves)
             {
                 save.SetLoadState(state);
             }
         }
         
-        protected override void LoadDefault()
+        public override void LoadDefault()
         {
-            foreach (var save in m_saves) save.Load(true);
+            _saves.ForEach(save => save.LoadDefault());
         }
     }
 }

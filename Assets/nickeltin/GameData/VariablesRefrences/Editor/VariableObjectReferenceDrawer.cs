@@ -1,9 +1,9 @@
-using nickeltin.GameData.Editor;
+using nickeltin.GameData.References;
 using UnityEditor;
 using UnityEngine;
 
 
-namespace nickeltin.UI.Editor
+namespace nickeltin.GameData.Editor
 {
     [CustomPropertyDrawer(typeof(VarObjRef<>), true)]
     public class VariableObjectReferenceDrawer : ReferenceDrawer
@@ -19,7 +19,7 @@ namespace nickeltin.UI.Editor
             SerializedProperty dataObject = property.FindPropertyRelative("m_dataObjectSource");
             SerializedProperty globalVariable = property.FindPropertyRelative("m_globalVariableSource");
             
-            DrawProperty(position, dataObject, globalVariable);
+            DrawProperty(position, property, dataObject, globalVariable);
             
             EndProperty(property);
         }

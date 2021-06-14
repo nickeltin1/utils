@@ -9,56 +9,55 @@ namespace Characters
 	[Serializable]
 	public class Stat
 	{
+		[SerializeField] protected float _value;
+
+		protected bool _isDirty = true;
+		protected float _lastBaseValue;
+		public event Action<float> onValueChanged;
+
 		public float baseValue;
-
-		protected bool m_isDirty = true;
-		protected float m_lastBaseValue;
-
-		[SerializeField] protected float m_value;
 		public virtual float Value 
 		{
 			get 
 			{
-				if(m_isDirty || m_lastBaseValue != baseValue) 
+				if(_isDirty || _lastBaseValue != baseValue) 
 				{
-					m_lastBaseValue = baseValue;
-					m_value = CalculateFinalValue();
-					m_isDirty = false;
+					_lastBaseValue = baseValue;
+					_value = CalculateFinalValue();
+					_isDirty = false;
 				}
-				return m_value;
+				return _value;
 			}
 		}
 		
-		protected readonly List<StatModifier> m_statModifiers;
+		protected readonly List<StatModifier> _statModifiers = new List<StatModifier>();
 
-		public IReadOnlyCollection<StatModifier> StatModifiers => m_statModifiers;
-
-		public Stat()
-		{
-			m_statModifiers = new List<StatModifier>();
-		}
-
-		public Stat(float baseValue, [Optional] params StatModifier[] initialModifiers) : this()
+		public IReadOnlyCollection<StatModifier> StatModifiers => _statModifiers;
+		
+		public Stat(float baseValue, params StatModifier[] initialModifiers)
 		{
 			this.baseValue = baseValue;
 			if (initialModifiers != null)
 			{
-				for (int i = 0; i < initialModifiers.Length; i++) AddModifier(initialModifiers[i]);
+				_isDirty = true;
+				for (int i = 0; i < initialModifiers.Length; i++) _statModifiers.Add(initialModifiers[i]);
 			}
 		}
 
 		public virtual StatModifier AddModifier(StatModifier mod)
 		{
-			m_isDirty = true;
-			m_statModifiers.Add(mod);
+			_isDirty = true;
+			_statModifiers.Add(mod);
+			onValueChanged?.Invoke(Value);
 			return mod;
 		}
 
 		public virtual bool RemoveModifier(StatModifier mod)
 		{
-			if (m_statModifiers.Remove(mod))
+			if (_statModifiers.Remove(mod))
 			{
-				m_isDirty = true;
+				_isDirty = true;
+				onValueChanged?.Invoke(Value);
 				return true;
 			}
 			return false;
@@ -66,10 +65,11 @@ namespace Characters
 
 		public virtual bool RemoveAllModifiers()
 		{
-			if (m_statModifiers.Count > 0)
+			if (_statModifiers.Count > 0)
 			{
-				m_statModifiers.Clear();
-				m_isDirty = true;
+				_statModifiers.Clear();
+				_isDirty = true;
+				onValueChanged?.Invoke(Value);
 				return true;
 			}
 
@@ -78,11 +78,12 @@ namespace Characters
 
 		public virtual bool RemoveAllModifiersFromSource(object source)
 		{
-			int numRemovals = m_statModifiers.RemoveAll(mod => mod.source == source);
+			int numRemovals = _statModifiers.RemoveAll(mod => mod.source == source);
 
 			if (numRemovals > 0)
 			{
-				m_isDirty = true;
+				_isDirty = true;
+				onValueChanged?.Invoke(Value);
 				return true;
 			}
 			return false;
@@ -101,11 +102,11 @@ namespace Characters
 			float finalValue = baseValue;
 			float sumPercentAdd = 0;
 
-			m_statModifiers.Sort(CompareModifierOrder);
+			_statModifiers.Sort(CompareModifierOrder);
 
-			for (int i = 0; i < m_statModifiers.Count; i++)
+			for (int i = 0; i < _statModifiers.Count; i++)
 			{
-				StatModifier mod = m_statModifiers[i];
+				StatModifier mod = _statModifiers[i];
 
 				if (mod.type == StatModifier.Type.Flat)
 				{
@@ -115,7 +116,7 @@ namespace Characters
 				{
 					sumPercentAdd += mod.value;
 
-					if (i + 1 >= m_statModifiers.Count || m_statModifiers[i + 1].type != StatModifier.Type.PercentAdd)
+					if (i + 1 >= _statModifiers.Count || _statModifiers[i + 1].type != StatModifier.Type.PercentAdd)
 					{
 						finalValue *= 1 + sumPercentAdd;
 						sumPercentAdd = 0;

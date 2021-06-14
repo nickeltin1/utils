@@ -1,4 +1,5 @@
-﻿using nickeltin.Extensions;
+﻿using System;
+using nickeltin.Extensions;
 using nickeltin.Editor.Utility;
 using UnityEngine;
 
@@ -30,18 +31,23 @@ namespace nickeltin.GameData.DataObjects
         {
             get
             {
-                if (m_type.Equals(NumberType.Int)) return Mathf.RoundToInt(m_value);
+                if (m_type.Equals(NumberType.Int)) return (int)m_value;
                 return m_value;
             }
             set
             {
-                if(m_value == value) return;
-                m_value = Mathf.Clamp(value, m_minValue, m_maxValue);
-                if (m_type.Equals(NumberType.Int)) m_value = Mathf.RoundToInt(m_value);
-                InvokeUpdate();
+                float v = Mathf.Clamp(value, m_minValue, m_maxValue);
+                if (m_type.Equals(NumberType.Int)) v = (int)v;
+
+                TrySetValue(v);
             }
         }
-        
+
+        private void OnValidate()
+        {
+            if (m_type.Equals(NumberType.Int)) m_value = (int) m_value;
+        }
+
         /// <summary>
         /// Value from 0 to 1, depends on min/max values
         /// </summary>

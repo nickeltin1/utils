@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using nickeltin.Extensions;
-using nickeltin.GameData.DataObjects;
 using nickeltin.Editor.Utility;
+using nickeltin.GameData.References;
 using UnityEngine;
 
 namespace nickeltin.GameData.Saving
@@ -25,29 +25,30 @@ namespace nickeltin.GameData.Saving
         }
         
         [Serializable]
-        public class Entry<T> where T : VariableReferenceBase
+        public class Entry<T> //where T : IValueWithoutTypeProvider
         {
-            public T defaultValue;
-            public T value;
+            public VarRef<T> defaultValue;
+            public VarRef<T> value;
         }
+
+        [SerializeField, TextArea] private string _description;
+        [SerializeField] private Entry<float>[] _numbers;
+        [SerializeField] private Entry<string>[] _strings;
+        [SerializeField] private Entry<bool>[] _bools;
         
-        [SerializeField] private Entry<VarRef<float>>[] m_numbers;
-        [SerializeField] private Entry<VarRef<string>>[] m_strings;
-        [SerializeField] private Entry<VarRef<bool>>[] m_bools;
-        
-        private object[] m_objects;
-        private Dictionary<string, object> m_monoSavesDictionary;
+        private object[] _objects;
+        private Dictionary<string, object> _monoSavesDictionary;
         
         /// <summary>
         /// Realocates memory for new array with new size, copying old values to temporary array, and back
         /// </summary>
         public void SetObjectsBufferSize(int size)
         {
-            object[] temp = new object[m_objects.Length];
-            m_objects.CopyTo(temp, 0);
+            object[] temp = new object[_objects.Length];
+            _objects.CopyTo(temp, 0);
             
-            m_objects = new object[size];
-            temp.CopyTo(m_objects, 0);
+            _objects = new object[size];
+            temp.CopyTo(_objects, 0);
         }
 
         /// <summary>
@@ -60,9 +61,9 @@ namespace nickeltin.GameData.Saving
                 Debug.LogError($"Custom object of type {typeof(T)} is not serializable, and won't be saved");
             }
 
-            if (id > m_objects.Length - 1) SetObjectsBufferSize(id + 1);
+            if (id > _objects.Length - 1) SetObjectsBufferSize(id + 1);
             
-            m_objects[id] = obj;
+            _objects[id] = obj;
         }
         public void SetMonoSave(MonoSave save)
         {
@@ -72,14 +73,14 @@ namespace nickeltin.GameData.Saving
                 return;
             }
 
-            if (m_monoSavesDictionary.ContainsKey(save.GUID)) m_monoSavesDictionary[save.GUID] = save.Data;
-            else m_monoSavesDictionary.Add(save.GUID, save.Data);
+            if (_monoSavesDictionary.ContainsKey(save.SaveID)) _monoSavesDictionary[save.SaveID] = save.Data;
+            else _monoSavesDictionary.Add(save.SaveID, save.Data);
         }
-        public bool SetNumber(float n, int id) => TryToSetArrayValue(m_numbers, n, id);
-        public bool SetString(string s, int id) => TryToSetArrayValue(m_strings, s, id);
-        public bool SetBool(bool b, int id) => TryToSetArrayValue(m_bools, b, id);
+        public bool SetNumber(float n, int id) => TryToSetArrayValue(_numbers, n, id);
+        public bool SetString(string s, int id) => TryToSetArrayValue(_strings, s, id);
+        public bool SetBool(bool b, int id) => TryToSetArrayValue(_bools, b, id);
 
-        private bool TryToSetArrayValue<T>(Entry<T>[] array, object value, int index) where T : VariableReferenceBase
+        private bool TryToSetArrayValue<T>(Entry<T>[] array, object value, int index)
         {
             if (array.InRange(index))
             {
@@ -92,38 +93,38 @@ namespace nickeltin.GameData.Saving
             return false;
         }
 
-        public T GetObject<T>(int id) => (T)m_objects[id];
-        public bool TryGetMonoSave(string key, out object data) => m_monoSavesDictionary.TryGetValue(key, out data);
-        public float GetNumber(int id) => m_numbers[id].value;
-        public string GetString(int id) => m_strings[id].value;
-        public bool GetBool(int id) => m_bools[id].value;
+        public T GetObject<T>(int id) => (T)_objects[id];
+        public bool TryGetMonoSave(string key, out object data) => _monoSavesDictionary.TryGetValue(key, out data);
+        public float GetNumber(int id) => _numbers[id].value;
+        public string GetString(int id) => _strings[id].value;
+        public bool GetBool(int id) => _bools[id].value;
         
         public int Length
         {
             //1 = first object in saves array, saves the length of custom objects array
             //1 = second object in saves array, monoSaves array length
-            get => 1 + 1 + m_numbers.Length + m_strings.Length + m_bools.Length + m_objects.Length + 
-                   m_monoSavesDictionary.Count;
+            get => 1 + 1 + _numbers.Length + _strings.Length + _bools.Length + _objects.Length + 
+                   _monoSavesDictionary.Count;
         }
         
         private void DeserializeCustomObjectsArray(object[] from, int startingIndex, out int lastItemIndex)
         {
-            for (int i = 0; i < m_objects.Length; i++)
+            for (int i = 0; i < _objects.Length; i++)
             {
-                m_objects[i] = from[startingIndex + i];
+                _objects[i] = from[startingIndex + i];
             }
 
-            lastItemIndex = startingIndex + m_objects.Length;
+            lastItemIndex = startingIndex + _objects.Length;
         }
         
         private void SerializeCustomObjectsArray(object[] to, int startingIndex, out int lastItemIndex)
         {
-            for (int i = 0; i < m_objects.Length; i++)
+            for (int i = 0; i < _objects.Length; i++)
             {
-                to[startingIndex + i] = m_objects[i];
+                to[startingIndex + i] = _objects[i];
             }
 
-            lastItemIndex = startingIndex + m_objects.Length;
+            lastItemIndex = startingIndex + _objects.Length;
         }
         
         
@@ -132,14 +133,14 @@ namespace nickeltin.GameData.Saving
             for (int i = 0; i < length; i++)
             {
                 MonoSaveEntry pair = (MonoSaveEntry) from[startingIndex + i];
-                m_monoSavesDictionary.Add(pair.key, pair.value);
+                _monoSavesDictionary.Add(pair.key, pair.value);
             }
         }
         
         private void SerializeMonoSaves(object[] to, int startingIndex)
         {
             int i = 0;
-            foreach (var keyValuePair in m_monoSavesDictionary)
+            foreach (var keyValuePair in _monoSavesDictionary)
             {
                 to[startingIndex + i] = new MonoSaveEntry()
                 {
@@ -150,8 +151,7 @@ namespace nickeltin.GameData.Saving
             }
         }
         
-        private static void SerializeArray<T>(Entry<T>[] from, object[] to, int startingIndex, out int lastItemIndex) 
-            where T : VariableReferenceBase
+        private static void SerializeArray<T>(Entry<T>[] from, object[] to, int startingIndex, out int lastItemIndex)
         {
             for (int i = 0; i < from.Length; i++)
             {
@@ -162,7 +162,6 @@ namespace nickeltin.GameData.Saving
         }
 
         private static void DeserializeArray<T>(object[] from, Entry<T>[] to, int startingIndex, out int lastItemIndex)
-            where T : VariableReferenceBase
         {
             for (int i = 0; i < to.Length; i++)
             {
@@ -172,7 +171,7 @@ namespace nickeltin.GameData.Saving
             lastItemIndex = startingIndex + to.Length;
         }
         
-        private static void LoadDefaultToArray<T>(Entry<T>[] array) where T : VariableReferenceBase
+        private static void LoadDefaultToArray<T>(Entry<T>[] array)
         {
             for (int i = array.Length - 1; i >= 0; i--)
             {
@@ -180,25 +179,25 @@ namespace nickeltin.GameData.Saving
             }
         }
         
-        protected override void LoadDefault()
+        public override void LoadDefault()
         {
-            m_objects = new object[0];
-            m_monoSavesDictionary = new Dictionary<string, object>();
+            _objects = new object[0];
+            _monoSavesDictionary = new Dictionary<string, object>();
 
-            LoadDefaultToArray(m_numbers);
-            LoadDefaultToArray(m_strings);
-            LoadDefaultToArray(m_bools);
+            LoadDefaultToArray(_numbers);
+            LoadDefaultToArray(_strings);
+            LoadDefaultToArray(_bools);
         }
 
-        protected override void Deserialize(object[] obj)
+        protected override void Deserialize(SaveSystem saveSystem, object[] obj)
         {
-            m_objects = new object[(int)obj[0]];
-            m_monoSavesDictionary = new Dictionary<string, object>();
+            _objects = new object[(int)obj[0]];
+            _monoSavesDictionary = new Dictionary<string, object>();
             int startingIndex = 2;
             
-            DeserializeArray(obj, m_numbers, startingIndex, out startingIndex);
-            DeserializeArray(obj, m_strings, startingIndex, out startingIndex);
-            DeserializeArray(obj, m_bools, startingIndex, out startingIndex);
+            DeserializeArray(obj, _numbers, startingIndex, out startingIndex);
+            DeserializeArray(obj, _strings, startingIndex, out startingIndex);
+            DeserializeArray(obj, _bools, startingIndex, out startingIndex);
             DeserializeCustomObjectsArray(obj, startingIndex, out startingIndex);
             DeserializeMonoSaves(obj, (int)obj[1], startingIndex);
         }
@@ -206,13 +205,13 @@ namespace nickeltin.GameData.Saving
         protected override object[] Serialize()
         {
             object[] obj = new object[Length];
-            obj[0] = m_objects.Length;
-            obj[1] = m_monoSavesDictionary.Count;
+            obj[0] = _objects.Length;
+            obj[1] = _monoSavesDictionary.Count;
             int startingIndex = 2;
             
-            SerializeArray(m_numbers, obj, startingIndex, out startingIndex);
-            SerializeArray(m_strings, obj, startingIndex, out startingIndex);
-            SerializeArray(m_bools, obj, startingIndex, out startingIndex);
+            SerializeArray(_numbers, obj, startingIndex, out startingIndex);
+            SerializeArray(_strings, obj, startingIndex, out startingIndex);
+            SerializeArray(_bools, obj, startingIndex, out startingIndex);
             SerializeCustomObjectsArray(obj, startingIndex, out startingIndex);
             SerializeMonoSaves(obj, startingIndex);
 

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using nickeltin.EditorExtensions.Editor;
+using UnityEditor;
 
 namespace nickeltin.GameData.Saving.Editor
 {
@@ -7,6 +8,8 @@ namespace nickeltin.GameData.Saving.Editor
     {
         public override void OnInspectorGUI()
         {
+            EditorExtension.DrawScriptField(this);
+            
             serializedObject.Update();
             
             SaveRegistry obj = (SaveRegistry) target;
@@ -23,7 +26,7 @@ namespace nickeltin.GameData.Saving.Editor
             {
                 foreach (var save in obj.Entries)
                 {
-                    if(save != null) save.UseGUID = true;
+                    if(save != null) save.SaveID.useGUID = true;
                 }
             }
             

@@ -240,7 +240,7 @@ namespace nickeltin.Localization.Editor
         private void OpenSettings()
         {
             //Debug.Log(LocalizationManager.Exists);
-            var localizationManager = LocalizationManager.GetInstance();
+            var localizationManager = LocalizationManager.Instance;
             if (LocalizationManager.Exists)
             {
                 Selection.activeObject = localizationManager;

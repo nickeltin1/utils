@@ -3,6 +3,7 @@ using System.Collections;
 using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
 using nickeltin.GameData.DataObjects;
+using nickeltin.GameData.References;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,57 +18,48 @@ namespace nickeltin.UI
             Linear, ImageFill
         }
 
-        [SerializeField] private BarType m_type;
-        [SerializeField, HideIf("m_usesSlider")] private Image m_graphic;
-        [SerializeField] private NumberObject m_source;
-        [SerializeField, ShowIf("m_usesSource"), Tooltip("Use source raw value or nomalized value")] private bool m_useSourceRawValue;
-        [SerializeField] private float m_interpolationTime = 1;
-        [SerializeField] private bool m_useColorLerp;
-        [SerializeField, ShowIf("m_useColorLerp")] private Color m_minColor;
-        [SerializeField, ShowIf("m_useColorLerp")] private Color m_maxColor;
+        [SerializeField] private BarType _type;
+        [SerializeField, HideIf("_usesSlider")] private Image _graphic;
+        [SerializeField] private VarObjRef<float> _source;
+        [SerializeField] private float _interpolationTime = 1;
+        [SerializeField] private bool _useColorLerp;
+        [SerializeField, ShowIf("_useColorLerp")] private Color _minColor;
+        [SerializeField, ShowIf("_useColorLerp")] private Color _maxColor;
         
-        private Slider m_slider;
+        private Slider _slider;
 
         private Slider slider
         {
             get
             {
-                if (m_slider == null) m_slider = GetComponent<Slider>();
-                return m_slider;
+                if (_slider == null) _slider = GetComponent<Slider>();
+                return _slider;
             } 
         }
         
-        private Coroutine m_interpolation;
+        private Coroutine _interpolation;
         
+        private bool _usesSlider => _type == BarType.Linear;
         
-        private bool m_usesSlider => m_type == BarType.Linear;
-        private bool m_usesSource => m_source != null;
-        
-
         public float progress { get; private set; } = 0;
 
-        public event Action onFill; 
-        
-        private void Awake()
-        {
-            if(m_source != null) UpdateValueFromSource(m_source.Value);
-        }
-        
+        public event Action onFill;
+
         /// <param name="normalizedValue">[0 - 1]</param>
         public void UpdateValueNonInterpolate(float normalizedValue)
         {
             normalizedValue = Mathf.Clamp01(normalizedValue);
             progress = normalizedValue;
 
-            switch (m_type)
+            switch (_type)
             {
                 case BarType.Linear:
                     slider.normalizedValue = normalizedValue;
                     UpdateSliderColor(normalizedValue);
                     break;
                 case BarType.ImageFill:
-                    m_graphic.fillAmount = normalizedValue;
-                    if(m_useColorLerp) m_graphic.color = Color.Lerp(m_minColor, m_maxColor, normalizedValue);
+                    _graphic.fillAmount = normalizedValue;
+                    if(_useColorLerp) _graphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
                     break;
             }
             
@@ -76,42 +68,41 @@ namespace nickeltin.UI
 
         public void UpdateSliderColor(float normalizedValue)
         {
-            if(m_useColorLerp) slider.targetGraphic.color = Color.Lerp(m_minColor, m_maxColor, normalizedValue);
+            if(_useColorLerp) slider.targetGraphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
         }
 
         /// <param name="normalizedValue">[0 - 1]</param>
         public void UpdateValue(float normalizedValue)
         {
-            if(m_interpolation != null) StopCoroutine(m_interpolation);
+            if(_interpolation != null) StopCoroutine(_interpolation);
 
-            if (m_interpolationTime > 0) m_interpolation = StartCoroutine(Interpolation());
+            if (_interpolationTime > 0) _interpolation = StartCoroutine(Interpolation());
             else UpdateValueNonInterpolate(normalizedValue);
 
             IEnumerator Interpolation()
             {
-                for (float t = 0; t < m_interpolationTime; t+=Time.deltaTime)
+                for (float t = 0; t < _interpolationTime; t+=Time.deltaTime)
                 {
                     UpdateValueNonInterpolate(Mathf.Lerp(progress, normalizedValue,
-                        t.To01Ratio(0, m_interpolationTime)));
+                        t.To01Ratio(0, _interpolationTime)));
                     
                     yield return null;
                 }
             }
         }
 
-        private void UpdateValueFromSource(float _)
-        {
-            UpdateValue(m_useSourceRawValue ? m_source.Value : m_source.NormalizedValue);
-        }
-
         private void OnEnable()
         {
-            if (m_source != null) m_source.onValueChanged += UpdateValueFromSource;
+            if (_source.HasSource)
+            {
+                _source.BindEvent(UpdateValue);
+                UpdateValueNonInterpolate(_source.Value);
+            }
         }
 
         private void OnDisable()
         {
-            if (m_source != null) m_source.onValueChanged -= UpdateValueFromSource;
+            if (_source.HasSource) _source.UnbindEvent(UpdateValue);
         }
     }
 

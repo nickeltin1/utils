@@ -1,36 +1,59 @@
-﻿using UnityEngine;
+﻿using System;
+using nickeltin.Editor.Attributes;
+using UnityEngine;
 
 namespace nickeltin.Other
 {
     [RequireComponent(typeof(Renderer))]
     public class PropertyBlockSetter : MonoBehaviour
     {
-        [SerializeField] private string m_propertyName = "_Color";
-        [SerializeField] private int m_materialId;
+        [Serializable]
+        private enum BaseProperties
+        {
+            Custom, _Color, _MainTex
+        }
+
+        [SerializeField] private BaseProperties _basePropertyType = BaseProperties._Color;
+        [SerializeField, ShowIf("_usesCustomProp")] private string _propertyName = "_Color";
+        [SerializeField] private int _materialId;
+        private bool _usesCustomProp => _basePropertyType == BaseProperties.Custom;
         
-        private Renderer m_renderer;
-        private int m_property;
-        private MaterialPropertyBlock m_propertyBlock;
+        private Renderer _renderer;
+        private int _property;
+        private MaterialPropertyBlock _propertyBlock;
+        private bool _initialized = false;
 
-        public MaterialPropertyBlock PropertyBlock => m_propertyBlock;
-
+        public MaterialPropertyBlock PropertyBlock => _propertyBlock;
+        
+        public void Init()
+        {
+            _renderer = GetComponent<Renderer>();
+            _property = Shader.PropertyToID(_usesCustomProp ? _propertyName : _basePropertyType.ToString());
+            _propertyBlock = new MaterialPropertyBlock();
+            _initialized = true;
+        }
+        
         private void Awake()
         {
-            m_renderer = GetComponent<Renderer>();
-            m_property = Shader.PropertyToID(m_propertyName);
-            m_propertyBlock = new MaterialPropertyBlock();
+            if(!_initialized) Init();
         }
 
         public void SetColor(Color color)
         {
-            m_propertyBlock.SetColor(m_property, color);
-            m_renderer.SetPropertyBlock(m_propertyBlock, m_materialId);
+            _propertyBlock.SetColor(_property, color);
+            _renderer.SetPropertyBlock(_propertyBlock, _materialId);
         }
 
         public void SetFloat(float f)
         {
-            m_propertyBlock.SetFloat(m_property, f);
-            m_renderer.SetPropertyBlock(m_propertyBlock, m_materialId);
+            _propertyBlock.SetFloat(_property, f);
+            _renderer.SetPropertyBlock(_propertyBlock, _materialId);
+        }
+
+        public void SetTexture(Texture tex)
+        {
+            _propertyBlock.SetTexture(_property, tex);
+            _renderer.SetPropertyBlock(_propertyBlock, _materialId);
         }
     }
 }

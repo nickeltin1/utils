@@ -1,23 +1,23 @@
-﻿using nickeltin.GameData.DataObjects;
+﻿using nickeltin.Extensions;
+using nickeltin.GameData.DataObjects;
 using UnityEngine;
 using UnityEngine.Events;
 
 namespace nickeltin.GameData.Events
 {
-    [AddComponentMenu("Events/EventListener")]
     public sealed class EventListener : MonoBehaviour
     {
-        [SerializeField] private EventRef m_event;
+        [SerializeField] private EventRef[] m_events;
         [SerializeField] private UnityEvent m_response;
 
         private void OnEnable()
         {
-            if (m_event.Source != null) m_event.Source.onInvoke += OnInvoke;
+            m_events.ForEach(e => { if(e.HasSource) e.BindEvent(OnInvoke); });
         }
 
         private void OnDisable()
         {
-            if (m_event.Source != null) m_event.Source.onInvoke -= OnInvoke;
+            m_events.ForEach(e => { if(e.HasSource) e.UnbindEvent(OnInvoke); });
         }
 
         public void OnInvoke() => m_response.Invoke();
@@ -25,17 +25,17 @@ namespace nickeltin.GameData.Events
     
     public abstract class EventListener<T> : MonoBehaviour
     {
-        [SerializeField] private EventRef<T> m_event;
+        [SerializeField] private EventRef<T>[] m_events;
         [SerializeField] private UnityEvent<T> m_response;
 
         private void OnEnable()
         {
-            if (m_event.Source != null) m_event.Source.onInvoke += OnInvoke;
+            m_events.ForEach(e => { if(e.HasSource) e.BindEvent(OnInvoke); });
         }
 
         private void OnDisable()
         {
-            if (m_event.Source != null) m_event.Source.onInvoke -= OnInvoke;
+            m_events.ForEach(e => { if(e.HasSource) e.UnbindEvent(OnInvoke); });
         }
 
         public void OnInvoke(T data) => m_response.Invoke(data);

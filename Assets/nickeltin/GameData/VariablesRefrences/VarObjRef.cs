@@ -1,12 +1,14 @@
 using System;
+using Game.Scripts.nickeltin.GameData.VariablesRefrences;
 using nickeltin.GameData.DataObjects;
+using nickeltin.GameData.Events.Types;
 using nickeltin.GameData.GlobalVariables;
 using UnityEngine;
 
-namespace nickeltin.UI
+namespace nickeltin.GameData.References
 {
     [Serializable]
-    public sealed class VarObjRef<T>
+    public sealed class VarObjRef<T> : VariableObjectReferenceBase, IEventBinder<T>
     {
         [Serializable] public enum SourceType { DataObject, GlobalVariable }
 
@@ -28,7 +30,7 @@ namespace nickeltin.UI
             }
         }
         
-        public bool CurrentSourcePresented
+        public bool HasSource
         {
             get
             {
@@ -39,16 +41,23 @@ namespace nickeltin.UI
         
         public void BindEvent(Action<T> onValueChanged)
         {
-            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.onValueChanged += onValueChanged;
+            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.BindEvent(onValueChanged);
             else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.BindEvent(onValueChanged);
         }
 
         public void UnbindEvent(Action<T> onValueChanged)
         {
-            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.onValueChanged -= onValueChanged;
+            if (m_sourceType == SourceType.DataObject) m_dataObjectSource.UnbindEvent(onValueChanged);
             else if (m_sourceType == SourceType.GlobalVariable) m_globalVariableSource.UnbindEvent(onValueChanged);
         }
         
         public static implicit operator T(VarObjRef<T> obj) => obj.Value;
+        public override object GetValueWithoutType() => Value;
+
+        public override void SetValueWithoutType(object value) => Value = (T) value;
+
+        public override string ToString() => Value.ToString();
     }
+    
+    public abstract class VariableObjectReferenceBase : VariableBase { }
 }

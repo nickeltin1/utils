@@ -10,12 +10,12 @@ namespace nickeltin.UI
         [SerializeField] private UnityEvent<PointerEventData> m_onPointerDown;
         [SerializeField] private UnityEvent<PointerEventData> m_onPointerUp;
         
-        public void OnPointerDown(PointerEventData eventData)
+        public virtual void OnPointerDown(PointerEventData eventData)
         {
             m_onPointerDown.Invoke(eventData);
         }
 
-        public void OnPointerUp(PointerEventData eventData)
+        public virtual void OnPointerUp(PointerEventData eventData)
         {
             m_onPointerUp.Invoke(eventData);
         }

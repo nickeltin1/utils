@@ -16,7 +16,7 @@ namespace GameData.DataObjects
 
         public event Action onCollectionChange;
 
-        public IReadOnlyList<T> Collection => m_collection;
+        public IList<T> Collection => m_collection;
         
         public void Clear()
         {
@@ -47,21 +47,21 @@ namespace GameData.DataObjects
             onCollectionChange?.Invoke();
         }
         
-        protected override void Deserialize(string[] obj)
+        protected override void Deserialize(SaveSystem saveSystem, string[] obj)
         {
             File = obj;
             m_collection.Clear();
             for (int i = 0; i < obj.Length; i++)
             {
-                if (SaveSystem.GetSavedItem<T>(obj[i], out var save))
+                if (saveSystem.GetSavedItem<T>(obj[i], out var save))
                 {
                     m_collection.Add(save);
                 }
                 else
                 {
                     Debug.LogError($"Item with key {obj[i]}, in object {name}, " +
-                                   $"is absent in database. Please add it to saves database in {typeof(SaveSystem).Name} " +
-                                   $"with {typeof(SaveRegistry).Name}, or like a regural save");
+                                   $"is absent in database. Please add it to saves database in {nameof(SaveSystem)} " +
+                                   $"with {nameof(SaveRegistry)}, or like a regural save");
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace GameData.DataObjects
             return obj;
         }
         
-        protected override void LoadDefault()
+        public override void LoadDefault()
         {
             if(m_collection == null) m_collection = new List<T>();
             m_collection.Clear();

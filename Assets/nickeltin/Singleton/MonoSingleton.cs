@@ -30,9 +30,17 @@ namespace nickeltin.Singletons
         }
         
         
-        protected virtual void OnDestroy()
+        protected virtual void OnDestroy() => OnDestroy_Internal();
+
+        protected bool OnDestroy_Internal()
         {
-            if (instance == this) instance = null;
+            if (instance == this)
+            {
+                instance = null;
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using nickeltin.Editor.Attributes;
 using nickeltin.Extensions;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -13,83 +11,71 @@ namespace nickeltin.GameData.Saving
     /// </summary>
     public class MonoSave : MonoBehaviour
     {
-        private static class GUIDs
-        {
-            public readonly static List<string> list;
-            static GUIDs() => list = new List<string>();
-        }
+        private readonly static List<string> allMonoSaveGUIDs = new List<string>();
         
-        [SerializeField, ReadOnly] private string m_guid;
-        [SerializeField] private GenericSave m_save;
+        [SerializeField] private SaveID _saveId;
+        [SerializeField] private GenericSave _save;
         [SerializeField, Tooltip("Load and Save methods on target will be called automatically")] 
-        private MonoSaveable m_target;
-        private object m_data;
+        private MonoSaveable _target;
+        private object _data;
         
         public UnityEvent<MonoSave> afterLoad; 
         public UnityEvent<MonoSave> beforeSave;
         
-        private bool m_loaded = false;
-
+        private bool _loaded = false;
         public bool SuccessfulyLoaded { get; private set; } = false;
         
-        public object Data => m_data;
-        public string GUID => m_guid;
+        public object Data => _data;
+
+        public SaveID SaveID => _saveId;
         
         private void OnEnable()
         {
-            if (!m_loaded) LoadValues();
+            if (!_loaded) LoadValues();
         }
         private void Awake() => SaveSystem.onBeforeSave += SaveValues;
         private void OnDestroy() => SaveSystem.onBeforeSave -= SaveValues;
         
         private void SaveValues()
         {
-            if (m_target != null) m_data = m_target.Save();
+            if (_target != null) _data = _target.Save();
             beforeSave.Invoke(this);
-            m_save.SetMonoSave(this);
+            _save.SetMonoSave(this);
         }
         private void LoadValues()
         {
-            if (m_guid.IsNullOrEmpty())
+            if (_saveId.ToString().IsNullOrEmpty())
             {
-                Debug.LogError($"{name} doesn't have GUID, generate it with context menu");
+                Debug.LogError($"{name} doesn't have SaveID, generate it with context menu");
                 return;
             } 
             
-            if (GUIDs.list.Contains(m_guid))
+            if (allMonoSaveGUIDs.Contains(_saveId))
             {
                 Debug.LogError($"{name} have same GUID as other item, regenerate it with context menu");
                 return;
             }
 
-            GUIDs.list.Add(m_guid);
+            allMonoSaveGUIDs.Add(_saveId);
 
-            if (m_save.TryGetMonoSave(m_guid, out m_data)) SuccessfulyLoaded = true;
+            if (_save.TryGetMonoSave(_saveId, out _data)) SuccessfulyLoaded = true;
             else
             {
                 SuccessfulyLoaded = false;
             }
             
-            if (m_target != null) m_target.Load(m_data);
+            if (_target != null) _target.Load(_data);
             afterLoad?.Invoke(this);
-            m_loaded = true;
+            _loaded = true;
         }
         
-        public void SetData(object data) => m_data = data;
+        public void SetData(object data) => _data = data;
         
-        public void GenerateGUID() => m_guid = SaveableBase.GenerateGUID();
 
 #if UNITY_EDITOR
-        [ContextMenu("Generate GUID")]
-        private void GenerateGUID_Context()
-        {
-            Undo.RecordObject(this, "GUID generation");
-            GenerateGUID();
-        }
-        
         private void OnValidate()
         {
-            if (m_guid.IsNullOrEmpty()) m_guid = SaveableBase.GenerateGUID();
+            if (!_saveId.SaveIDGenerated) _saveId.GenerateSaveID(name);
         }
 #endif
     }

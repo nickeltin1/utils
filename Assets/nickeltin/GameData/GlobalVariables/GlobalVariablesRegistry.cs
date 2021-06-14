@@ -6,9 +6,9 @@ using UnityEngine;
 
 namespace nickeltin.GameData.GlobalVariables
 {
-    public abstract class GlobalVariablesRegistry<T> : VariablesRegistryBase
+    public abstract class GlobalVariablesRegistry<T> : GlobalVariablesRegistryBase
     {
-        [SerializeField, LinkedListsSettings(false, false, runtimeImmutable: true)] private LinkedArrays<string, T> m_entries;
+        [SerializeField, LinkedListsSettings(false, false, runtimeImmutable: true)] protected LinkedArrays<string, T> m_entries;
 
         /// <summary> <see cref="int"/> - id of the entry, <see cref="T"/> - new entry value. </summary>
         public event Action<int, T> onEntryChanged;

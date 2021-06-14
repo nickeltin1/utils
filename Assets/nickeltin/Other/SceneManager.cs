@@ -36,16 +36,16 @@ namespace nickeltin.SceneManagment
             public bool saveProgress = true;
             public int startFromLevelId;
             public bool loadTutorialAfterInitialization = true;
+            public bool loadUI = true;
         }
         
         [Serializable]
         private struct BaseScenes
         {
-            public SceneReference uiScene;
             public SceneReference initializeScene;
+            public SceneReference uiScene;
             public SceneReference tutorialScene;
         }
-        
         
         [SerializeField] private Settings m_settings;
         [SerializeField] private Events m_events;
@@ -71,7 +71,8 @@ namespace nickeltin.SceneManagment
         private const string levelsCompleted_key = "levels_completed_count";
         private const string tutorialState_key = "tutorial_state";
 
-        private Scene m_originScene;
+        // private Scene _originScene;
+        
 
         private void Load()
         {
@@ -93,30 +94,41 @@ namespace nickeltin.SceneManagment
             }
         }
 
+        readonly List<string> _loadedScenes = new List<string>();
+        
         protected override void Awake()
         {
-            m_originScene = gameObject.scene;
             if (Awake_Internal())
             {
-                Load();
-
-                if (m_baseScenes.uiScene != null)
+               
+                int sceneCount = UnityEngine.SceneManagement.SceneManager.sceneCount;
+                for (int i = 0; i < sceneCount; i++)
                 {
-                    LoadScene(m_baseScenes.uiScene, LoadSceneMode.Additive);
-                    LogEvent("UI loaded");
-                    afterUILoaded?.Invoke();
-                    m_events.afterUILoaded?.Invoke();
+                    _loadedScenes.Add(UnityEngine.SceneManagement.SceneManager.GetSceneAt(i).path);
                 }
+
+                Load();
 
                 if (m_baseScenes.initializeScene != null)
                 {
-                    if (m_originScene.name != m_baseScenes.initializeScene)
+                    if (!_loadedScenes.Contains(m_baseScenes.initializeScene))
                     {
                         LoadScene(m_baseScenes.initializeScene);
                     }
                     LogEvent("Initailzation scene loaded");
                     afterInitialization?.Invoke();
-                    m_events.afterInitialization?.Invoke();
+                    m_events.afterInitialization.Invoke();
+                }
+                
+                if (m_settings.loadUI && m_baseScenes.uiScene != null)
+                {
+                    if (!_loadedScenes.Contains(m_baseScenes.uiScene))
+                    {
+                        LoadScene(m_baseScenes.uiScene, LoadSceneMode.Additive);
+                    }
+                    LogEvent("UI loaded");
+                    afterUILoaded?.Invoke();
+                    m_events.afterUILoaded.Invoke();
                 }
             }
         }
@@ -128,12 +140,12 @@ namespace nickeltin.SceneManagment
                 currentLevelId = -1;
                 LoadScene(m_baseScenes.tutorialScene);
                 afterLevelLoad?.Invoke(-1);
-                instance.m_events.afterLevelLoad?.Invoke(-1);
+                instance.m_events.afterLevelLoad.Invoke(-1);
             }
             else LoadLevel(m_settings.startFromLevelId);
         }
 
-        private static void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
+        private void LoadScene(string sceneName, LoadSceneMode mode = LoadSceneMode.Single)
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(sceneName, mode);
             if (mode.Equals(LoadSceneMode.Single))
@@ -142,56 +154,50 @@ namespace nickeltin.SceneManagment
             }
         }
 
-        private static void LogEvent(string text, EventType type = EventType.Regural)
+        private void LogEvent(string text, EventType type = EventType.Regural)
         {
-            if (instance.m_settings.logEventsToConsole)
+            if (m_settings.logEventsToConsole)
             {
                 switch (type)
                 {
-                    case EventType.Regural:
-                        Debug.Log(text);
-                        break;
-                    case EventType.Error:
-                        Debug.LogError(text);
-                        break;
-                    case EventType.Warning:
-                        Debug.LogWarning(text);
-                        break;
+                    case EventType.Regural: Debug.Log(text); break;
+                    case EventType.Error: Debug.LogError(text); break;
+                    case EventType.Warning: Debug.LogWarning(text); break;
                 }
             }
         }
 
-        private static int GetNextLevelId()
+        private int GetNextLevelId()
         {
             int nextId = currentLevelId + 1;
-            if (nextId >= instance.m_levels.Count) nextId = 0;
+            if (nextId >= m_levels.Count) nextId = 0;
             return nextId;
         }
 
-        public static void CompleteLevel()
+        public void CompleteLevel()
         {
             levelsCompleted++;
-            instance.Save(GetNextLevelId());
+            Save(GetNextLevelId());
             afterLevelCompleted?.Invoke(currentLevelId);
-            instance.m_events.afterLevelCompleted?.Invoke(currentLevelId);
+            m_events.afterLevelCompleted.Invoke(currentLevelId);
         }
 
-        public static void CompleteTutorial()
+        public void CompleteTutorial()
         {
             tutorialCompleted = true;
-            instance.Save(instance.m_settings.startFromLevelId);
+            Save(m_settings.startFromLevelId);
             afterLevelCompleted?.Invoke(-1);
-            instance.m_events.afterLevelCompleted?.Invoke(-1);
+            m_events.afterLevelCompleted.Invoke(-1);
         }
 
-        public static void ReloadLevel()
+        public void ReloadLevel()
         {
             beforeLevelReload?.Invoke(currentLevelId);
-            instance.m_events.beforeLevelReload?.Invoke(currentLevelId);
+            m_events.beforeLevelReload.Invoke(currentLevelId);
             LoadLevel(currentLevelId);
         }
 
-        public static void LoadLevel(int levelId)
+        public void LoadLevel(int levelId)
         {
             void Load(string sceneName)
             {
@@ -199,17 +205,14 @@ namespace nickeltin.SceneManagment
                 currentLevelId = levelId;
                 LogEvent($"Level with id {levelId} loaded");
                 afterLevelLoad?.Invoke(levelId);
-                instance.m_events.afterLevelLoad?.Invoke(levelId);
+                m_events.afterLevelLoad.Invoke(levelId);
             }
 
-            if (levelId < 0) Load(instance.m_baseScenes.tutorialScene);
-            else if (instance.m_levels[levelId] != null) Load(instance.m_levels[levelId]);
+            if (levelId < 0) Load(m_baseScenes.tutorialScene);
+            else if (m_levels[levelId] != null) Load(m_levels[levelId]);
             else LogEvent($"Level with id {levelId}", EventType.Error);
         }
 
-        public static void LoadNextLevel()
-        {
-            LoadLevel(GetNextLevelId());
-        }
+        public void LoadNextLevel() => LoadLevel(GetNextLevelId());
     }
 }

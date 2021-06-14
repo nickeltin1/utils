@@ -1,41 +1,24 @@
 ﻿using System;
+using nickeltin.Extensions;
 using UnityEngine;
 
 namespace nickeltin.Other
 {
     public class Ragdoll : MonoBehaviour
     {
+        [SerializeField] private bool _autoCacheReferences = true;
         [SerializeField] private Rigidbody[] m_rigidbodies;
         [SerializeField] private Collider[] m_colliders;
         [SerializeField] private Joint[] m_joints;
 
 
-        private void OnValidate()
-        {
-            if (m_rigidbodies == null || m_rigidbodies.Length == 0)
-            {
-                m_rigidbodies = GetComponentsInChildren<Rigidbody>();
-            }
-            
-            if (m_colliders == null || m_colliders.Length == 0)
-            {
-                m_colliders = GetComponentsInChildren<Collider>();
-            }
-            
-            if (m_joints == null || m_joints.Length == 0)
-            {
-                m_joints = GetComponentsInChildren<Joint>();
-            }
-        }
+        private void OnValidate() { if(_autoCacheReferences) Refresh(); }
         
         public void ForEachRigidbody(Action<Rigidbody> action) => ForEach(m_rigidbodies, action);
         public void ForEacCollider(Action<Collider> action) => ForEach(m_colliders, action);
         public void ForEachJoint(Action<Joint> action) => ForEach(m_joints, action);
         
-        private void ForEach<T>(T[] from, Action<T> action)
-        {
-            for (var i = 0; i < from.Length; i++) action?.Invoke(from[i]);
-        }
+        private void ForEach<T>(T[] from, Action<T> action) => from.ForEach(item=> action?.Invoke(item)); 
 
         public void SetActive(bool state)
         {
@@ -46,9 +29,9 @@ namespace nickeltin.Other
         [ContextMenu("Refresh references")]
         private void Refresh()
         {
-            m_rigidbodies = GetComponentsInChildren<Rigidbody>();
-            m_colliders = GetComponentsInChildren<Collider>();
-            m_joints = GetComponentsInChildren<Joint>();
+            ComponentExt.CacheInChildrens(ref m_rigidbodies, gameObject);
+            ComponentExt.CacheInChildrens(ref m_colliders, gameObject);
+            ComponentExt.CacheInChildrens(ref m_joints, gameObject);
         }
     }
 }

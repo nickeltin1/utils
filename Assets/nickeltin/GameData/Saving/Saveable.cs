@@ -19,29 +19,30 @@ namespace nickeltin.GameData.Saving
             protected set => m_file = value;
         }
         
-        public override void Save() => SaveSystem.Save(Serialize(), m_saveId);
+        public override void Save(SaveSystem saveSystem) => saveSystem.Save(Serialize(), SaveID);
 
-        public override bool Load(bool loadDefault = false)
+        public override bool Load(SaveSystem saveSystem)
         {
-            if (loadDefault || !SaveSystem.SaveExists(m_saveId))
+            if (!saveSystem.SaveExists(SaveID))
             {
                 LoadDefault();
                 SetLoadState(false);
             }
-            else if(SaveSystem.SaveExists(m_saveId))
+            else if(saveSystem.SaveExists(SaveID))
             {
-                Deserialize(SaveSystem.Load<SaveType>(m_saveId));
+                Deserialize(saveSystem, saveSystem.Load<SaveType>(SaveID));
                 SetLoadState(true);
             }
 
             return SuccessfulyLoaded;
         }
         
-        public override void SetFileWithoutType(object file) => Deserialize((SaveType) file);
+        public override void SetFileWithoutType(SaveSystem saveSystem, object file) => 
+            Deserialize(saveSystem, (SaveType) file);
 
         public override object GetFileWithoutType() => Serialize();
         
         protected virtual SaveType Serialize() => File;
-        protected virtual void Deserialize(SaveType obj) => File = obj;
+        protected virtual void Deserialize(SaveSystem saveSystem, SaveType obj) => File = obj;
     }
 }
