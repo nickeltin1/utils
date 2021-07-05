@@ -22,7 +22,7 @@ namespace nickeltin.Runtime.GameData.DataObjects
             set => TrySetValue(value);
         }
 
-        protected bool TrySetValue(T value)
+        protected virtual bool TrySetValue(T value)
         {
             if (_value.Equals(value)) return false;
 
@@ -39,7 +39,7 @@ namespace nickeltin.Runtime.GameData.DataObjects
             return true;
         }
         
-        protected virtual void InvokeUpdate() => _onValueChanged?.Invoke(Value);
+        public override void InvokeUpdate() => _onValueChanged?.Invoke(Value);
 
         public void BindEvent(Action<T> onValueChanged) => _onValueChanged += onValueChanged;
 
@@ -49,6 +49,9 @@ namespace nickeltin.Runtime.GameData.DataObjects
 
         public override string ToString() => Value.ToString();
     }
-    
-    public abstract class DataObjectBase : NestedAsset {}
+
+    public abstract class DataObjectBase : NestedAsset
+    {
+        public abstract void InvokeUpdate();
+    }
 }

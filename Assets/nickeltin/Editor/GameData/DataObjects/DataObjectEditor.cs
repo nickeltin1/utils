@@ -1,5 +1,6 @@
 ﻿using nickeltin.Runtime.GameData.DataObjects;
 using UnityEditor;
+using UnityEngine;
 
 namespace  nickeltin.Editor.GameData.DataObjects
 {
@@ -16,6 +17,13 @@ namespace  nickeltin.Editor.GameData.DataObjects
 
             serializedObject.Update();
 
+            GUI.enabled = Application.isPlaying;
+            if (GUILayout.Button("Invoke Update"))
+            {
+                ((DataObjectBase)serializedObject.targetObject).InvokeUpdate();
+            }
+            GUI.enabled = true;
+            
             EditorGUILayout.PropertyField(description);
             EditorGUILayout.PropertyField(readOnly);
             

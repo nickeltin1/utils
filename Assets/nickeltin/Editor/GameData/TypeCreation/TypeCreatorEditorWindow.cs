@@ -3,7 +3,6 @@ using nickeltin.Runtime.Utility;
 using nickeltin.Extensions;
 using nickeltin.Runtime.GameData.DataObjects;
 using nickeltin.Runtime.GameData.Events;
-using nickeltin.Runtime.GameData.GlobalVariables;
 using nickeltin.Runtime.NestedAssets;
 using UnityEditor;
 using UnityEngine;
@@ -14,8 +13,6 @@ namespace nickeltin.Editor.GameData.TypeCreation
     {
         private const string _dataObjectName = "Data Object";
         private const string _eventName = "Event Object";
-        //private const string _registryName = "Registry";
-        //private const string _eventRegistryName= "Event Reigstry";
         private const string _containerName = "Container";
         private const string _eventListenerName = "Event Listener"; 
         
@@ -40,8 +37,6 @@ namespace nickeltin.Editor.GameData.TypeCreation
             {
                 _dataObjectName,
                 _eventName,
-                //_registryName, 
-                //_eventRegistryName,
                 _containerName,
                 _eventListenerName
             }, 3);
@@ -77,27 +72,6 @@ namespace nickeltin.Editor.GameData.TypeCreation
                         GetTargetedType());
                 }
             }
-            // //Registry
-            // else if (m_toolbarValue == 2)
-            // {
-            //     if(DrawButton(_registryName))
-            //     {
-            //         TypeCreator.Create(typeof(GlobalVariablesRegistry<>), "Registry", 
-            //             $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.registryMenu)}", 
-            //             GetTargetedType());
-            //     }
-            // }
-            // //EventRegistry
-            // else if (m_toolbarValue == 3)
-            // {
-            //     if(DrawButton(_eventRegistryName))
-            //     {
-            //         TypeCreator.Create(typeof(GlobalVariablesRegistry<>), "EventRegistry", 
-            //             $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.eventsRegistryMenu)}",
-            //             typeof(Event<>), GetTargetedType());
-            //     };
-            // }
-            
             //Container
             else if (m_toolbarValue == 2)
             {

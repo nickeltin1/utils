@@ -6,6 +6,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using nickeltin.Runtime.Utility;
 using nickeltin.Extensions;
+using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.GameData.Saving.SerializationSurrogates;
 using nickeltin.Runtime.GameData.VariablesRefrences;
 using nickeltin.Runtime.Singletons;
@@ -32,7 +33,7 @@ namespace nickeltin.Runtime.GameData.Saving
         [SerializeField] private bool _logEvents = true;
         [SerializeField] private Path _path;
         [SerializeField] private AutosavingSettings _autosavingSettings;
-        [SerializeField] private EventRef[] _saveTriggers;
+        [SerializeField] private EventObject[] _saveTriggers;
         [SerializeField] private SaveableBase[] _saves;
         [SerializeField] private UnityEvent _onBeforeSaveEvent;
 
@@ -54,10 +55,7 @@ namespace nickeltin.Runtime.GameData.Saving
                     worldInstance.onBeforeAutoSave += AutoSaveAll;
                 }
 
-                _saveTriggers.ForEach(e =>
-                {
-                    if (e.HasSource) e.BindEvent(AutoSaveAll);
-                });
+                _saveTriggers.ForEach(e => e.BindEvent(AutoSaveAll));
                 return true;
             }
 
@@ -68,10 +66,7 @@ namespace nickeltin.Runtime.GameData.Saving
         {
             if (base.Destruct())
             {
-                _saveTriggers.ForEach(e =>
-                {
-                    if (e.HasSource) e.UnbindEvent(AutoSaveAll);
-                });
+                _saveTriggers.ForEach(e => e.UnbindEvent(AutoSaveAll));
                 return true;
             }
 

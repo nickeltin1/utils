@@ -21,6 +21,12 @@ namespace nickeltin.Runtime.GameData.DataObjects
             this._maxValue = max;
         }
 
+        protected override bool TrySetValue(float value)
+        {
+            value.Clamp(_minValue, _maxValue);
+            return base.TrySetValue(value);
+        }
+
 
         /// <summary>
         /// Value from 0 to 1, depends on min/max values

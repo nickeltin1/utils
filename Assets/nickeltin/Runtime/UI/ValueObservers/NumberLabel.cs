@@ -1,5 +1,5 @@
 ﻿using nickeltin.Extensions.Attributes;
-using nickeltin.Runtime.GameData.VariablesRefrences;
+using nickeltin.Runtime.GameData.DataObjects;
 using TMPro;
 using UnityEngine;
 
@@ -11,9 +11,9 @@ namespace nickeltin.Runtime.UI
         protected enum ValueType { Int, Float }
 
         [SerializeField] protected ValueType _type;
-        [SerializeField, ShowIf("_floatTypeValidator")] protected VarObjRef<float> _floatSource;
+        [SerializeField, ShowIf("_floatTypeValidator")] protected DataObject<float> _floatSource;
         [SerializeField, ShowIf("_floatTypeValidator")] [Range(0, 4)] protected int _digitsAfterPoint = 0; 
-        [SerializeField, HideIf("_floatTypeValidator")] protected VarObjRef<int> _intSource;
+        [SerializeField, HideIf("_floatTypeValidator")] protected DataObject<int> _intSource;
         [SerializeField] protected string _prefix;
         [SerializeField] protected string _postfix;
 

@@ -17,60 +17,51 @@ namespace nickeltin.Runtime.UI
 
         [SerializeField] private BarType _type;
         [SerializeField, HideIf("_usesSlider")] private Image _graphic;
-        [SerializeField] private VarObjRef<float> _source;
+        [SerializeField, ShowIf("_usesSlider")] private Slider _slider;
+        [SerializeField] private FloatObject _source;
+        [SerializeField] private bool _useSourceRawValue;
         [SerializeField] private float _interpolationTime = 1;
         [SerializeField] private bool _useColorLerp;
         [SerializeField, ShowIf("_useColorLerp")] private Color _minColor;
         [SerializeField, ShowIf("_useColorLerp")] private Color _maxColor;
         
-        private Slider _slider;
-
-        private Slider slider
-        {
-            get
-            {
-                if (_slider == null) _slider = GetComponent<Slider>();
-                return _slider;
-            } 
-        }
         
         private Coroutine _interpolation;
         
         private bool _usesSlider => _type == BarType.Linear;
+        private bool _hasSource => _source != null;
         
         public float progress { get; private set; } = 0;
 
-        public event Action onFill;
+        private void OnValidate()
+        {
+            if(_usesSlider) ComponentExt.Cache(ref _slider, gameObject);
+        }
 
-        /// <param name="normalizedValue">[0 - 1]</param>
         public void UpdateValueNonInterpolate(float normalizedValue)
         {
             normalizedValue = Mathf.Clamp01(normalizedValue);
             progress = normalizedValue;
 
-            switch (_type)
+            if (_type == BarType.Linear)
             {
-                case BarType.Linear:
-                    slider.normalizedValue = normalizedValue;
-                    UpdateSliderColor(normalizedValue);
-                    break;
-                case BarType.ImageFill:
-                    _graphic.fillAmount = normalizedValue;
-                    if(_useColorLerp) _graphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
-                    break;
+                _slider.normalizedValue = normalizedValue;
+                UpdateSliderColor(normalizedValue);
             }
-            
-            if (Mathf.Approximately(normalizedValue, 1)) onFill?.Invoke();
-            
+            else if (_type == BarType.ImageFill)
+            {
+                _graphic.fillAmount = normalizedValue;
+                if (_useColorLerp) _graphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
+            }
+
             InvokeUnityEvent();
         }
 
-        public void UpdateSliderColor(float normalizedValue)
+        private void UpdateSliderColor(float normalizedValue)
         {
-            if(_useColorLerp) slider.targetGraphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
+            if(_useColorLerp) _slider.targetGraphic.color = Color.Lerp(_minColor, _maxColor, normalizedValue);
         }
-
-        /// <param name="normalizedValue">[0 - 1]</param>
+        
         public void UpdateValue(float normalizedValue)
         {
             if(_interpolation != null) StopCoroutine(_interpolation);
@@ -90,19 +81,21 @@ namespace nickeltin.Runtime.UI
             }
         }
 
+        public void UpdateValueFromSource(float sourceValue)
+        {
+            if(_useSourceRawValue) UpdateValue(sourceValue);
+            else UpdateValue(_source.NormalizedValue);
+        }
+
         private void OnEnable()
         {
-            if (_source.HasSource)
-            {
-                _source.BindEvent(UpdateValue);
-                UpdateValueNonInterpolate(_source.Value);
-            }
+            _source.BindEvent(UpdateValueFromSource);
+            UpdateValueNonInterpolate(_source.Value);
         }
 
         private void OnDisable()
         {
-            if (_source.HasSource) _source.UnbindEvent(UpdateValue);
+            _source.UnbindEvent(UpdateValueFromSource);
         }
     }
-
 }

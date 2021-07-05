@@ -1,4 +1,5 @@
 ﻿using System;
+using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.GameData.VariablesRefrences;
 
 namespace nickeltin.Runtime.SceneManagment
@@ -8,9 +9,9 @@ namespace nickeltin.Runtime.SceneManagment
         [Serializable]
         private struct Events
         {
-            public EventRef afterLevelLoad;
-            public EventRef afterLevelCompleted;
-            public EventRef beforeLevelReload;
+            public EventObject afterLevelLoad;
+            public EventObject afterLevelCompleted;
+            public EventObject beforeLevelReload;
         }
     }
 }

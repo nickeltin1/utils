@@ -1,6 +1,5 @@
 ﻿using nickeltin.Editor.Extensions;
 using nickeltin.Runtime.GameData.Events;
-using nickeltin.Runtime.GameData.GlobalVariables;
 using UnityEditor;
 using UnityEngine;
 using Event = nickeltin.Runtime.GameData.Events.Event;
@@ -23,8 +22,7 @@ namespace nickeltin.Editor.GameData.Events
                 position.x += lableWidth + spacing;
                 position.width = width - lableWidth - spacing;
                 EditorGUI.HelpBox(position, 
-                    $"Do not use {nameof(Event)} explicitly, use {nameof(EventObject)} or " +
-                    $"{nameof(EventRegistry)} for events implementation", 
+                    $"Do not use {nameof(Event)} explicitly, use {nameof(EventObject)} for events implementation", 
                     MessageType.Warning);
                 return false;
             }

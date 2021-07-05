@@ -52,8 +52,7 @@ namespace nickeltin.Editor.PropertyDrawers
         protected bool IsInsideVariableReference(SerializedProperty property)
         {
             Type parentType = property.GetParentType();
-            if (parentType.BaseType == typeof(VariableReferenceBase) 
-                || parentType.BaseType  == typeof(VariableObjectReferenceBase))
+            if (parentType.BaseType == typeof(VariableReferenceBase))
             {
                 return true;
             }

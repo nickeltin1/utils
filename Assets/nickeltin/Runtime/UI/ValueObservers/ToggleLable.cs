@@ -1,4 +1,4 @@
-﻿using nickeltin.Runtime.GameData.VariablesRefrences;
+﻿using nickeltin.Runtime.GameData.DataObjects;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,7 +7,7 @@ namespace nickeltin.Runtime.UI
     [RequireComponent(typeof(Toggle))]
     public class ToggleLable : ValueObserverBase
     {
-        [SerializeField] private VarObjRef<bool> m_source;
+        [SerializeField] private DataObject<bool> m_source;
         [SerializeField] private GameObject m_invertedObject;
         
         private Toggle m_toggle;
@@ -36,14 +36,8 @@ namespace nickeltin.Runtime.UI
             InvokeUnityEvent();
         }
         
-        private void OnEnable()
-        {
-            if (m_source.HasSource) m_source.BindEvent(UpdateValue);
-        }
+        private void OnEnable() => m_source.BindEvent(UpdateValue);
 
-        private void OnDisable()
-        {
-            if (m_source.HasSource) m_source.UnbindEvent(UpdateValue);
-        }
+        private void OnDisable() => m_source.UnbindEvent(UpdateValue);
     }
 }

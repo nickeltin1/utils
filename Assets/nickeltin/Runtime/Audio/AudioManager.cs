@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using nickeltin.Extensions.Attributes;
 using nickeltin.Runtime.Utility;
 using nickeltin.Extensions;
+using nickeltin.Runtime.GameData.DataObjects;
+using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.GameData.VariablesRefrences;
 using nickeltin.Runtime.Singletons;
 using UnityEngine;
@@ -16,14 +18,14 @@ namespace nickeltin.Runtime.Audio
         [Serializable]
         private struct Settings
         {
-            public VarObjRef<bool> channelEnabled;
+            public DataObject<bool> channelEnabled;
             public string parameter;
             [MinMaxSlider(-100, 100)] public Vector2 range;
         }
 
         [SerializeField] private AudioMixer _mixer;
         [SerializeField] private AudioMixerGroup[] _groups;
-        [SerializeField] private EventRef _refreshSettings;
+        [SerializeField] private EventObject _refreshSettings;
         [SerializeField] private Settings[] _settings;
         [SerializeField] private AudioEvent[] _events;
 
@@ -73,7 +75,7 @@ namespace nickeltin.Runtime.Audio
 
         private void ApplySettings(Settings settings)
         {
-            if (settings.channelEnabled.HasSource)
+            if (settings.channelEnabled != null)
             {
                 _mixer.SetFloat(settings.parameter, settings.channelEnabled ? settings.range.y : settings.range.x);
             }
