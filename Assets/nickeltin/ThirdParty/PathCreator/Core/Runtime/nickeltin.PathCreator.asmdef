@@ -1,0 +1,16 @@
+{
+    "name": "nickeltin.PathCreator",
+    "rootNamespace": "",
+    "references": [
+        "GUID:8a69a93fc244ca84dbb0a473e72b1698"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

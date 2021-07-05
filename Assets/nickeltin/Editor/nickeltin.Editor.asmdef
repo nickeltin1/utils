@@ -1,0 +1,19 @@
+{
+    "name": "nickeltin.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:7ed353d4d7dca564a937233fc017c39a",
+        "GUID:8a69a93fc244ca84dbb0a473e72b1698"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
