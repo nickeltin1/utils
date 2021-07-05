@@ -9,11 +9,7 @@ namespace nickeltin.Editor.GameData.Saving
     [CustomEditor(typeof(SaveSystem))]
     public class SaveSystemEditor : UnityEditor.Editor
     {
-        private static readonly string ENABLED_NAME = SaveSystem.enabled_prop_name;
-        private static readonly string SUBFOLDERS_NAME = SaveSystem.sub_folders_prop_name;
-        private static readonly string DIRECTORY_SETTINGS_NAME = SaveSystem.directory_settings_prop_name;
-        
-        private static readonly string[] _excluding = {"m_Script", ENABLED_NAME, SUBFOLDERS_NAME, DIRECTORY_SETTINGS_NAME};
+        private static readonly string[] _excluding = {"m_Script", SaveSystem.enabled_prop_name, SaveSystem.sub_folders_prop_name, SaveSystem.directory_settings_prop_name};
         
         private SaveSystem _saveSystem;
         private ReorderableList _reorderableList;
@@ -22,7 +18,7 @@ namespace nickeltin.Editor.GameData.Saving
         private void OnEnable()
         {
             _saveSystem = (SaveSystem) target;
-            _subfolders = serializedObject.FindProperty(SUBFOLDERS_NAME);
+            _subfolders = serializedObject.FindProperty(SaveSystem.sub_folders_prop_name);
             _reorderableList = new ReorderableList(serializedObject, _subfolders, 
                 false, true, true, true)
             {
@@ -57,12 +53,13 @@ namespace nickeltin.Editor.GameData.Saving
 
             EditorExtension.DrawScriptField(this);
             
-            SerializedProperty enabled = serializedObject.FindProperty(ENABLED_NAME);
+            SerializedProperty enabled = serializedObject.FindProperty(SaveSystem.enabled_prop_name);
             EditorGUILayout.PropertyField(enabled);
 
             EditorGUI.BeginDisabledGroup(!enabled.boolValue);
             {
-                EditorGUILayout.PropertyField(serializedObject.FindProperty(DIRECTORY_SETTINGS_NAME), true);
+                EditorGUILayout.PropertyField(
+                    serializedObject.FindProperty(SaveSystem.directory_settings_prop_name), true);
                 
                 _reorderableList.DoLayoutList();
                 
