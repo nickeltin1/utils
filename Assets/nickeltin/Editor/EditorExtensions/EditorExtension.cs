@@ -10,6 +10,7 @@ namespace nickeltin.Editor
     {
         public static float line => EditorGUIUtility.singleLineHeight;
         
+        
         public static void DrawScriptField(UnityEditor.Editor editor)
         {
             using (new EditorGUI.DisabledScope(true)) 
@@ -27,7 +28,7 @@ namespace nickeltin.Editor
                 }
             }
         }
-        
+
         public static void DrawChildProperties(SerializedProperty property, Rect position, 
             List<string> excluding = null)
         {

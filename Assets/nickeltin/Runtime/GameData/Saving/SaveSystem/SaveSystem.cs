@@ -8,10 +8,8 @@ using nickeltin.Runtime.Utility;
 using nickeltin.Extensions;
 using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.GameData.Saving.SerializationSurrogates;
-using nickeltin.Runtime.GameData.VariablesRefrences;
 using nickeltin.Runtime.Singletons;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace nickeltin.Runtime.GameData.Saving
 {
@@ -22,22 +20,26 @@ namespace nickeltin.Runtime.GameData.Saving
     [CreateAssetMenu(menuName = MenuPathsUtility.savingMenu + nameof(SaveSystem))]
     public sealed partial class SaveSystem : SOSingleton<SaveSystem>
     {
-        private const string extention = ".save";
+        private const string DEFAULT_SUB_FOLDER_NAME = "save/";
+        
         private Dictionary<string, SaveableBase> allSaves;
         public static event Action onBeforeSave;
 
         //Custom editor variables
-        [SerializeField, HideInInspector] private bool _enabled = true;
+        [SerializeField] private bool _enabled = true;
+        [SerializeField] private DirectorySettings _directorySettings;
+        [SerializeField] private List<SubFolder> _subFolders = new List<SubFolder>(){new SubFolder(DEFAULT_SUB_FOLDER_NAME)};
 
         //Regural editor variables
         [SerializeField] private bool _logEvents = true;
-        [SerializeField] private Path _path;
+        [SerializeField] private int _currentSubFolder = 0;
         [SerializeField] private AutosavingSettings _autosavingSettings;
         [SerializeField] private EventObject[] _saveTriggers;
         [SerializeField] private SaveableBase[] _saves;
-        [SerializeField] private UnityEvent _onBeforeSaveEvent;
 
-        public string SavePath => _path;
+        public string RootSavePathRoot => _directorySettings.path;
+
+        public string CurrentSavePath => _directorySettings.GetSubFolderPath(_subFolders[_currentSubFolder]);
         
         public override bool Initialize()
         {
@@ -52,10 +54,10 @@ namespace nickeltin.Runtime.GameData.Saving
                     LoadAll();
                     var worldInstance = new GameObject("autosaver").AddComponent<AutoSaver>();
                     worldInstance.Initialize(_autosavingSettings);
-                    worldInstance.onBeforeAutoSave += AutoSaveAll;
+                    worldInstance.onBeforeAutoSave += SaveAll;
                 }
 
-                _saveTriggers.ForEach(e => e.BindEvent(AutoSaveAll));
+                _saveTriggers.ForEach(e => e.BindEvent(SaveAll));
                 return true;
             }
 
@@ -66,11 +68,47 @@ namespace nickeltin.Runtime.GameData.Saving
         {
             if (base.Destruct())
             {
-                _saveTriggers.ForEach(e => e.UnbindEvent(AutoSaveAll));
+                _saveTriggers.ForEach(e => e.UnbindEvent(SaveAll));
                 return true;
             }
 
             return false;
+        }
+        
+        public void Save<T>(T obj, string key)
+        {
+            if (!_enabled) return;
+
+            if (!IsObjectSerializeable<T>(key, "SAVED")) return;
+
+            if (!allSaves.ContainsKey(key))
+            {
+                Debug.Log(
+                    $"Save with key {key} is saved explicitly, and not contained in {nameof(SaveSystem)} Saves list");
+            }
+
+            Directory.CreateDirectory(CurrentSavePath);
+            BinaryFormatter formatter = GetBinaryFormater();
+            using (FileStream fileStream = new FileStream(GetFilePath(key), FileMode.Create))
+            {
+                formatter.Serialize(fileStream, obj);
+            }
+        }
+
+        public T Load<T>(string key)
+        {
+            if (!_enabled) return default;
+
+            if (!IsObjectSerializeable<T>(key, "LOADED")) return default;
+
+            BinaryFormatter formatter = GetBinaryFormater();
+            T loadedObject;
+            using (FileStream fileStream = new FileStream(GetFilePath(key), FileMode.Open))
+            {
+                loadedObject = (T) formatter.Deserialize(fileStream);
+            }
+
+            return loadedObject;
         }
 
         public void LoadAll()
@@ -90,12 +128,11 @@ namespace nickeltin.Runtime.GameData.Saving
             if (_logEvents) Debug.Log(sb.ToString());
         }
 
-        public void AutoSaveAll()
+        public void SaveAll()
         {
             if (!_enabled) return;
 
             onBeforeSave?.Invoke();
-            _onBeforeSaveEvent.Invoke();
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("Next Saves is saved: ");
             _saves.ForEach(save =>
@@ -107,7 +144,7 @@ namespace nickeltin.Runtime.GameData.Saving
 
             if (_logEvents) Debug.Log(sb.ToString());
         }
-
+        
         public bool AddSavedItem(SaveableBase entery)
         {
             if (allSaves.ContainsKey(entery.SaveID))
@@ -134,57 +171,25 @@ namespace nickeltin.Runtime.GameData.Saving
 
         public bool ContainsSave(string key) => allSaves.ContainsKey(key);
 
-        public void Save<T>(T obj, string key)
-        {
-            if (!_enabled) return;
+        public bool SaveExists(string key) => File.Exists(GetFilePath(key));
 
-            if (!IsObjectSerializeable<T>(key, "SAVED")) return;
+        public void DeleteCurrentSave() => DeleteSavesAt(CurrentSavePath);
 
-            if (!allSaves.ContainsKey(key))
-            {
-                Debug.Log(
-                    $"Save with key {key} is saved explicitly, and not contained in {nameof(SaveSystem)} Saves list");
-            }
+        public void DeleteAllSaves() => DeleteSavesAt(RootSavePathRoot);
 
-            Directory.CreateDirectory(_path);
-            BinaryFormatter formatter = GetBinaryFormater();
-            using (FileStream fileStream = new FileStream(_path + key + extention, FileMode.Create))
-            {
-                formatter.Serialize(fileStream, obj);
-            }
-        }
-
-        public T Load<T>(string key)
-        {
-            if (!_enabled) return default;
-
-            if (!IsObjectSerializeable<T>(key, "LOADED")) return default;
-
-            BinaryFormatter formatter = GetBinaryFormater();
-            T loadedObject;
-            using (FileStream fileStream = new FileStream(_path + key + extention, FileMode.Open))
-            {
-                loadedObject = (T) formatter.Deserialize(fileStream);
-            }
-
-            return loadedObject;
-        }
-
-        public bool SaveExists(string key) => File.Exists(_path + key + extention);
-
-        public void DeleteSaves()
+        public void DeleteSavesAt(string path)
         {
             _saves.ForEach(save => save.LoadDefault());
-
-            if (Directory.Exists(_path))
+            
+            if (Directory.Exists(path))
             {
-                DirectoryInfo directory = new DirectoryInfo(_path);
+                DirectoryInfo directory = new DirectoryInfo(path);
 
                 if (directory.GetFiles().Length > 0)
                 {
                     StringBuilder sb = new StringBuilder();
                     sb.AppendLine("Next save files was deleted:");
-                    foreach (var file in directory.EnumerateFiles())
+                    foreach (var file in directory.EnumerateDirectories())
                     {
                         sb.AppendLine(file.FullName);
                     }
@@ -193,9 +198,14 @@ namespace nickeltin.Runtime.GameData.Saving
                 }
 
                 directory.Delete(true);
-                Directory.CreateDirectory(_path);
             }
         }
+
+        private string GetFilePath(string fileName) => 
+            _directorySettings.GetFilePath(_subFolders[_currentSubFolder], fileName);
+
+        public void RefreshEventsList() =>
+            _saves = Resources.FindObjectsOfTypeAll<SaveableBase>();
 
         private static bool IsObjectSerializeable<T>(string key, string actionLable)
         {
@@ -225,8 +235,12 @@ namespace nickeltin.Runtime.GameData.Saving
 
             return formatter;
         }
-
-        public static void RefreshEventsList(SaveSystem target) =>
-            target._saves = Resources.FindObjectsOfTypeAll<SaveableBase>();
+        
+        
+#if UNITY_EDITOR
+        public static string enabled_prop_name => nameof(_enabled);
+        public static string directory_settings_prop_name => nameof(_directorySettings);
+        public static string sub_folders_prop_name => nameof(_subFolders);
+#endif
     }
 }

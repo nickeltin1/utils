@@ -20,7 +20,7 @@ namespace nickeltin.Runtime.GameData.Saving
 
             private void Update()
             {
-                if(!_settings.autosaveEnabled) return;
+                if(!_settings.autosaveInterval.Enabled) return;
                 
                 _timePassed += Time.deltaTime;
                 

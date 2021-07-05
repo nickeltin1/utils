@@ -33,8 +33,6 @@ namespace nickeltin.Editor.GameData.VariablesRefrences
         
         protected void DrawProperty(Rect position, SerializedProperty baseProperty, params SerializedProperty[] properties)
         {
-            if (Application.isPlaying) GUI.enabled = false;
-            
             DrawPopup(position);
 
             GUIContent label = new GUIContent(baseProperty.displayName);
@@ -46,9 +44,6 @@ namespace nickeltin.Editor.GameData.VariablesRefrences
                     EditorGUI.PropertyField(position,  properties[i], label, true);
                 }
             }
-            
-            
-            GUI.enabled = true;
         }
         
         protected void EndProperty(SerializedProperty property)

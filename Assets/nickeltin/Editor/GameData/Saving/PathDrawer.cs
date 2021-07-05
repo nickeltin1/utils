@@ -10,7 +10,7 @@ namespace nickeltin.Editor.GameData.Saving
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             SerializedProperty type = property.FindPropertyRelative("_type");
-            EditorGUI.PropertyField(position, type, new GUIContent("Save Path"));
+            EditorGUI.PropertyField(position, type, label);
         }
     }
 }

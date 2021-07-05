@@ -48,14 +48,14 @@ namespace nickeltin.Editor.GameData.Events
 
         protected void DrawButton(Rect position, SerializedProperty property)
         {
-            GUI.enabled = Application.isPlaying;
+            EditorGUI.BeginDisabledGroup(!Application.isPlaying);
             
             if (GUI.Button(position, "Invoke"))
             {
                 (property.GetTargetObject() as EventBase)?.InvokeWithDefaultData();
             }
 
-            GUI.enabled = true;
+            EditorGUI.EndDisabledGroup();
         }
     }
 }

@@ -17,12 +17,12 @@ namespace  nickeltin.Editor.GameData.DataObjects
 
             serializedObject.Update();
 
-            GUI.enabled = Application.isPlaying;
+            EditorGUI.BeginDisabledGroup(!Application.isPlaying);
             if (GUILayout.Button("Invoke Update"))
             {
                 ((DataObjectBase)serializedObject.targetObject).InvokeUpdate();
             }
-            GUI.enabled = true;
+            EditorGUI.EndDisabledGroup();
             
             EditorGUILayout.PropertyField(description);
             EditorGUILayout.PropertyField(readOnly);

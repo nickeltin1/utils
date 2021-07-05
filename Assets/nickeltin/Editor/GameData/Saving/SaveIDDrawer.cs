@@ -32,10 +32,9 @@ namespace nickeltin.Editor.GameData.Saving
             
             if (useGuid.boolValue)
             {
-                bool wasGUIEnabled = GUI.enabled;
-                GUI.enabled = false;
+                EditorGUI.BeginDisabledGroup(true);
                 EditorGUI.PropertyField(position, guid);
-                GUI.enabled = wasGUIEnabled;
+                EditorGUI.EndDisabledGroup();
             }
             else EditorGUI.PropertyField(position, saveID);
         }

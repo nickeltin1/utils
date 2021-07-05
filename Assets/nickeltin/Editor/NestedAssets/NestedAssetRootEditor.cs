@@ -63,9 +63,11 @@ namespace nickeltin.Editor.NestedAssets
             EditorGUI.BeginChangeCheck();
             serializedObject.Update();
             
-            GUI.enabled = !Application.isPlaying;
-            _reorderableList.DoLayoutList();
-            GUI.enabled = true;
+            EditorGUI.BeginDisabledGroup(Application.isPlaying);
+            {
+                _reorderableList.DoLayoutList();
+            }
+            EditorGUI.EndDisabledGroup();
             
             DrawPropertiesExcluding(serializedObject, "m_Script");
             
