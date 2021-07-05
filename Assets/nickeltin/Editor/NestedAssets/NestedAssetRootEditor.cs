@@ -112,9 +112,16 @@ namespace nickeltin.Editor.NestedAssets
 
         protected virtual void OnContextMenuCallback(ReorderableList list, GenericMenu menu)
         {
+            menu.AddItem(new GUIContent("Properties"), false, () =>
+            {
+                Selection.activeObject = list.GetSelectedObject(_childs);
+                EditorApplication.ExecuteMenuItem("Assets/Properties...");
+                Selection.activeObject = target;
+            });
+            
             menu.AddItem(new GUIContent("Select asset"), false, () =>
             {
-                var obj = _childs.GetArrayElementAtIndex(list.index).objectReferenceValue;
+                var obj = list.GetSelectedObject(_childs);
                 Selection.activeObject = obj;
                 EditorGUIUtility.PingObject(obj);
             });

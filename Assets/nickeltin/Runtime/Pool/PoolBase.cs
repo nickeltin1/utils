@@ -38,7 +38,6 @@ namespace nickeltin.Runtime.ObjectPooling
         public IList<T> Items => _pool;
         public IList<T> OutOfPoolItems => _outOfPoolItems;
         public Action<T> OnNewItemSpawned => _onItemFirstSpawn;
-        
 
         protected PoolBase(T poolItem, Transform poolParent, int size, Action<T> onItemFirstSpawn, bool fillAtCreation)
         {

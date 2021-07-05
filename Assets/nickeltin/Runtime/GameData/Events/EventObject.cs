@@ -1,16 +1,14 @@
 ﻿using System;
 using nickeltin.Runtime.Utility;
-using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.NestedAssets;
 using UnityEngine;
-using Event = nickeltin.Runtime.GameData.Events.Event;
 
 namespace nickeltin.Runtime.GameData.Events
 {
     [CreateAssetMenu(menuName = MenuPathsUtility.eventsMenu + nameof(EventObject))]
     public sealed class EventObject : EventObjectBase, IEventBinder
     {
-        [SerializeField] private Events.Event _event;
+        [SerializeField] private Event _event;
 
         public void Invoke() => _event.Invoke();
         

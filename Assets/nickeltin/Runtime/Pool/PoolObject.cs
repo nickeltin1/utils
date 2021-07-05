@@ -6,7 +6,8 @@ namespace nickeltin.Runtime.ObjectPooling
     public abstract class PoolObject<T> : ScriptableObject where T : Component, IPoolItem<T>
     {
         [SerializeField] private Pool<T> _pool;
-
+        
+        
         public IList<T> Items => _pool.Items;
         public IList<T> OutOfPoolItems => _pool.OutOfPoolItems;
 

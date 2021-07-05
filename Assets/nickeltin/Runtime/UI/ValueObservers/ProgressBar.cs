@@ -2,6 +2,7 @@
 using System.Collections;
 using nickeltin.Extensions.Attributes;
 using nickeltin.Extensions;
+using nickeltin.Extensions.Types;
 using nickeltin.Runtime.GameData.DataObjects;
 using nickeltin.Runtime.GameData.VariablesRefrences;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace nickeltin.Runtime.UI
         [SerializeField, ShowIf("_usesSlider")] private Slider _slider;
         [SerializeField] private FloatObject _source;
         [SerializeField] private bool _useSourceRawValue;
-        [SerializeField] private float _interpolationTime = 1;
+        [SerializeField] private Optional<float> _interpolationTime = 1;
         [SerializeField] private bool _useColorLerp;
         [SerializeField, ShowIf("_useColorLerp")] private Color _minColor;
         [SerializeField, ShowIf("_useColorLerp")] private Color _maxColor;
@@ -66,7 +67,7 @@ namespace nickeltin.Runtime.UI
         {
             if(_interpolation != null) StopCoroutine(_interpolation);
 
-            if (_interpolationTime > 0) _interpolation = StartCoroutine(Interpolation());
+            if (_interpolationTime.Enabled) _interpolation = StartCoroutine(Interpolation());
             else UpdateValueNonInterpolate(normalizedValue);
 
             IEnumerator Interpolation()
@@ -81,7 +82,7 @@ namespace nickeltin.Runtime.UI
             }
         }
 
-        public void UpdateValueFromSource(float sourceValue)
+        private void UpdateValueFromSource(float sourceValue)
         {
             if(_useSourceRawValue) UpdateValue(sourceValue);
             else UpdateValue(_source.NormalizedValue);
@@ -89,13 +90,16 @@ namespace nickeltin.Runtime.UI
 
         private void OnEnable()
         {
-            _source.BindEvent(UpdateValueFromSource);
-            UpdateValueNonInterpolate(_source.Value);
+            if (_hasSource)
+            {
+                _source.BindEvent(UpdateValueFromSource);
+                UpdateValueFromSource(_source.Value);
+            }
         }
 
         private void OnDisable()
         {
-            _source.UnbindEvent(UpdateValueFromSource);
+            if (_hasSource) _source.UnbindEvent(UpdateValueFromSource);
         }
     }
 }

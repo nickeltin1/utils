@@ -13,7 +13,7 @@ namespace nickeltin.Extensions.Types
         public T Value => _value;
 
         public static implicit operator T(Optional<T> source) => source._value;
-
+        public static implicit operator bool(Optional<T> source) => source._enabled;
         public static implicit operator Optional<T>(T value) => new Optional<T>() {_value = value};
     }
 }
