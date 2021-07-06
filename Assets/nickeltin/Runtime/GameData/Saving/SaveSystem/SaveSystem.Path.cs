@@ -12,8 +12,8 @@ namespace nickeltin.Runtime.GameData.Saving
             
             public enum PathType
             {
-                DataPath,
-                PersistentDataPath
+                PersistentDataPath,
+                DataPath
             }
 
 
