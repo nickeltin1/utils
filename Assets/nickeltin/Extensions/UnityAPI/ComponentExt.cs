@@ -13,6 +13,11 @@ namespace nickeltin.Extensions
             if(component == null) component = from.GetComponent<T>();
         }
         
+        public static void CacheInChildrens<T>(ref T component, GameObject from) where T : Component
+        {
+            if(component == null) component = from.GetComponentInChildren<T>();
+        }
+        
         /// <summary>
         /// Gets component form <paramref name="from" /> if component isnt null.
         /// Use it in <see cref="MonoBehaviour.OnValidate"/>.

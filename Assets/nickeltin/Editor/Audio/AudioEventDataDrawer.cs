@@ -10,10 +10,10 @@ namespace nickeltin.Editor.Audio
     {
         protected override void DrawChildProperties(Rect position, SerializedProperty property)
         {
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_clips"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_volume"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_pitch"));
-            EditorGUILayout.PropertyField(property.FindPropertyRelative("_mixerGroup"));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative(AudioEventData.clips_prop_name));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative(AudioEventData.volume_prop_name));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative(AudioEventData.pitch_prop_name));
+            EditorGUILayout.PropertyField(property.FindPropertyRelative(AudioEventData.mixer_group_prop_name));
         }
     }
 }

@@ -30,6 +30,11 @@ namespace nickeltin.Runtime.GameData.Saving
             
             /// <returns> Returns path of Main folder + sub folder</returns>
             private static string GetPath(string mainFolder) => mainFolder + SAVE_FOLDER;
+
+
+#if UNITY_EDITOR
+            public static string type_prop_name => nameof(_type);
+#endif
         }
     }
 }

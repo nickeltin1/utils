@@ -15,15 +15,15 @@ namespace nickeltin.Editor.NestedAssets
     [CustomEditor(typeof(NestedAssetRoot<>), true)]
     public class NestedAssetRootEditor : UnityEditor.Editor
     {
-        protected ReorderableList _reorderableList;
-        protected SerializedProperty _childs;
-        
-        protected Type _childsType;
-        
-        protected bool _allowExport = false;
-        protected bool _allowImport = false;
-        protected char _separatorChar = NestedAssetParentBase.DEFAULT_NAME_SEPARATOR;
-        protected List<Type> _excludeChildTypes = new List<Type>();
+        public ReorderableList _reorderableList;
+        public SerializedProperty _childs;
+
+        private Type _childsType;
+
+        public bool _allowExport = false;
+        public bool _allowImport = false;
+        private char _separatorChar = NestedAssetParentBase.DEFAULT_NAME_SEPARATOR;
+        private List<Type> _excludeChildTypes = new List<Type>();
 
         #region Unity Methods
 
@@ -40,7 +40,7 @@ namespace nickeltin.Editor.NestedAssets
                 drawHeaderCallback = rect => EditorGUI.LabelField(rect, "Childs"),
                 onRemoveCallback = list => DeleteChild(list.index),
                 onAddDropdownCallback = OnAddDropdownCallback,
-                onMouseUpCallback = OnMouseUpCallback,
+                onMouseUpCallback = OnMouseUpCallback
             };
             
             var settingsAttribute = GetSettings(serializedObject);
@@ -91,7 +91,7 @@ namespace nickeltin.Editor.NestedAssets
             NestedAsset identifier = (NestedAsset)element.objectReferenceValue;
             SerializedProperty _name = GetChildNameProperty(identifier, out var child);
             child.Update();
-            EditorGUI.PropertyField(rect, _name);
+            EditorGUI.PropertyField(rect, _name, new GUIContent("Child " + index));
             if (child.ApplyModifiedProperties())
             {
                 if (identifier.name != GetProperChildName(_name.stringValue))
@@ -106,6 +106,7 @@ namespace nickeltin.Editor.NestedAssets
         {
             if (Event.current.button == 1)
             {
+                Debug.Log("Mouse UP");
                 GenericMenu menu = new GenericMenu();
                 OnContextMenuCallback(list, menu);
                 menu.DropDown(new Rect(Event.current.mousePosition, Vector2.zero));
@@ -152,13 +153,13 @@ namespace nickeltin.Editor.NestedAssets
         
         #endregion
 
-        private void CacheChildsProperty() => _childs = serializedObject.FindProperty("_childs");
+        private void CacheChildsProperty() => _childs = serializedObject.FindProperty(NestedAssetParent<NestedAsset>.childs_prop_name);
 
         private void HandleDropdownImport()
         {
             if (DragAndDrop.objectReferences.Length == 0 || DragAndDrop.objectReferences[0] == null) return;
 
-            if (DragAndDrop.objectReferences[0].GetType().IsSubclassOf(_childsType))
+            if (DragAndDrop.objectReferences[0].GetType().IsSubclassOf(_childsType) || DragAndDrop.objectReferences[0].GetType() == _childsType)
             {
                 EditorGUILayout.HelpBox("Drop object here to create its copy inside.", 
                     MessageType.Warning);
@@ -344,7 +345,7 @@ namespace nickeltin.Editor.NestedAssets
         {
             var childObject = new SerializedObject(child);
             serializedObject = childObject; 
-            return childObject.FindProperty("_name");
+            return childObject.FindProperty(NestedAsset.name_prop_name);
         }
         
         public static string GetProperChildName(string parentName, string childName, char nameSeparator) => 

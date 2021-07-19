@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using nickeltin.Runtime.GameData.Events;
 using nickeltin.Runtime.NestedAssets;
 using UnityEngine;
@@ -16,15 +17,11 @@ namespace nickeltin.Runtime.GameData.DataObjects
 
         public bool Readonly => _readonly;
         
-        public virtual T Value
-        {
-            get => _value;
-            set => TrySetValue(value);
-        }
+        public virtual T Value { get => _value; set => TrySetValue(value); }
 
         protected virtual bool TrySetValue(T value)
         {
-            if (_value.Equals(value)) return false;
+            if (Equals(_value, value)) return false;
 
             if (_readonly)
             {
@@ -48,6 +45,12 @@ namespace nickeltin.Runtime.GameData.DataObjects
         public static implicit operator T(DataObject<T> reference) => reference.Value;
 
         public override string ToString() => Value.ToString();
+        
+#if UNITY_EDITOR
+        public static string dev_desc_prop_name => nameof(_developmentDescription);
+        public static string readonly_prop_name => nameof(_readonly);
+        public static string value_prop_name => nameof(_value);
+#endif
     }
 
     public abstract class DataObjectBase : NestedAsset

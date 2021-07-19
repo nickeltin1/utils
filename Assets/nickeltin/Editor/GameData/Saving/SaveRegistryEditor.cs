@@ -1,5 +1,4 @@
-﻿using nickeltin.Editor;
-using nickeltin.Runtime.GameData.Saving;
+﻿using nickeltin.Runtime.GameData.Saving;
 using UnityEditor;
 
 namespace nickeltin.Editor.GameData.Saving
@@ -17,10 +16,10 @@ namespace nickeltin.Editor.GameData.Saving
             
             EditorGUILayout.HelpBox(
                 $"This is {typeof(SaveRegistry).Name} file, items in it will be added to Saves Database, " +
-                "but will not be SAVED/LOADED. For all items will be used Guid as SaveID", 
+                "but will not be SAVED/LOADED. For all items will use Guid as SaveID", 
                 MessageType.Info);
             
-            SerializedProperty enteries = serializedObject.FindProperty("m_entries");
+            SerializedProperty enteries = serializedObject.FindProperty(SaveRegistry.entries_prop_name);
             EditorGUILayout.PropertyField(enteries);
             
             if (obj.Entries != null && obj.Entries.Count > 0)

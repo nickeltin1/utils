@@ -56,5 +56,9 @@ namespace nickeltin.Runtime.GameData.Saving
         {
             _saves.ForEach(save => save.LoadDefault());
         }
+
+#if UNITY_EDITOR
+        public static string saves_prop_name => nameof(_saves);
+#endif
     }
 }

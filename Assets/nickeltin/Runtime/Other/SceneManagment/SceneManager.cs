@@ -21,8 +21,8 @@ namespace nickeltin.Runtime.SceneManagment
         [Serializable]
         private struct Values
         {
-            public VarRef<int> currentLevelId;
-            public VarRef<int> levelsCompleted;
+            public VariableRef<int> currentLevelId;
+            public VariableRef<int> levelsCompleted;
         }
         
         [SerializeField] private Settings _settings;
@@ -96,13 +96,14 @@ namespace nickeltin.Runtime.SceneManagment
 
         public void CompleteLevel()
         {
+            if (_events.beforeLevelCompleted != null) _events.beforeLevelCompleted.Invoke();
             _values.levelsCompleted.Value++;
-            _events.afterLevelCompleted.Invoke();
+            if (_events.afterLevelCompleted != null) _events.afterLevelCompleted.Invoke();
         }
 
         public void ReloadLevel()
         {
-            _events.beforeLevelReload.Invoke();
+            if (_events.beforeLevelReload != null) _events.beforeLevelReload.Invoke();
             LoadLevel(_values.currentLevelId);
         }
 
@@ -113,7 +114,7 @@ namespace nickeltin.Runtime.SceneManagment
                 LoadScene(sceneName);
                 _values.currentLevelId.Value = levelId;
                 LogEvent($"Level with id {levelId} loaded");
-                _events.afterLevelLoad.Invoke();
+                if (_events.afterLevelLoad != null) _events.afterLevelLoad.Invoke();
             }
             
             if (_levels[levelId] != null) Load(_levels[levelId]);

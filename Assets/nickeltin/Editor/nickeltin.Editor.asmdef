@@ -2,8 +2,8 @@
     "name": "nickeltin.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:7ed353d4d7dca564a937233fc017c39a",
-        "GUID:8a69a93fc244ca84dbb0a473e72b1698"
+        "GUID:195c8272ba97ba74c9bad71eca5d644b",
+        "GUID:4b33e36440816b844aa10fbe8765deb5"
     ],
     "includePlatforms": [
         "Editor"

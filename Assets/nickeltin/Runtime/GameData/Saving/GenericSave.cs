@@ -27,8 +27,8 @@ namespace nickeltin.Runtime.GameData.Saving
         [Serializable]
         public class Entry<T> //where T : IValueWithoutTypeProvider
         {
-            public VarRef<T> defaultValue;
-            public VarRef<T> value;
+            public VariableRef<T> defaultValue;
+            public VariableRef<T> value;
         }
 
         [SerializeField, TextArea] private string _description;

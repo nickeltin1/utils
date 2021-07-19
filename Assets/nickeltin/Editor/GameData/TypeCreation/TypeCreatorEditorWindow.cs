@@ -15,6 +15,7 @@ namespace nickeltin.Editor.GameData.TypeCreation
         private const string _eventName = "Event Object";
         private const string _containerName = "Container";
         private const string _eventListenerName = "Event Listener"; 
+        private const string _collectionObjectName = "Collection"; 
         
         
         private int m_toolbarValue;
@@ -38,7 +39,8 @@ namespace nickeltin.Editor.GameData.TypeCreation
                 _dataObjectName,
                 _eventName,
                 _containerName,
-                _eventListenerName
+                _eventListenerName,
+                _collectionObjectName
             }, 3);
             GUILayout.Space(20f);
 
@@ -93,6 +95,16 @@ namespace nickeltin.Editor.GameData.TypeCreation
                 {
                     TypeCreator.Create(typeof(EventListener<>), "EventListener", 
                         null, GetTargetedType());
+                };
+            }
+            //CollectionObject
+            else if (m_toolbarValue == 4)
+            {
+                if(DrawButton(_eventListenerName))
+                {
+                    TypeCreator.Create(typeof(CollectionObject<>), "Collection", 
+                        $"{nameof(MenuPathsUtility)}.{nameof(MenuPathsUtility.containersMenu)}",
+                        GetTargetedType(false));
                 };
             }
 

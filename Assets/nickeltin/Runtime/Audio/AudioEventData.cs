@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using nickeltin.Extensions;
 using nickeltin.Extensions.Attributes;
 using UnityEngine;
@@ -29,5 +32,14 @@ namespace nickeltin.Runtime.Audio
             source.pitch = Pitch;
             source.Play();
         }
+
+        public void SetClips(IEnumerable<AudioClip> clips) => _clips = clips.ToArray();
+
+#if UNITY_EDITOR
+        public static string clips_prop_name => nameof(_clips);
+        public static string volume_prop_name => nameof(_volume);
+        public static string pitch_prop_name => nameof(_pitch);
+        public static string mixer_group_prop_name => nameof(_mixerGroup);
+#endif
     }
 }

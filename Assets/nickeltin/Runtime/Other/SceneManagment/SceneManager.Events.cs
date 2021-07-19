@@ -10,8 +10,10 @@ namespace nickeltin.Runtime.SceneManagment
         private struct Events
         {
             public EventObject afterLevelLoad;
+            public EventObject beforeLevelCompleted;
             public EventObject afterLevelCompleted;
             public EventObject beforeLevelReload;
+            
         }
     }
 }

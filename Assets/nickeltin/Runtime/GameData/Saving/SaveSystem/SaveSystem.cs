@@ -215,6 +215,7 @@ namespace nickeltin.Runtime.GameData.Saving
         public static string directory_settings_prop_name => nameof(_directorySettings);
         public static string sub_folders_prop_name => nameof(_subFolders);
         public static string log_events_prop_name => nameof(_logEvents);
+        public static string saves_prop_name => nameof(_saves);
 #endif
     }
 }

@@ -22,8 +22,8 @@ namespace nickeltin.Runtime.UI.Groups
             if(_opened) return false;
             
             gameObject.SetActive(true);
-            _onOpen.Invoke();
             SharedContentSetActive(true);
+            _onOpen.Invoke();
 
             return true;
         }

@@ -12,20 +12,14 @@ namespace nickeltin.Editor.GameData.DataObjects
         private Type _objectType;
         private Type[] _objectParameters;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent _label)
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             CacheGenericType(typeof(DataObject<>), property, ref _objectType, ref _objectParameters);
-            
-            GUIContent label = new GUIContent(_label);
-            
-            if (!IsInsideVariableReference(property)) label.text = property.displayName;
-
-            Rect topLine = new Rect(position) {height = EditorGUIUtility.singleLineHeight};
 
             EditorGUI.BeginProperty(position, label, property);
             EditorGUI.BeginChangeCheck();
-            
-            DrawGenericObjectField(topLine, property, label, _objectType, _objectParameters);
+
+            DrawGenericObjectField(position, property, label, _objectType, _objectParameters);
             
             EditorGUI.EndProperty();
 

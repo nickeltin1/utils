@@ -9,9 +9,9 @@ namespace nickeltin.Editor.GameData.Saving
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            SerializedProperty useGuid = property.FindPropertyRelative("useGUID");
-            SerializedProperty saveID = property.FindPropertyRelative("_saveID");
-            SerializedProperty guid = property.FindPropertyRelative("_GUID");
+            SerializedProperty useGuid = property.FindPropertyRelative(SaveID.use_guid_prop_name);
+            SerializedProperty saveID = property.FindPropertyRelative(SaveID.save_id_prop_name);
+            SerializedProperty guid = property.FindPropertyRelative(SaveID.guid_prop_name);
 
             position.height = EditorGUIUtility.singleLineHeight;
             
@@ -22,7 +22,7 @@ namespace nickeltin.Editor.GameData.Saving
             if (Event.current.type == EventType.MouseUp && Event.current.button == 1)
             {
                 Rect contextMenuRect = new Rect(position) {width = EditorGUIUtility.labelWidth};
-                ;
+                
                 if (contextMenuRect.Contains(Event.current.mousePosition))
                 {
                     OnContextMenu(new Rect(Event.current.mousePosition, Vector2.zero), property);

@@ -10,13 +10,9 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
     [ExecuteInEditMode]
     public class CameraRig : CameraSystemObjectBase
     {
-        [Serializable]
-        public enum UpdateType
-        {
-            Update, LateUpdate, FixedUpdate
-        }
+        [Serializable] public enum UpdateType { Update, LateUpdate, FixedUpdate }
 
-        [Serializable]
+        [Serializable] 
         public struct Settings
         {
             public Vector2 offset;
@@ -25,10 +21,10 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
             public float fov;
         }
         
-        [Serializable]
+        [Serializable] 
         private class InterpolationSettings
         {
-            public float positionLerpSpeed = 100f;
+            public float positionSmoothTime = 0.1f;
             public float localPositionLerpSpeed = 100f;
             public float rotationLerpSpeed = 100f;
             public float fovLerpSpeed = 100f;
@@ -50,15 +46,12 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
         private bool m_hasTarget => m_target != null;
         
         public bool updatePosition { get; set; } = true;
-        
-        public float postitionLerpSpeed
+        public float positionSmoothTime
         {
-            get => m_lerpSettings.positionLerpSpeed;
-            set => m_lerpSettings.positionLerpSpeed = value;
+            get => m_lerpSettings.positionSmoothTime;
+            set => m_lerpSettings.positionSmoothTime = value;
         }
-        
         public bool shaking { get; private set; }
-
         public UpdateType updateType
         {
             get => m_updateType;
@@ -69,6 +62,7 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
         private Settings m_settings;
         private Quaternion m_targetedRotation;
         private Vector3 m_targetedCameraLocalPos;
+        private Vector3 _movementVelocity;
 
         private void Awake()
         {
@@ -82,7 +76,6 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
         }
 
         private void OnEnable() => CameraTarget.onChange += ChangeTarget;
-
         private void OnDisable() => CameraTarget.onChange -= ChangeTarget;
 
         private void OnDrawGizmos()
@@ -117,7 +110,7 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
             if(m_updateType == UpdateType.LateUpdate) Update_Internal(Time.deltaTime);
         }
         
-        private void Update_Internal(float timeStep)
+        private void Update_Internal(float delta)
         {
             if( m_camera == null) return;
             
@@ -131,12 +124,16 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
             {
                 m_targetedCameraLocalPos = m_settings.offset;
                 
-                transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
-                    m_lerpSettings.positionLerpSpeed * timeStep);
+                // transform.position = Vector3.Lerp(transform.position, m_target.transform.position, 
+                //     m_lerpSettings.positionLerpSpeed * delta);
+                
+                transform.position = Vector3.SmoothDamp(transform.position, m_target.transform.position, 
+                    ref _movementVelocity, m_lerpSettings.positionSmoothTime,
+                    float.MaxValue, delta);
             }
             
             m_camera.transform.localPosition = Vector3.Lerp(m_camera.transform.localPosition, 
-                m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed * timeStep);
+                m_targetedCameraLocalPos, m_lerpSettings.localPositionLerpSpeed * delta);
 
             if(m_settings.alignWithTargetRotation)
             {
@@ -148,11 +145,11 @@ namespace nickeltin.Runtime.Cameras.TriDimensional
             }
             
             transform.rotation = Quaternion.Lerp(transform.rotation, m_targetedRotation, 
-                m_lerpSettings.rotationLerpSpeed * timeStep);
+                m_lerpSettings.rotationLerpSpeed * delta);
 
             if (m_camera != null)
             {
-                m_camera.fieldOfView =  Mathf.Lerp(m_camera.fieldOfView, m_settings.fov, m_lerpSettings.fovLerpSpeed * timeStep);
+                m_camera.fieldOfView =  Mathf.Lerp(m_camera.fieldOfView, m_settings.fov, m_lerpSettings.fovLerpSpeed * delta);
             }
         }
 

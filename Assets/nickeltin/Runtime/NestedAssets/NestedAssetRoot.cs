@@ -9,6 +9,10 @@ namespace nickeltin.Runtime.NestedAssets
         [SerializeField, HideInInspector] private List<T> _childs;
 
         public IList<T> Childs => _childs;
+
+#if UNITY_EDITOR
+        public static string childs_prop_name => nameof(_childs);
+#endif
     }
 
     public abstract class NestedAssetParentBase : ScriptableObject

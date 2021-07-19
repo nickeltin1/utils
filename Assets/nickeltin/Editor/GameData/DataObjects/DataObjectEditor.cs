@@ -9,9 +9,9 @@ namespace  nickeltin.Editor.GameData.DataObjects
     {
         public override void OnInspectorGUI()
         {
-            SerializedProperty description = serializedObject.FindProperty("_developmentDescription");
-            SerializedProperty readOnly = serializedObject.FindProperty("_readonly");
-            SerializedProperty value = serializedObject.FindProperty("_value");
+            SerializedProperty description = serializedObject.FindProperty(DataObject<int>.dev_desc_prop_name);
+            SerializedProperty readOnly = serializedObject.FindProperty(DataObject<int>.readonly_prop_name);
+            SerializedProperty value = serializedObject.FindProperty(DataObject<int>.value_prop_name);
 
             EditorExtension.DrawScriptField(this);
 

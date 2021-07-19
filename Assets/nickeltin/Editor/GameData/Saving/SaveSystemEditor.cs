@@ -160,7 +160,7 @@ namespace nickeltin.Editor.GameData.Saving
                 if (GUILayout.Button("Refresh saves list"))
                 {
                     Undo.RecordObject(target, "Refreshing saves");
-                    SerializedProperty saves = serializedObject.FindProperty("_saves");
+                    SerializedProperty saves = serializedObject.FindProperty(SaveSystem.saves_prop_name);
                     saves.ClearArray();
                     var foundChilds = Resources.FindObjectsOfTypeAll<SaveableBase>();
                     saves.arraySize = foundChilds.Length;

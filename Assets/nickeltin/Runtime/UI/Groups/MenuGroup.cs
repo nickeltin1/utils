@@ -10,7 +10,7 @@ namespace nickeltin.Runtime.UI.Groups
         [SerializeField] private bool _openMenuAtStart;
         [SerializeField, ShowIf("_openMenuAtStart")] private Menu _startMenu;
         
-        private void Start()
+        public void Start()
         {
             if(_closeAllAtStart) CloseAllItems();
             if(_openMenuAtStart) _startMenu.Open();

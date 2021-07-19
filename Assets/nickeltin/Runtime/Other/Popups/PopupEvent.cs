@@ -12,7 +12,9 @@ namespace nickeltin.Runtime.Other.Popups
             get => _event.invokeData;
             set => _event.invokeData = value;
         }
-        
+
+        public void Invoke(Vector3 worldPosition) => Invoke(worldPosition, data.text);
+
         public void Invoke(Vector3 worldPosition, string text)
         {
             Invoke(true, worldPosition, text, false, data.color);

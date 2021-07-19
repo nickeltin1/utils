@@ -9,9 +9,9 @@ namespace nickeltin.Editor.GameData.VariablesRefrences
         protected SerializedProperty _referenceType;
 
 
-        protected void BeginProperty(ref Rect position, SerializedProperty property, ref GUIContent label)
+        protected void BeginProperty(ref Rect position, SerializedProperty property, GUIContent label)
         {
-            label = EditorGUI.BeginProperty(position, label, property);
+            EditorGUI.BeginProperty(position, label, property);
             EditorGUI.BeginChangeCheck();
         }
 
@@ -31,17 +31,15 @@ namespace nickeltin.Editor.GameData.VariablesRefrences
                 _referenceType.enumDisplayNames, _popupStyle);
         }
         
-        protected void DrawProperty(Rect position, SerializedProperty baseProperty, params SerializedProperty[] properties)
+        protected void DrawProperty(Rect position, GUIContent label, params SerializedProperty[] properties)
         {
             DrawPopup(position);
-
-            GUIContent label = new GUIContent(baseProperty.displayName);
             
             for (int i = 0; i < properties.Length; i++)
             {
                 if (i == _referenceType.enumValueIndex)
                 {
-                    EditorGUI.PropertyField(position,  properties[i], label, true);
+                    EditorGUI.PropertyField(position, properties[i], label, true);
                 }
             }
         }

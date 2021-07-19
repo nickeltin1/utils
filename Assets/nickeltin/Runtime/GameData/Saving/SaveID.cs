@@ -37,5 +37,11 @@ namespace nickeltin.Runtime.GameData.Saving
         public override string ToString() => useGUID ? _GUID : _saveID;
         
         public static implicit operator string(SaveID source) => source.ToString();
+
+#if UNITY_EDITOR
+        public static string use_guid_prop_name => nameof(useGUID);
+        public static string save_id_prop_name => nameof(_saveID);
+        public static string guid_prop_name => nameof(_GUID);
+#endif
     }
 }

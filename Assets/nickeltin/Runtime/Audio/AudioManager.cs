@@ -12,13 +12,13 @@ using UnityEngine.Audio;
 
 namespace nickeltin.Runtime.Audio
 {
-    [CreateAssetMenu(menuName = MenuPathsUtility.audioMenu + nameof(AudioManager))]
+    [CreateAssetMenu(menuName = MenuPathsUtility.audioMenu + nameof(AudioManager), fileName = nameof(AudioManager))]
     public class AudioManager : SOSingleton<AudioManager>
     {
         [Serializable]
         private struct Settings
         {
-            public DataObject<bool> channelEnabled;
+            public VariableRef<bool> channelEnabled;
             public string parameter;
             [MinMaxSlider(-100, 100)] public Vector2 range;
         }
@@ -75,10 +75,7 @@ namespace nickeltin.Runtime.Audio
 
         private void ApplySettings(Settings settings)
         {
-            if (settings.channelEnabled != null)
-            {
-                _mixer.SetFloat(settings.parameter, settings.channelEnabled ? settings.range.y : settings.range.x);
-            }
+            _mixer.SetFloat(settings.parameter, settings.channelEnabled ? settings.range.y : settings.range.x);
         }
         
         private void Play(AudioEventData audioData)

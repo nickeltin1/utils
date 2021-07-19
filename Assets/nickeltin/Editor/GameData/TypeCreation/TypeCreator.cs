@@ -36,7 +36,7 @@ namespace nickeltin.Editor.GameData.TypeCreation
 
             string path = EditorUtility.SaveFilePanelInProject("Save event object", 
                 $"{parameterTypes[parameterTypes.Length - 1].Name}{name}", 
-                "cs", "Please enter a file name to save the texture to");
+                "cs", "Select file destination");
 
             if (path.IsNullOrEmpty()) return;
             

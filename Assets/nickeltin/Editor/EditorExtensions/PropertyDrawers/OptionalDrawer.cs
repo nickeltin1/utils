@@ -13,8 +13,8 @@ namespace nickeltin.Editor.PropertyDrawers
         
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            var value = property.FindPropertyRelative("_value");
-            var enabled = property.FindPropertyRelative("_enabled");
+            var value = property.FindPropertyRelative(Optional<int>.value_prop_name);
+            var enabled = property.FindPropertyRelative(Optional<int>.enabled_prop_name);
 
             position.width -= TOGGLE_WIDTH;
             EditorGUI.BeginDisabledGroup(!enabled.boolValue);
@@ -29,7 +29,7 @@ namespace nickeltin.Editor.PropertyDrawers
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
-            var value = property.FindPropertyRelative("_value");
+            var value = property.FindPropertyRelative(Optional<int>.value_prop_name);
             return EditorGUI.GetPropertyHeight(value);
         }
     }

@@ -2,7 +2,8 @@
     "name": "nickeltin.PathCreator",
     "rootNamespace": "",
     "references": [
-        "GUID:8a69a93fc244ca84dbb0a473e72b1698"
+        "GUID:195c8272ba97ba74c9bad71eca5d644b",
+        "GUID:a175c730f6bde4b4a9509e711d9969e4"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

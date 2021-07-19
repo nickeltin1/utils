@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using nickeltin.Extensions;
+﻿using nickeltin.Extensions;
 using nickeltin.Extensions.Attributes;
 using nickeltin.Runtime.GameData.DataObjects;
 using UnityEngine;
@@ -36,11 +34,11 @@ namespace nickeltin.Runtime.GameData.Events
         {
             if (_binderType == EventBinderType.EventObject)
             {
-                ForEachEventBinder(_eventObjects, b => b.BindEvent(OnInvoke));
+                for (int i = 0; i < _eventObjects.Length; i++) _eventObjects[i].BindEvent(OnInvoke);
             }
             else
             {
-                ForEachEventBinder(_dataObjects, b => b.BindEvent(OnInvoke));
+                for (int i = 0; i < _dataObjects.Length; i++) _dataObjects[i].BindEvent(OnInvoke);
             }
         }
 
@@ -48,19 +46,14 @@ namespace nickeltin.Runtime.GameData.Events
         {
             if (_binderType == EventBinderType.EventObject)
             {
-                ForEachEventBinder(_eventObjects, b => b.UnbindEvent(OnInvoke));
+                for (int i = 0; i < _eventObjects.Length; i++) _eventObjects[i].UnbindEvent(OnInvoke);
             }
             else
             {
-                ForEachEventBinder(_dataObjects, b => b.UnbindEvent(OnInvoke));
+                for (int i = 0; i < _dataObjects.Length; i++) _dataObjects[i].UnbindEvent(OnInvoke);
             }
         }
 
-        private void ForEachEventBinder(IReadOnlyList<IEventBinder<T>> binders, Action<IEventBinder<T>> action)
-        {
-            for (int i = 0; i < binders.Count; i++) action.Invoke(binders[i]);
-        }
-
-        public void OnInvoke(T data) => _response.Invoke(data);
+        public virtual void OnInvoke(T data) => _response.Invoke(data);
     }
 }

@@ -1,5 +1,4 @@
-﻿using nickeltin.Editor;
-using nickeltin.Runtime.GameData.Saving;
+﻿using nickeltin.Runtime.GameData.Saving;
 using UnityEditor;
 
 namespace nickeltin.Editor.GameData.Saving
@@ -36,7 +35,7 @@ namespace nickeltin.Editor.GameData.Saving
             }
 
 
-            SerializedProperty saves = serializedObject.FindProperty("_saves");
+            SerializedProperty saves = serializedObject.FindProperty(SavePackage.saves_prop_name);
 
             EditorGUILayout.PropertyField(saves);
                 

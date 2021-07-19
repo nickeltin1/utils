@@ -4,22 +4,21 @@ using UnityEngine;
 
 namespace nickeltin.Editor.GameData.VariablesRefrences
 {
-    [CustomPropertyDrawer(typeof(VarRef<>), true)]
+    [CustomPropertyDrawer(typeof(VariableRef<>), true)]
     public sealed class VariableReferenceDrawer : ReferenceDrawer
     {
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             CachePopupStyle();
             
-            BeginProperty(ref position, property, ref label);
+            BeginProperty(ref position, property, label);
             
-            CacheReferenceType(property, "_referenceType");
+            CacheReferenceType(property, VariableRef<int>.ref_type_prop_name);
             
-            SerializedProperty constantValue = property.FindPropertyRelative("_constantValue");
-            SerializedProperty dataObject = property.FindPropertyRelative("_dataObject");
-            SerializedProperty globalVariable = property.FindPropertyRelative("_globalVariable");
+            SerializedProperty constantValue = property.FindPropertyRelative(VariableRef<int>.const_value_prop_name);
+            SerializedProperty dataObject = property.FindPropertyRelative(VariableRef<int>.data_obj_prop_name);
             
-            DrawProperty(position, property,constantValue, dataObject, globalVariable);
+            DrawProperty(position, label,constantValue, dataObject);
 
             EndProperty(property);
         }

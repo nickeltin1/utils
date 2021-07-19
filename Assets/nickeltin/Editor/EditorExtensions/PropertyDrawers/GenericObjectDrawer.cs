@@ -48,16 +48,5 @@ namespace nickeltin.Editor.PropertyDrawers
 
             EditorGUI.HelpBox(position, $"Generic type with parameter {type} not found", MessageType.Error);
         }
-
-        protected bool IsInsideVariableReference(SerializedProperty property)
-        {
-            Type parentType = property.GetParentType();
-            if (parentType.BaseType == typeof(VariableReferenceBase))
-            {
-                return true;
-            }
-
-            return false;
-        }
     }
 }

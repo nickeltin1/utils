@@ -13,7 +13,7 @@ namespace nickeltin.Editor.GameData.Events
         {
             if(!VerifyContext(position, property, label)) return;
             
-            _invokeData = property.FindPropertyRelative("invokeData");
+            _invokeData = property.FindPropertyRelative(Event<int>.invoke_data_prop_name);
             
             GUIContent dataLabel = new GUIContent("InvokeData");
             Rect topLine = new Rect(position);

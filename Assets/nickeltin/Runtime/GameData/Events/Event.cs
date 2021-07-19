@@ -6,7 +6,7 @@ namespace nickeltin.Runtime.GameData.Events
     [Serializable]
     public class Event : EventBase
     {
-        //Empty variable for making its object Serializable
+        //Empty variable for making object Serializable
         [SerializeField] private int _; 
         
         private event Action _onInvoke;
@@ -33,6 +33,10 @@ namespace nickeltin.Runtime.GameData.Events
 
         public void Invoke(T invokeData) => _onInvoke?.Invoke(invokeData);
         public override void InvokeWithDefaultData() => Invoke(invokeData);
+
+#if UNITY_EDITOR
+        public static string invoke_data_prop_name => nameof(invokeData);
+#endif
     }
     
     public abstract class EventBase

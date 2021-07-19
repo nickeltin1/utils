@@ -18,15 +18,15 @@ namespace nickeltin.Runtime.GameData.Saving
     /// <typeparam name="T"></typeparam>
     public  class SaveRegistry<T> : RegistryItem where T : SaveableBase
     {
-        [SerializeField] private List<T> m_entries;
+        [SerializeField] private List<T> _entries;
 
-        public IReadOnlyList<T> Entries => m_entries;
+        public IReadOnlyList<T> Entries => _entries;
         
         public override bool Register(SaveSystem saveSystem)
         {
             bool value = true;
             
-            foreach (var save in m_entries)
+            foreach (var save in _entries)
             {
                 if (save != null)
                 {
@@ -38,14 +38,18 @@ namespace nickeltin.Runtime.GameData.Saving
             return value;
         }
         
-        public int GetLocalId(T entry) => m_entries.IndexOf(entry);
+        public int GetLocalId(T entry) => _entries.IndexOf(entry);
         public T this[int localId]
         {
             get
             {
-                if (localId < 0 || localId >= m_entries.Count) return null;
-                return m_entries[localId];
+                if (localId < 0 || localId >= _entries.Count) return null;
+                return _entries[localId];
             }
         }
+        
+#if UNITY_EDITOR
+        public static string entries_prop_name => nameof(_entries);
+#endif
     }
 }

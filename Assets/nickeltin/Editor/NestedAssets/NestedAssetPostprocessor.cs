@@ -24,7 +24,7 @@ namespace nickeltin.Editor.NestedAssets
             var settings = NestedAssetRootEditor.GetSettings(serializedObject);
             char nameSeparator = settings?.nameSeparator ?? NestedAssetParentBase.DEFAULT_NAME_SEPARATOR;
             
-            SerializedProperty childs = serializedObject.FindProperty("_childs");
+            SerializedProperty childs = serializedObject.FindProperty(NestedAssetParent<NestedAsset>.childs_prop_name);
 
             
             
